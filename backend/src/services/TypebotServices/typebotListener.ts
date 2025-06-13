@@ -29,6 +29,8 @@ const typebotListener = async ({
 
     if (msg.key.remoteJid === 'status@broadcast') return;
 
+    if (!ticket.useIntegration) return;
+
     const { urlN8N: url,
         typebotExpires,
         typebotKeywordFinish,
@@ -97,7 +99,7 @@ const typebotListener = async ({
             await ticket.reload();
         }
 
-        if (isNil(ticket.typebotSessionId)) {            
+        if (isNil(ticket.typebotSessionId)) {
             dataStart = await createSession(msg, typebot, number);
             sessionId = dataStart.sessionId
             status = true;
@@ -255,7 +257,8 @@ const typebotListener = async ({
                                             queueId: jsonGatilho.queueId,
                                             chatbot: false,
                                             useIntegration: false,
-                                            integrationId: null
+                                            integrationId: null,
+                                            typebotStatus: false
                                         },
                                         ticketId: ticket.id,
                                         companyId: ticket.companyId
@@ -271,7 +274,8 @@ const typebotListener = async ({
                                             userId: jsonGatilho.userId,
                                             chatbot: false,
                                             useIntegration: false,
-                                            integrationId: null
+                                            integrationId: null,
+                                            typebotStatus: false
                                         },
                                         ticketId: ticket.id,
                                         companyId: ticket.companyId
@@ -393,7 +397,7 @@ const typebotListener = async ({
                 ticketData: {
                     status: "closed",
                     useIntegration: false,
-                    integrationId: null                   
+                    integrationId: null
                 },
                 ticketId: ticket.id,
                 companyId: ticket.companyId

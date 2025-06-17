@@ -29,8 +29,6 @@ const typebotListener = async ({
 
     if (msg.key.remoteJid === 'status@broadcast') return;
 
-    if (!ticket.useIntegration) return;
-
     const { urlN8N: url,
         typebotExpires,
         typebotKeywordFinish,
@@ -257,8 +255,7 @@ const typebotListener = async ({
                                             queueId: jsonGatilho.queueId,
                                             chatbot: false,
                                             useIntegration: false,
-                                            integrationId: null,
-                                            typebotStatus: false
+                                            integrationId: null
                                         },
                                         ticketId: ticket.id,
                                         companyId: ticket.companyId
@@ -274,8 +271,7 @@ const typebotListener = async ({
                                             userId: jsonGatilho.userId,
                                             chatbot: false,
                                             useIntegration: false,
-                                            integrationId: null,
-                                            typebotStatus: false
+                                            integrationId: null
                                         },
                                         ticketId: ticket.id,
                                         companyId: ticket.companyId

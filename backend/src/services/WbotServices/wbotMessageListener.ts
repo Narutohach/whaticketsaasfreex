@@ -1242,60 +1242,50 @@ const verifyQueue = async (
    * recebe as mensagens dos usuários e envia as opções de fila
    * tratamento de mensagens para resposta aos usuarios apartir do chatbot/fila.
    */
- const botText = async () => {
-  const numberEmojis = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
-  let options = "";
+  const botText = async () => {
+    let options = "";
 
-  queues.forEach((queue, index) => {
-    const emoji = numberEmojis[index] || `[${index + 1}]`;
-    options += `*${emoji}* - ${queue.name}\n`;
-  });
+    queues.forEach((queue, index) => {
+      options += `*[ ${index + 1} ]* - ${queue.name}\n`;
+    });
 
-  const textMessage = {
-    text: formatBody(`\u200e${greetingMessage}\n\n${options}`, contact),
+
+    const textMessage = {
+      text: formatBody(`\u200e${greetingMessage}\n\n${options}`, contact),
+    };
+    let lastMsg = map_msg.get(contact.number)
+    let invalidOption = "Opção inválida, por favor, escolha uma opção válida."
+
+
+    // console.log('getBodyMessage(msg)', getBodyMessage(msg))
+    console.log('textMessage2', textMessage)
+     console.log("lastMsg::::::::::::':", contact.number)
+    // map_msg.set(contact.number, lastMsg);
+    if (!lastMsg?.msg || getBodyMessage(msg).includes('#') || textMessage.text === 'concluido' || lastMsg.msg !== textMessage.text && !lastMsg.invalid_option) {
+      const sendMsg = await wbot.sendMessage(
+        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        textMessage
+      );
+      lastMsg ?? (lastMsg = {});
+      lastMsg.msg = textMessage.text;
+      lastMsg.invalid_option = false;
+      map_msg.set(contact.number, lastMsg);
+      await verifyMessage(sendMsg, ticket, ticket.contact);
+
+    } else if (lastMsg.msg !== invalidOption && !lastMsg.invalid_option) {
+      textMessage.text = invalidOption
+      const sendMsg = await wbot.sendMessage(
+        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+        textMessage
+      );
+      lastMsg ?? (lastMsg = {});
+      lastMsg.invalid_option = true;
+      lastMsg.msg = textMessage.text;
+      map_msg.set(contact.number, lastMsg);
+      await verifyMessage(sendMsg, ticket, ticket.contact);
+    }
+
   };
-
-  let lastMsg = map_msg.get(contact.number);
-  const invalidOption = "Opção inválida, por favor, escolha uma opção válida.";
-
-  console.log('textMessage:', textMessage);
-  console.log("lastMsg:", contact.number);
-
-  const bodyMsg = getBodyMessage(msg);
-
-  if (
-    !lastMsg?.msg ||
-    bodyMsg.includes('#') ||
-    textMessage.text === 'concluido' ||
-    (lastMsg.msg !== textMessage.text && !lastMsg.invalid_option)
-  ) {
-    const sendMsg = await wbot.sendMessage(
-      `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-      textMessage
-    );
-    lastMsg ??= {};
-    lastMsg.msg = textMessage.text;
-    lastMsg.invalid_option = false;
-    map_msg.set(contact.number, lastMsg);
-
-    await verifyMessage(sendMsg, ticket, ticket.contact);
-  } else {
-    textMessage.text = `${invalidOption}\n\n${options}`;
-
-    const sendMsg = await wbot.sendMessage(
-      `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-      textMessage
-    );
-
-    lastMsg ??= {};
-    lastMsg.invalid_option = true;
-    lastMsg.msg = textMessage.text;
-    map_msg.set(contact.number, lastMsg);
-
-    await verifyMessage(sendMsg, ticket, ticket.contact);
-  }
-};
-
 
   if (choosenQueue) {
     let chatbot = false;
@@ -2276,20 +2266,24 @@ const handleMessage = async (
     }
 
     if (
-      !msg.key.fromMe &&
-      !ticket.isGroup &&
-      !ticket.userId &&
-      ticket.integrationId &&
-      ticket.useIntegration &&
-      ticket.queue
-    ) {
+          !msg.key.fromMe &&
+          !ticket.isGroup &&
+          !ticket.userId &&
+          ticket.useIntegration === true &&
+          ticket.queueId
+        ) {
+          const queue = await Queue.findByPk(ticket.queueId);
+          const queueIntegration = queue?.integrationId
+            ? await ShowQueueIntegrationService(queue.integrationId, companyId)
+            : null;
 
-      console.log("entrou no type 1974")
-      const integrations = await ShowQueueIntegrationService(ticket.integrationId, companyId);
-
-      await handleMessageIntegration(msg, wbot, integrations, ticket)
-
-    }
+          if (queueIntegration?.type === "typebot") {
+            console.log("entrou no typebot integration");
+            await handleMessageIntegration(msg, wbot, queueIntegration, ticket);
+          } else {
+            console.log("Fila sem integração typebot ou integrationId inexistente");
+          }
+        }
 
     if (
       !ticket.queue &&
@@ -2543,12 +2537,14 @@ const filterMessages = (msg: WAMessage): boolean => {
       WAMessageStubType.E2E_DEVICE_CHANGED,
       WAMessageStubType.E2E_IDENTITY_CHANGED,
       WAMessageStubType.CIPHERTEXT
-    ].includes(msg.messageStubType as WAMessageStubType)
-  )
+    ].includes(msg.messageStubType ?? -1)
+  ) {
     return false;
+  }
 
   return true;
 };
+
 
 const wbotMessageListener = async (wbot: Session, companyId: number): Promise<void> => {
   try {

@@ -1156,13 +1156,13 @@ const verifyQueue = async (
     }
 
     const firstQueue = head(queues);
-    
+
     let chatbot = false;
 
     if (firstQueue?.options) {
       chatbot = firstQueue.options.length > 0;
     }
-	
+
 
     //inicia integração dialogflow/n8n
     if (
@@ -1207,7 +1207,7 @@ const verifyQueue = async (
 
     return;
   }
-  
+
   	const lastMessage = await Message.findOne({
     where: {
       ticketId: ticket.id,
@@ -1215,7 +1215,7 @@ const verifyQueue = async (
     },
     order: [["createdAt", "DESC"]]
   });
-	
+
 
     // REGRA PARA DESABILITAR O BOT PARA ALGUM CONTATO
     if (contact.disableBot) {
@@ -1223,11 +1223,11 @@ const verifyQueue = async (
     }
 
 	const selectedOption = getBodyMessage(msg);
-  
+
     const choosenQueue = /\*\[\s*\d+\s*\]\*\s*-\s*.*/g.test(lastMessage?.body)
     ? queues[+selectedOption - 1]
     : undefined;
-	
+
 
   const buttonActive = await Setting.findOne({
     where: {
@@ -1240,52 +1240,62 @@ const verifyQueue = async (
 
   /**
    * recebe as mensagens dos usuários e envia as opções de fila
-   * tratamento de mensagens para resposta aos usuarios apartir do chatbot/fila.         
+   * tratamento de mensagens para resposta aos usuarios apartir do chatbot/fila.
    */
-  const botText = async () => {
-    let options = "";
+ const botText = async () => {
+  const numberEmojis = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
+  let options = "";
 
-    queues.forEach((queue, index) => {
-      options += `*[ ${index + 1} ]* - ${queue.name}\n`;
-    });
+  queues.forEach((queue, index) => {
+    const emoji = numberEmojis[index] || `[${index + 1}]`;
+    options += `*${emoji}* - ${queue.name}\n`;
+  });
 
-
-    const textMessage = {
-      text: formatBody(`\u200e${greetingMessage}\n\n${options}`, contact),
-    };
-    let lastMsg = map_msg.get(contact.number)
-    let invalidOption = "Opção inválida, por favor, escolha uma opção válida."
-    
-
-    // console.log('getBodyMessage(msg)', getBodyMessage(msg))
-    console.log('textMessage2', textMessage)
-     console.log("lastMsg::::::::::::':", contact.number)
-    // map_msg.set(contact.number, lastMsg);
-    if (!lastMsg?.msg || getBodyMessage(msg).includes('#') || textMessage.text === 'concluido' || lastMsg.msg !== textMessage.text && !lastMsg.invalid_option) {
-      const sendMsg = await wbot.sendMessage(
-        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-        textMessage
-      );
-      lastMsg ?? (lastMsg = {});
-      lastMsg.msg = textMessage.text;
-      lastMsg.invalid_option = false;
-      map_msg.set(contact.number, lastMsg);
-      await verifyMessage(sendMsg, ticket, ticket.contact);
-
-    } else if (lastMsg.msg !== invalidOption && !lastMsg.invalid_option) {
-      textMessage.text = invalidOption
-      const sendMsg = await wbot.sendMessage(
-        `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
-        textMessage
-      );
-      lastMsg ?? (lastMsg = {});
-      lastMsg.invalid_option = true;
-      lastMsg.msg = textMessage.text;
-      map_msg.set(contact.number, lastMsg);
-      await verifyMessage(sendMsg, ticket, ticket.contact);
-    }
-
+  const textMessage = {
+    text: formatBody(`\u200e${greetingMessage}\n\n${options}`, contact),
   };
+
+  let lastMsg = map_msg.get(contact.number);
+  const invalidOption = "Opção inválida, por favor, escolha uma opção válida.";
+
+  console.log('textMessage:', textMessage);
+  console.log("lastMsg:", contact.number);
+
+  const bodyMsg = getBodyMessage(msg);
+
+  if (
+    !lastMsg?.msg ||
+    bodyMsg.includes('#') ||
+    textMessage.text === 'concluido' ||
+    (lastMsg.msg !== textMessage.text && !lastMsg.invalid_option)
+  ) {
+    const sendMsg = await wbot.sendMessage(
+      `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+      textMessage
+    );
+    lastMsg ??= {};
+    lastMsg.msg = textMessage.text;
+    lastMsg.invalid_option = false;
+    map_msg.set(contact.number, lastMsg);
+
+    await verifyMessage(sendMsg, ticket, ticket.contact);
+  } else {
+    textMessage.text = `${invalidOption}\n\n${options}`;
+
+    const sendMsg = await wbot.sendMessage(
+      `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+      textMessage
+    );
+
+    lastMsg ??= {};
+    lastMsg.invalid_option = true;
+    lastMsg.msg = textMessage.text;
+    map_msg.set(contact.number, lastMsg);
+
+    await verifyMessage(sendMsg, ticket, ticket.contact);
+  }
+};
+
 
   if (choosenQueue) {
     let chatbot = false;
@@ -1403,14 +1413,14 @@ if (choosenQueue.options.length === 0) {
         });
         await verifyMessage(sentMessage, ticket, contact);
       }
-  
+
       if (choosenQueue.mediaPath !== null && choosenQueue.mediaPath !== "") {
         const filePath = path.resolve("public", `company${companyId}`,choosenQueue.mediaPath);
-  
+
         const optionsMsg = await getMessageOptions(choosenQueue.mediaName, filePath, null, ticket.companyId.toString());
-  
+
         let sentMessage = await wbot.sendMessage(`${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`, { ...optionsMsg });
-  
+
         await verifyMediaMessage(sentMessage, ticket, contact);
       }
     }
@@ -1509,7 +1519,7 @@ export const handleRating = async (
     // Remover esses campos, já que queremos manter a fila
     queueOptionId: null,
     userId: null,
-    status: "closed", 
+    status: "closed",
     // Não removemos queueId, pois a fila deve ser mantida
   });
 
@@ -1723,7 +1733,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
         ["createdAt", "ASC"],
       ],
     });
-	
+
 	if (queueOptions.length === 0) {
 	const textMessage = {
 	  text: formatBody(`\u200e${currentOption.message}`, ticket.contact),
@@ -1733,7 +1743,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
 	  `${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
 	  textMessage
 	);
-	
+
 	await verifyMessage(sendMsg, ticket, ticket.contact);
 		        if (currentOption.mediaPath !== null && currentOption.mediaPath !== "")  {
 
@@ -1748,7 +1758,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
         }
 
 	await verifyMessage(sendMsg, ticket, ticket.contact);
-	
+
 	await ticket.update({
 	  queueOptionId: null,
 	  chatbot: false,
@@ -1981,7 +1991,7 @@ const handleMessage = async (
           groupContactCache.set(msg.key.remoteJid, result);
         }
         return result;
-      });      
+      });
     }
 
     const whatsapp = await ShowWhatsAppService(wbot.id!, companyId);
@@ -2008,12 +2018,12 @@ const handleMessage = async (
       },
       order: [["createdAt", "DESC"]],
     });
-    
+
 
     if (unreadMessages === 0 && whatsapp.complationMessage && formatBody(whatsapp.complationMessage, contact).trim().toLowerCase() === lastMessage?.body.trim().toLowerCase()) {
       return;
     }
-    
+
 
     const ticket = await FindOrCreateTicketService(contact, wbot.id!, unreadMessages, companyId, groupContact);
 
@@ -2022,9 +2032,9 @@ const handleMessage = async (
     await provider(ticket, msg, companyId, contact, wbot as WASocket);
 
     //DESABILITADO INTERAÇÕES NOS GRUPOS USANDO O && !isGroup e if (isGroup || contact.disableBot)//
-	
+
 	// voltar para o menu inicial
-	
+
     // voltar para o menu inicia
     if (bodyMessage == "#" && !isGroup) {
       await ticket.update({
@@ -2097,9 +2107,9 @@ const handleMessage = async (
       Sentry.captureException(e);
       console.log(e);
     }
-	
 
-    // Atualiza o ticket se a ultima mensagem foi enviada por mim, para que possa ser finalizado. 
+
+    // Atualiza o ticket se a ultima mensagem foi enviada por mim, para que possa ser finalizado.
     try {
       await ticket.update({
         fromMe: msg.key.fromMe,
@@ -2114,7 +2124,7 @@ const handleMessage = async (
     } else {
       await verifyMessage(msg, ticket, contact);
     }
-	
+
     if (isGroup || contact.disableBot) {
       return;
     }
@@ -2336,7 +2346,7 @@ const handleMessage = async (
           const startTimeA = moment(schedule.startTimeA, "HH:mm");
           const endTimeA = moment(schedule.endTimeA, "HH:mm");
           const startTimeB = moment(schedule.startTimeB, "HH:mm");
-          const endTimeB = moment(schedule.endTimeB, "HH:mm");		  
+          const endTimeB = moment(schedule.endTimeB, "HH:mm");
 
           if (now.isBefore(startTimeA) || now.isAfter(endTimeA) && (now.isBefore(startTimeB) || now.isAfter(endTimeB))) {
             const body = queue.outOfHoursMessage;
@@ -2557,7 +2567,7 @@ const wbotMessageListener = async (wbot: Session, companyId: number): Promise<vo
 
     const processMessageQueue = async () => {
       if (processingQueue || messageQueue.length === 0) return;
-      
+
       processingQueue = true;
       try {
         const messagesToProcess = [...messageQueue];
@@ -2568,7 +2578,7 @@ const wbotMessageListener = async (wbot: Session, companyId: number): Promise<vo
           messagesToProcess.map(async (message) => {
             try {
               const messageId = message.key.id!;
-              
+
               // Verifica cache primeiro
               if (messageCache.has(messageId)) return;
               messageCache.add(messageId);
@@ -2624,7 +2634,7 @@ const wbotMessageListener = async (wbot: Session, companyId: number): Promise<vo
 
           // Processa deleção de mensagens
           if (
-            message.update.messageStubType === 1 && 
+            message.update.messageStubType === 1 &&
             message.key.remoteJid !== 'status@broadcast'
           ) {
             await MarkDeleteWhatsAppMessage(
@@ -2648,7 +2658,7 @@ const wbotMessageListener = async (wbot: Session, companyId: number): Promise<vo
   } catch (error) {
     Sentry.captureException(error);
     logger.error(`Error handling wbot message listener. Err: ${error}`);
-    
+
     // Tenta reconectar em caso de erro
     setTimeout(() => {
       wbotMessageListener(wbot, companyId)

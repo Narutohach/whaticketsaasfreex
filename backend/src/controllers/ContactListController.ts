@@ -73,8 +73,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
+  const { companyId } = req.user;
 
-  const record = await ShowService(id);
+  const record = await ShowService(id, companyId);
 
   return res.status(200).json(record);
 };
@@ -98,9 +99,11 @@ export const update = async (
 
   const { id } = req.params;
 
+  // companyId vem sempre do token, nunca do corpo da requisição
   const record = await UpdateService({
     ...data,
-    id
+    id,
+    companyId
   });
 
   const io = getIO();
@@ -119,7 +122,7 @@ export const remove = async (
   const { id } = req.params;
   const { companyId } = req.user;
 
-  await DeleteService(id);
+  await DeleteService(id, companyId);
 
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-ContactList`, {
@@ -134,7 +137,8 @@ export const findList = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const params = req.query as FindParams;
+  // O companyId da query é ignorado: sempre o do token.
+  const params = { ...(req.query as FindParams), companyId: `${req.user.companyId}` };
   const records: ContactList[] = await FindService(params);
 
   return res.status(200).json(records);

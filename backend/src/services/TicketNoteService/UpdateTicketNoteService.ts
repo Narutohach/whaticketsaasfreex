@@ -1,21 +1,19 @@
 import AppError from "../../errors/AppError";
 import TicketNote from "../../models/TicketNote";
+import ShowTicketNoteService from "./ShowTicketNoteService";
 
 interface TicketNoteData {
   note: string;
   id?: number | string;
+  companyId: number;
 }
 
 const UpdateTicketNoteService = async (
   ticketNoteData: TicketNoteData
 ): Promise<TicketNote> => {
-  const { id, note } = ticketNoteData;
+  const { id, note, companyId } = ticketNoteData;
 
-  const ticketNote = await TicketNote.findByPk(id);
-
-  if (!ticketNote) {
-    throw new AppError("ERR_NO_TICKETNOTE_FOUND", 404);
-  }
+  const ticketNote = await ShowTicketNoteService(id, companyId);
 
   await ticketNote.update({
     note

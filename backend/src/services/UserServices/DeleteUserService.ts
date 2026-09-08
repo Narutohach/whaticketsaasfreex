@@ -8,7 +8,7 @@ const DeleteUserService = async (
   companyId: number
 ): Promise<void> => {
   const user = await User.findOne({
-    where: { id }
+    where: { id, companyId }
   });
 
   if (!user) {

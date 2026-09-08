@@ -98,7 +98,7 @@ export const remove = async (
   const { messageId } = req.params;
   const { companyId } = req.user;
 
-  const message = await DeleteWhatsAppMessage(messageId);
+  const message = await DeleteWhatsAppMessage(messageId, companyId);
 
   const io = getIO();
   io.to(message.ticketId.toString()).emit(`company-${companyId}-appMessage`, {
@@ -205,14 +205,21 @@ export const addReaction = async (req: Request, res: Response): Promise<Response
     const {type} = req.body; // O tipo de reação, por exemplo, 'like', 'heart', etc.
     const {companyId, id} = req.user;
 
-    const message = await Message.findByPk(messageId);
-
-    const ticket = await Ticket.findByPk(message.ticketId, {
-      include: ["contact"]
+    const message = await Message.findOne({
+      where: { id: messageId, companyId }
     });
 
     if (!message) {
       return res.status(404).send({message: "Mensagem não encontrada"});
+    }
+
+    const ticket = await Ticket.findOne({
+      where: { id: message.ticketId, companyId },
+      include: ["contact"]
+    });
+
+    if (!ticket) {
+      return res.status(404).send({message: "Atendimento não encontrado"});
     }
 
     // Envia a reação via WhatsApp
@@ -271,7 +278,7 @@ export const forwardMessage = async (
   if (!messageId || !contactId) {
     return res.status(200).send("MessageId or ContactId not found");
   }
-  const message = await ShowMessageService(messageId);
+  const message = await ShowMessageService(messageId, companyId);
   const contact = await ShowContactService(contactId, companyId);
 
   if (!message) {
@@ -352,7 +359,7 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
   const { messageId } = req.params;
   const { companyId } = req.user;
   const { body }: MessageData = req.body;
-  const { ticket , message } = await EditWhatsAppMessage({messageId, body});
+  const { ticket , message } = await EditWhatsAppMessage({messageId, body, companyId});
 
   const io = getIO();
  io.emit(`company-${companyId}-appMessage`, {

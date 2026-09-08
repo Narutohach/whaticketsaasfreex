@@ -3,8 +3,18 @@ import AppError from "../../errors/AppError";
 import Queue from "../../models/Queue";
 import Company from "../../models/Company";
 
-const ShowUserService = async (id: string | number): Promise<User> => {
-  const user = await User.findByPk(id, {
+/**
+ * `companyId` deve ser informado sempre que a origem for uma requisição de
+ * usuário: sem ele a busca é apenas por id e permite ler usuários de outra
+ * empresa. Fica opcional apenas para os fluxos de autenticação, que resolvem a
+ * identidade a partir do próprio token.
+ */
+const ShowUserService = async (
+  id: string | number,
+  companyId?: number
+): Promise<User> => {
+  const user = await User.findOne({
+    where: companyId ? { id, companyId } : { id },
     attributes: [
       "name",
       "id",

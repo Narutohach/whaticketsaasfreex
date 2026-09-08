@@ -25,9 +25,11 @@ interface Data {
 }
 
 const UpdateService = async (data: Data): Promise<Campaign> => {
-  const { id } = data;
+  const { id, companyId } = data;
 
-  const record = await Campaign.findByPk(id);
+  const record = await Campaign.findOne({
+    where: { id, companyId }
+  });
 
   if (!record) {
     throw new AppError("ERR_NO_CAMPAIGN_FOUND", 404);

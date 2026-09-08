@@ -31,7 +31,6 @@ import HactoLogo from "../../components/Logo";
 
 import { openApi } from "../../services/api";
 import toastError from "../../errors/toastError";
-import moment from "moment";
 
 const Copyright = () => {
 	return (
@@ -71,36 +70,28 @@ const UserSchema = Yup.object().shape({
 		.min(2, "Too Short!")
 		.max(50, "Too Long!")
 		.required("Required"),
-	password: Yup.string().min(5, "Too Short!").max(50, "Too Long!"),
+	password: Yup.string()
+		.min(6, "Too Short!")
+		.max(50, "Too Long!")
+		.required("Required"),
 	email: Yup.string().email("Invalid email").required("Required"),
+	planId: Yup.number().typeError("Required").required("Required"),
 });
 
 const SignUp = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	const [allowregister, setallowregister] = useState('enabled');
-    const [trial, settrial] = useState('3');
 
 	let companyId = null;
 
 	useEffect(() => {
         fetchallowregister();
-        fetchtrial();
     }, []);
-
-    const fetchtrial = async () => {
-        try {
-            const responsevvv = await api.get("/settings/trial");
-            const allowtrialX = responsevvv.data.value;
-            settrial(allowtrialX);
-        } catch (error) {
-            console.error('Error retrieving trial', error);
-        }
-    };
 
     const fetchallowregister = async () => {
         try {
-            const responsevv = await api.get("/settings/allowregister");
+            const responsevv = await api.get("/settings/public/allowregister");
             const allowregisterX = responsevv.data.value;
             setallowregister(allowregisterX);
         } catch (error) {
@@ -120,13 +111,10 @@ const SignUp = () => {
 	const initialState = { name: "", email: "", phone: "", password: "", planId: "disabled" };
 
 	const [user] = useState(initialState);
-	const dueDate = moment().add(trial, "day").format();
 
+	// Plano, vencimento, status e recorrência são definidos pelo backend — não
+	// devem trafegar pelo cliente.
 	const handleSignUp = async values => {
-		Object.assign(values, { recurrence: "MENSAL" });
-		Object.assign(values, { dueDate: dueDate });
-		Object.assign(values, { status: "t" });
-		Object.assign(values, { campaignsEnabled: true });
 		try {
 			await openApi.post("/companies/cadastro", values);
 			toast.success(i18n.t("signup.toasts.success"));

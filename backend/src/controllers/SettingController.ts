@@ -14,6 +14,9 @@ import Company from "../models/Company";
 import UpdateSettingService from "../services/SettingServices/UpdateSettingService";
 import ListSettingsService from "../services/SettingServices/ListSettingsService";
 import ShowSettingsService from "../services/SettingServices/ShowSettingsService";
+import GetPublicSettingsCompanyId, {
+  isPublicSettingKey
+} from "../helpers/PublicSettings";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
@@ -58,15 +61,25 @@ export const show = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  let companyId: number = 1;
+  const { companyId } = req.user;
+  const { settingKey } = req.params;
 
-  if (req.user && req.user.companyId) {
-    companyId = req.user.companyId;
-  } else if (req.query && req.query.companyId) {
-    companyId = Number(req.query.companyId) || 1;
+  const retornoData = await ShowSettingsService({ settingKey, companyId });
+
+  return res.status(200).json(retornoData);
+};
+
+export const publicShow = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { settingKey } = req.params;
+
+  if (!isPublicSettingKey(settingKey)) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
   }
 
-  const { settingKey } = req.params;
+  const companyId = await GetPublicSettingsCompanyId();
 
   const retornoData = await ShowSettingsService({ settingKey, companyId });
 

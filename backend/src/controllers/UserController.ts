@@ -59,7 +59,13 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const newUserCompanyId = bodyCompanyId || userCompanyId; 
 
   if (req.url === "/signup") {
-    if (await CheckSettingsHelper("userCreation") === "disabled") {
+    if (!newUserCompanyId) {
+      throw new AppError("ERR_NO_COMPANY_ID", 400);
+    }
+    if (
+      (await CheckSettingsHelper("userCreation", newUserCompanyId)) ===
+      "disabled"
+    ) {
       throw new AppError("ERR_USER_CREATION_DISABLED", 403);
     }
   } else if (req.user?.profile !== "admin") {
@@ -90,8 +96,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { userId } = req.params;
+  const { companyId } = req.user;
 
-  const user = await ShowUserService(userId);
+  const user = await ShowUserService(userId, companyId);
 
   return res.status(200).json(user);
 };
@@ -145,7 +152,14 @@ export const remove = async (
 
 export const list = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.query;
-  const { companyId: userCompanyId } = req.user;
+  const { companyId: userCompanyId, super: isSuper } = req.user;
+
+  // Listar usuários de outra empresa é exclusivo do super admin: sem esta
+  // checagem qualquer usuário autenticado enumera os usuários de todos os
+  // tenants passando ?companyId=N.
+  if (companyId && +companyId !== userCompanyId && !isSuper) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
 
   const users = await SimpleListService({
     companyId: companyId ? +companyId : userCompanyId

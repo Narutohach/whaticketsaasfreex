@@ -4,6 +4,9 @@ import * as Yup from "yup";
 import authConfig from "../config/auth";
 import AppError from "../errors/AppError";
 import Company from "../models/Company";
+import Plan from "../models/Plan";
+import { addDays } from "date-fns";
+import { getGlobalSettingValue } from "../helpers/PublicSettings";
 import fs from "fs";
 import path from "path";
 import { verify } from "jsonwebtoken";
@@ -80,6 +83,66 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const company = await CreateCompanyService(newCompany);
 
   return res.status(200).json(company);
+};
+
+/**
+ * Cadastro público (self-service). Diferente de `store`, aqui nada que tenha
+ * valor comercial pode vir do cliente: plano, vencimento, status e recorrência
+ * são definidos pelo servidor. Antes desta separação era possível criar uma
+ * empresa anônima no plano mais caro com vencimento em 2099.
+ */
+export const publicStore = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { name, email, phone, password, planId } = req.body;
+
+  const schema = Yup.object().shape({
+    name: Yup.string().trim().min(2).required("ERR_COMPANY_NAME_REQUIRED"),
+    email: Yup.string().email().required("ERR_COMPANY_EMAIL_REQUIRED"),
+    phone: Yup.string().trim().notRequired(),
+    password: Yup.string().min(6).required("ERR_COMPANY_PASSWORD_REQUIRED"),
+    planId: Yup.number().integer().positive().required("ERR_PLAN_REQUIRED")
+  });
+
+  try {
+    await schema.validate({ name, email, phone, password, planId });
+  } catch (err: any) {
+    throw new AppError(err.message, 400);
+  }
+
+  // A checagem de cadastro liberado existia apenas no frontend.
+  const allowRegister = await getGlobalSettingValue("allowregister", "enabled");
+
+  if (allowRegister === "disabled") {
+    throw new AppError("ERR_REGISTER_DISABLED", 403);
+  }
+
+  // Só planos marcados como disponíveis para autoatendimento (os mesmos que
+  // GET /plans/register expõe na tela de cadastro).
+  const plan = await Plan.findOne({
+    where: { id: Number(planId), useInternal: true }
+  });
+
+  if (!plan) {
+    throw new AppError("ERR_INVALID_PLAN", 400);
+  }
+
+  const trialDays = Number(await getGlobalSettingValue("trial", "3")) || 3;
+
+  const company = await CreateCompanyService({
+    name,
+    email,
+    phone,
+    password,
+    planId: plan.id,
+    status: true,
+    recurrence: "MENSAL",
+    dueDate: addDays(new Date(), trialDays).toISOString(),
+    campaignsEnabled: !!plan.useCampaigns
+  });
+
+  return res.status(200).json({ id: company.id, name: company.name });
 };
 
 export const show = async (req: Request, res: Response): Promise<Response> => {

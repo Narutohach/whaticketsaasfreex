@@ -1,18 +1,26 @@
 import Chat from "../../models/Chat";
 import ChatUser from "../../models/ChatUser";
 import User from "../../models/User";
+import AppError from "../../errors/AppError";
 
 interface ChatData {
   id: number;
   title?: string;
   users?: any[];
+  companyId: number;
 }
 
 export default async function UpdateService(data: ChatData) {
-  const { users } = data;
-  const record = await Chat.findByPk(data.id, {
+  const { users, companyId } = data;
+  const record = await Chat.findOne({
+    where: { id: data.id, companyId },
     include: [{ model: ChatUser, as: "users" }]
   });
+
+  if (!record) {
+    throw new AppError("ERR_NO_CHAT_FOUND", 404);
+  }
+
   const { ownerId } = record;
 
   await record.update({ title: data.title });

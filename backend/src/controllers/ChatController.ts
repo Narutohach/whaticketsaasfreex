@@ -73,9 +73,11 @@ export const update = async (
   const data = req.body;
   const { id } = req.params;
 
+  // companyId vem por último para que um companyId enviado no body não sobreponha o do token
   const record = await UpdateService({
     ...data,
-    id: +id
+    id: +id,
+    companyId
   });
 
   const io = getIO();
@@ -92,8 +94,9 @@ export const update = async (
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
+  const { companyId } = req.user;
 
-  const record = await ShowFromUuidService(id);
+  const record = await ShowFromUuidService(id, companyId);
 
   return res.status(200).json(record);
 };
@@ -105,7 +108,7 @@ export const remove = async (
   const { id } = req.params;
   const { companyId } = req.user;
 
-  await DeleteService(id);
+  await DeleteService(id, companyId);
 
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-chat`, {

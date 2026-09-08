@@ -35,10 +35,12 @@ type UpdateInvoiceData = {
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { searchParam, pageNumber } = req.query as IndexQuery;
+  const { companyId } = req.user;
 
   const { invoices, count, hasMore } = await ListInvoicesServices({
     searchParam,
-    pageNumber
+    pageNumber,
+    companyId
   });
 
   return res.json({ invoices, count, hasMore });
@@ -46,8 +48,9 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { Invoiceid } = req.params;
+  const { companyId } = req.user;
 
-  const invoice = await ShowInvoceService(Invoiceid);
+  const invoice = await ShowInvoceService(Invoiceid, companyId);
 
   return res.status(200).json(invoice);
 };
@@ -76,12 +79,14 @@ export const update = async (
     throw new AppError(err.message);
   }
 
-  const { id, status } = InvoiceData;
+  // O id vem da rota: aceitá-lo pelo corpo permitia alterar a fatura de
+  // qualquer empresa. A rota é restrita ao super admin (isSuper).
+  const { id } = req.params;
+  const { status } = InvoiceData;
 
   const plan = await UpdateInvoiceService({
     id,
-    status,
-
+    status
   });
 
   // const io = getIO();

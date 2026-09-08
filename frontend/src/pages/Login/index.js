@@ -443,7 +443,7 @@ const Login = () => {
 
   const fetchviewregister = async () => {
     try {
-      const responsev = await api.get("/settings/viewregister");
+      const responsev = await api.get("/settings/public/viewregister");
       const viewregisterX = responsev?.data?.value;
       setviewregister(viewregisterX);
     } catch (error) {

@@ -222,7 +222,7 @@ export const remove = async (
 
   await ShowTicketService(ticketId, companyId);
 
-  const ticket = await DeleteTicketService(ticketId);
+  const ticket = await DeleteTicketService(ticketId, companyId);
 
   const io = getIO();
   io.to(ticketId)

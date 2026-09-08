@@ -8,14 +8,17 @@ import formatBody from "../../helpers/Mustache";
 interface Request {
   messageId: string;
   body: string;
+  companyId: number;
 }
 
 const EditWhatsAppMessage = async ({
   messageId,
   body,
+  companyId
 }: Request): Promise<{ ticket: Ticket , message: Message}> => {
-  
-  const message = await Message.findByPk(messageId, {
+
+  const message = await Message.findOne({
+    where: { id: messageId, companyId },
     include: [
       {
         model: Ticket,

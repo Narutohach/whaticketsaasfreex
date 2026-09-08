@@ -137,7 +137,8 @@ export const findList = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const params = req.query as FindParams;
+  // O companyId da query é ignorado: sempre o do token.
+  const params = { ...(req.query as FindParams), companyId: `${req.user.companyId}` };
   const records: Announcement[] = await FindService(params);
 
   return res.status(200).json(records);

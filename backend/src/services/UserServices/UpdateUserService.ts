@@ -36,11 +36,17 @@ const UpdateUserService = async ({
   companyId,
   requestUserId
 }: Request): Promise<Response | undefined> => {
-  const user = await ShowUserService(userId);
-
   const requestUser = await User.findByPk(requestUserId);
 
-  if (requestUser.super === false && userData.companyId !== companyId) {
+  // A validação precisa ser sobre a empresa do usuário-alvo, não sobre o
+  // companyId enviado no corpo da requisição: caso contrário basta mandar o
+  // próprio companyId junto com o id de um usuário de outra empresa.
+  const user = await ShowUserService(
+    userId,
+    requestUser?.super ? undefined : companyId
+  );
+
+  if (!requestUser?.super && user.companyId !== companyId) {
     throw new AppError("O usuário não pertence à esta empresa");
   }
 

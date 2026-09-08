@@ -22,6 +22,7 @@ import {
   WhatsApp,
 } from "@mui/icons-material";
 import HactoLogo from "../../components/Logo";
+import commandCenter from "../../assets/portal-command-center.png";
 
 const useStyles = makeStyles(() => ({
   page: {
@@ -60,11 +61,13 @@ const useStyles = makeStyles(() => ({
   secondary: { border: "1px solid rgba(148,163,184,.22)", color: "#e2e8f0", textTransform: "none", fontWeight: 750, borderRadius: 10, padding: "11px 17px", "&:hover": { borderColor: "#34d399", background: "rgba(16,185,129,.08)" } },
   proof: { display: "flex", flexWrap: "wrap", gap: 18, marginTop: 28, color: "#64748b", fontSize: 12, fontWeight: 650 },
   proofItem: { display: "inline-flex", alignItems: "center", gap: 6 },
-  showcase: { position: "relative", zIndex: 1, border: "1px solid rgba(148,163,184,.18)", borderRadius: 22, background: "linear-gradient(145deg, rgba(19,31,47,.94), rgba(8,13,24,.98))", boxShadow: "0 30px 90px rgba(0,0,0,.42)", padding: 14, transform: "rotate(1.2deg)", "@media (max-width: 850px)": { transform: "none" } },
-  windowBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 8px 14px", color: "#64748b", fontSize: 11 },
+  showcase: { position: "relative", zIndex: 1, minHeight: 470, overflow: "hidden", border: "1px solid rgba(148,163,184,.24)", borderRadius: 22, background: "#07111b", boxShadow: "0 30px 90px rgba(0,0,0,.5)", transform: "rotate(1.2deg)", "@media (max-width: 850px)": { transform: "none", minHeight: 430 } },
+  heroImage: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "65% center", opacity: .86 },
+  showcaseShade: { position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(3,10,18,.16) 0%, rgba(3,10,18,.12) 34%, rgba(3,10,18,.9) 100%)" },
+  windowBar: { position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "17px 18px 14px", color: "#cbd5e1", fontSize: 11 },
   windowDots: { display: "flex", gap: 5 },
   dot: { width: 7, height: 7, borderRadius: "50%", background: "#334155" },
-  panel: { border: "1px solid rgba(148,163,184,.12)", borderRadius: 14, background: "#0b1320", padding: 16 },
+  panel: { position: "absolute", zIndex: 2, left: 18, right: 18, bottom: 18, border: "1px solid rgba(148,163,184,.2)", borderRadius: 14, background: "rgba(7,15,27,.86)", backdropFilter: "blur(16px)", padding: 16 },
   panelTop: { display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: 15, borderBottom: "1px solid rgba(148,163,184,.1)" },
   panelTitle: { display: "flex", alignItems: "center", gap: 9, fontWeight: 800, fontSize: 14 },
   panelMark: { display: "flex", alignItems: "center", justifyContent: "center", width: 29, height: 29, borderRadius: 9, background: "#10b981", color: "#04110c" },
@@ -148,6 +151,8 @@ const Portal = () => {
           </div>
 
           <div className={classes.showcase} aria-label="Prévia do HACTO Desk">
+            <img className={classes.heroImage} src={commandCenter} alt="Centro de operações de atendimento conectado" />
+            <div className={classes.showcaseShade} />
             <div className={classes.windowBar}><div className={classes.windowDots}><span className={classes.dot} /><span className={classes.dot} /><span className={classes.dot} /></div><span>whats.hacto.com.br</span></div>
             <div className={classes.panel}>
               <div className={classes.panelTop}><div className={classes.panelTitle}><span className={classes.panelMark}><MessageRounded fontSize="small" /></span> Visão geral</div><div className={classes.live}><span className={classes.liveDot} /> Sistema online</div></div>

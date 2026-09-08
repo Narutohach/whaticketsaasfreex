@@ -63,6 +63,8 @@ services:
       MAIL_PASS: ${MAIL_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-}
       MAIL_PORT: ${MAIL_PORT:-587}
+      META_APP_SECRET: ${META_APP_SECRET:-}
+      META_VERIFY_TOKEN: ${META_VERIFY_TOKEN:-}
     depends_on:
       whaticket_db:
         condition: service_healthy

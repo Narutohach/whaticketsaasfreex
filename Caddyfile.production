@@ -1,0 +1,13 @@
+n8n-with-ai-assistant-nwk1.srv636927.hstgr.cloud {
+    reverse_proxy n8n:5678 {
+        flush_interval -1
+    }
+}
+
+whats.hacto.com.br {
+    reverse_proxy whaticket_frontend:3250
+}
+
+api.whats.hacto.com.br {
+    reverse_proxy whaticket_backend:3000
+}

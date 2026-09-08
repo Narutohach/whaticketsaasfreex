@@ -9,6 +9,7 @@ import Whatsapp from "../models/Whatsapp";
 import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../models/Prompt";
 import { verify } from "jsonwebtoken";
 import authConfig from "../config/auth";
+import { registerAudit } from "../helpers/RegisterAudit";
 
 interface TokenPayload {
   id: string;
@@ -60,6 +61,19 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     prompt: safePrompt
   });
 
+  // apiKey e voiceKey ficam fora da trilha.
+  await registerAudit(req, {
+    action: "prompt.create",
+    entity: "prompt",
+    entityId: promptTable.id,
+    metadata: {
+      name,
+      provider,
+      model,
+      queueId
+    }
+  });
+
   return res.status(200).json(safePrompt);
 };
 
@@ -89,6 +103,18 @@ export const update = async (
     prompt: safePrompt
   });
 
+  await registerAudit(req, {
+    action: "prompt.update",
+    entity: "prompt",
+    entityId: promptId,
+    metadata: {
+      name: promptData?.name,
+      provider: promptData?.provider,
+      model: promptData?.model,
+      changedFields: Object.keys(promptData || {})
+    }
+  });
+
   return res.status(200).json(safePrompt);
 };
 
@@ -109,6 +135,12 @@ export const remove = async (
     io.to(`company-${companyId}-mainchannel`).emit("prompt", {
       action: "delete",
       intelligenceId: +promptId
+    });
+
+    await registerAudit(req, {
+      action: "prompt.delete",
+      entity: "prompt",
+      entityId: promptId
     });
 
     return res.status(200).json({ message: "Prompt deleted" });

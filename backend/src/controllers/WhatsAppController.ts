@@ -9,6 +9,7 @@ import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsServi
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import AppError from "../errors/AppError";
+import { registerAudit } from "../helpers/RegisterAudit";
 
 interface WhatsappData {
   name: string;
@@ -112,6 +113,18 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     });
   }
 
+  // Nome e provedor apenas: `token` e a sessão nunca entram na trilha.
+  await registerAudit(req, {
+    action: "connection.create",
+    entity: "whatsapp",
+    entityId: whatsapp.id,
+    metadata: {
+      name: whatsapp.name,
+      provider: whatsapp.provider,
+      isDefault: whatsapp.isDefault
+    }
+  });
+
   return res.status(200).json(whatsapp);
 };
 
@@ -152,6 +165,18 @@ export const update = async (
     });
   }
 
+  // Só os nomes dos campos alterados; o corpo pode trazer token e sessão.
+  await registerAudit(req, {
+    action: "connection.update",
+    entity: "whatsapp",
+    entityId: whatsappId,
+    metadata: {
+      name: whatsapp.name,
+      provider: whatsapp.provider,
+      changedFields: Object.keys(whatsappData || {})
+    }
+  });
+
   return res.status(200).json(whatsapp);
 };
 
@@ -162,7 +187,7 @@ export const remove = async (
   const { whatsappId } = req.params;
   const { companyId } = req.user;
 
-  await ShowWhatsAppService(whatsappId, companyId);
+  const whatsapp = await ShowWhatsAppService(whatsappId, companyId);
 
   await DeleteWhatsAppService(whatsappId);
   removeWbot(+whatsappId);
@@ -171,6 +196,16 @@ export const remove = async (
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "delete",
     whatsappId: +whatsappId
+  });
+
+  await registerAudit(req, {
+    action: "connection.delete",
+    entity: "whatsapp",
+    entityId: whatsappId,
+    metadata: {
+      name: whatsapp?.name,
+      provider: whatsapp?.provider
+    }
   });
 
   return res.status(200).json({ message: "Whatsapp deleted." });

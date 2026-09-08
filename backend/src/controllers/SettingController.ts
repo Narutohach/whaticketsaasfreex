@@ -17,6 +17,7 @@ import ShowSettingsService from "../services/SettingServices/ShowSettingsService
 import GetPublicSettingsCompanyId, {
   isPublicSettingKey
 } from "../helpers/PublicSettings";
+import { registerAudit } from "../helpers/RegisterAudit";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
@@ -51,6 +52,17 @@ export const update = async (
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-settings`, {
     action: "update",
     setting
+  });
+
+  // Apenas a chave: muitos valores de configuração são credenciais de
+  // integração (tokens de gateway, chaves de API, etc.).
+  await registerAudit(req, {
+    action: "setting.update",
+    entity: "setting",
+    entityId: key,
+    metadata: {
+      key
+    }
   });
 
   return res.status(200).json(setting);

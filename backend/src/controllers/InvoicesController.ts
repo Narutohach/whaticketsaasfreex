@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 // import { getIO } from "../libs/socket";
 import AppError from "../errors/AppError";
 import Invoices from "../models/Invoices";
+import { registerAudit } from "../helpers/RegisterAudit";
 
 import CreatePlanService from "../services/PlanService/CreatePlanService";
 import UpdatePlanService from "../services/PlanService/UpdatePlanService";
@@ -87,6 +88,15 @@ export const update = async (
   const plan = await UpdateInvoiceService({
     id,
     status
+  });
+
+  await registerAudit(req, {
+    action: "invoice.update_status",
+    entity: "invoice",
+    entityId: id,
+    metadata: {
+      status
+    }
   });
 
   // const io = getIO();

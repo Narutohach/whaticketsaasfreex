@@ -7,6 +7,7 @@ import Company from "../models/Company";
 import Plan from "../models/Plan";
 import { addDays } from "date-fns";
 import { getGlobalSettingValue } from "../helpers/PublicSettings";
+import { registerAudit } from "../helpers/RegisterAudit";
 import fs from "fs";
 import path from "path";
 import { verify } from "jsonwebtoken";
@@ -82,6 +83,21 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
   const company = await CreateCompanyService(newCompany);
 
+  await registerAudit(req, {
+    action: "company.create",
+    entity: "company",
+    entityId: company.id,
+    companyId: company.id,
+    metadata: {
+      name: newCompany.name,
+      email: newCompany.email,
+      planId: newCompany.planId,
+      status: newCompany.status,
+      recurrence: newCompany.recurrence,
+      dueDate: newCompany.dueDate
+    }
+  });
+
   return res.status(200).json(company);
 };
 
@@ -142,6 +158,21 @@ export const publicStore = async (
     campaignsEnabled: !!plan.useCampaigns
   });
 
+  // Cadastro anônimo: não há req.user, então a trilha guarda apenas a
+  // empresa criada, o IP e o user-agent de origem.
+  await registerAudit(req, {
+    action: "company.signup",
+    entity: "company",
+    entityId: company.id,
+    companyId: company.id,
+    metadata: {
+      name,
+      email,
+      planId: plan.id,
+      trialDays
+    }
+  });
+
   return res.status(200).json({ id: company.id, name: company.name });
 };
 
@@ -184,6 +215,17 @@ export const update = async (
 
   const company = await UpdateCompanyService({ id, ...companyData });
 
+  await registerAudit(req, {
+    action: "company.update",
+    entity: "company",
+    entityId: id,
+    metadata: {
+      targetCompanyId: id,
+      // O sanitizador remove `password` caso venha no corpo.
+      changes: companyData
+    }
+  });
+
   return res.status(200).json(company);
 };
 
@@ -202,6 +244,16 @@ export const updateSchedules = async (
   const company = await UpdateSchedulesService({
     id,
     schedules
+  });
+
+  await registerAudit(req, {
+    action: "company.update_schedules",
+    entity: "company",
+    entityId: id,
+    metadata: {
+      targetCompanyId: id,
+      schedulesCount: Array.isArray(schedules) ? schedules.length : 0
+    }
   });
 
   return res.status(200).json(company);
@@ -226,6 +278,17 @@ export const remove = async (
   }
 
   const company = await DeleteCompanyService(id);
+
+  await registerAudit(req, {
+    action: "company.delete",
+    entity: "company",
+    entityId: id,
+    // A empresa deixou de existir: o registro fica vinculado ao tenant do
+    // autor (super admin) para não apontar para uma FK removida.
+    metadata: {
+      targetCompanyId: id
+    }
+  });
 
   return res.status(200).json(company);
 };

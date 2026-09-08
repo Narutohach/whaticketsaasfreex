@@ -17,7 +17,7 @@ export default {
   limits: uploadLimits,
   fileFilter: uploadFileFilter,
   storage: multer.diskStorage({
-    destination: async function (req, file, cb) {
+    async destination(req, file, cb) {
       try {
         let companyId = req.user?.companyId;
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
 
 import CheckSettingsHelper from "../helpers/CheckSettings";
+import { registerAudit } from "../helpers/RegisterAudit";
 import AppError from "../errors/AppError";
 
 import CreateUserService from "../services/UserServices/CreateUserService";
@@ -91,6 +92,20 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     user
   });
 
+  await registerAudit(req, {
+    action: "user.create",
+    entity: "user",
+    entityId: user.id,
+    companyId: newUserCompanyId,
+    // A senha nunca entra na trilha.
+    metadata: {
+      email,
+      name,
+      profile,
+      targetCompanyId: newUserCompanyId
+    }
+  });
+
   return res.status(200).json(user);
 };
 
@@ -125,6 +140,17 @@ export const update = async (
     user
   });
 
+  await registerAudit(req, {
+    action: "user.update",
+    entity: "user",
+    entityId: userId,
+    metadata: {
+      targetUserId: userId,
+      // `password` é removido pelo sanitizador.
+      changedFields: Object.keys(userData || {})
+    }
+  });
+
   return res.status(200).json(user);
 };
 
@@ -145,6 +171,15 @@ export const remove = async (
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-user`, {
     action: "delete",
     userId
+  });
+
+  await registerAudit(req, {
+    action: "user.delete",
+    entity: "user",
+    entityId: userId,
+    metadata: {
+      targetUserId: userId
+    }
   });
 
   return res.status(200).json({ message: "User deleted" });

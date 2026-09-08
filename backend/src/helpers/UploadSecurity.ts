@@ -122,7 +122,7 @@ export const sanitizeUploadFileName = (originalName: string): string => {
   const base = path.basename(originalName || "arquivo").replace(/\\/g, "/");
   const safe = path
     .basename(base)
-    .replace(/[^\w.\-]/g, "_")
+    .replace(/[^\w.-]/g, "_")
     .replace(/_{2,}/g, "_")
     .replace(/^\.+/, "");
 

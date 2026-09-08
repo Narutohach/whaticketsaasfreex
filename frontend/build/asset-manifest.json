@@ -1,9 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.b0ecba99.css",
-    "main.js": "/static/js/main.d2a13bfc.js",
+    "main.js": "/static/js/main.a1bb149d.js",
     "static/js/718.477b832a.chunk.js": "/static/js/718.477b832a.chunk.js",
-    "static/media/portal-command-center.png": "/static/media/portal-command-center.d78227c547e28d1e37bb.png",
     "static/media/n8n.png": "/static/media/n8n.55dcf941cabd688d5fa8.png",
     "static/media/wa-background.png": "/static/media/wa-background.ab8484d1eefb1548a030.png",
     "static/media/wa-background-dark.png": "/static/media/wa-background-dark.4c52474fa80c52e227a9.png",
@@ -15,6 +14,6 @@
   },
   "entrypoints": [
     "static/css/main.b0ecba99.css",
-    "static/js/main.d2a13bfc.js"
+    "static/js/main.a1bb149d.js"
   ]
 }

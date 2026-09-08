@@ -21,7 +21,8 @@ const server = app.listen(process.env.PORT, async () => {
     startQueueProcess();
     logger.info(`Server started on port: ${process.env.PORT}`);
   } catch (error) {
-    logger.error("Error starting server:", error);
+    logger.error({ err: error }, "Error starting server");
+    console.error(error);
     process.exit(1);
   }
 });

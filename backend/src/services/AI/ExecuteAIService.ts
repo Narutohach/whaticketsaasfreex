@@ -41,13 +41,23 @@ export const ExecuteAIService = async ({
       return { replyText: "", action: "transfer_queue", queueId: prompt.queueId };
     }
 
-    if (company?.plan?.maxTokensMonthly && (prompt.totalTokens || 0) >= company.plan.maxTokensMonthly) {
-      logger.warn(`Company ${ticket.companyId} exceeded monthly AI token limit (${prompt.totalTokens}/${company.plan.maxTokensMonthly})`);
-      return {
-        replyText: "Limite de atendimento automatizado atingido para este período. Transferindo para nossa equipe...",
-        action: "transfer_queue",
-        queueId: prompt.queueId
-      };
+    if (company?.plan?.maxTokensMonthly) {
+      // O limite é da empresa, não de um prompt isolado: comparar só contra
+      // prompt.totalTokens permitia burlar o teto do plano criando um prompt
+      // por fila, já que cada um tinha seu próprio contador independente.
+      const usedTokens =
+        (await Prompt.sum("totalTokens", {
+          where: { companyId: ticket.companyId }
+        })) || 0;
+
+      if (usedTokens >= company.plan.maxTokensMonthly) {
+        logger.warn(`Company ${ticket.companyId} exceeded AI token limit (${usedTokens}/${company.plan.maxTokensMonthly})`);
+        return {
+          replyText: "Limite de atendimento automatizado atingido para este período. Transferindo para nossa equipe...",
+          action: "transfer_queue",
+          queueId: prompt.queueId
+        };
+      }
     }
 
     const provider = AIProviderFactory.create({

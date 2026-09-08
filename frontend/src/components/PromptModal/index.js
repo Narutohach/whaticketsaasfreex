@@ -14,7 +14,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CircularProgress from "@mui/material/CircularProgress";
 import { i18n } from "../../translate/i18n";
-import { MenuItem, FormControl, InputLabel, Select } from "@mui/material";
+import {
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Select,
+    FormControlLabel,
+    Switch,
+    Tooltip
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { InputAdornment, IconButton } from "@mui/material";
 import QueueSelectSingle from "../../components/QueueSelectSingle";
@@ -88,6 +96,7 @@ const PromptModal = ({ open, onClose, promptId }) => {
         maxTokens: 100,
         temperature: 1,
         apiKey: "",
+        isDefault: false,
         queueId: null,
         maxMessages: 10
     };
@@ -401,6 +410,20 @@ const PromptModal = ({ open, onClose, promptId }) => {
                                         fullWidth
                                     />
                                 </div>
+
+                                <Tooltip title="Usado quando o ticket não tem fila com IA nem a conexão tem uma IA configurada. Só uma empresa pode ter um prompt padrão.">
+                                    <FormControlLabel
+                                        control={
+                                            <Field
+                                                as={Switch}
+                                                color="primary"
+                                                name="isDefault"
+                                                checked={values.isDefault}
+                                            />
+                                        }
+                                        label="Prompt padrão da empresa"
+                                    />
+                                </Tooltip>
                             </DialogContent>
                             <DialogActions>
                                 <Button

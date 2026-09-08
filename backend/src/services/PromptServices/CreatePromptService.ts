@@ -21,6 +21,7 @@ interface PromptData {
     voice?: string;
     voiceKey?: string;
     voiceRegion?: string;
+    isDefault?: boolean;
 }
 
 const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
@@ -44,6 +45,14 @@ const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
     }
 
     const encryptedApiKey = apiKey ? encrypt(apiKey) : "";
+
+    // Só uma empresa pode ter um prompt padrão por vez.
+    if (promptData.isDefault) {
+        await Prompt.update(
+            { isDefault: false },
+            { where: { companyId } }
+        );
+    }
 
     let promptTable = await Prompt.create({
         ...promptData,

@@ -267,7 +267,9 @@ const Prompts = () => {
                     <br />
                     <small style={{ color: "#777" }}>{prompt.model || "padrão"}</small>
                   </TableCell>
-                  <TableCell align="left">{prompt.queue?.name || "-"}</TableCell>
+                  <TableCell align="left">
+                    {prompt.queue?.name || (prompt.isDefault ? "Padrão da empresa" : "-")}
+                  </TableCell>
                   <TableCell align="left">{prompt.maxTokens}</TableCell>
                   <TableCell align="center">
                     <IconButton

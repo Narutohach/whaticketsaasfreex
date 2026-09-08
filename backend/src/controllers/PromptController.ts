@@ -50,8 +50,8 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
-  const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = req.body;
-  const promptTable = await CreatePromptService({ name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, companyId, voice, voiceKey, voiceRegion });
+  const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion, isDefault } = req.body;
+  const promptTable = await CreatePromptService({ name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, companyId, voice, voiceKey, voiceRegion, isDefault });
 
   const safePrompt = withoutSecrets(promptTable);
 

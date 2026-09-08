@@ -4,6 +4,7 @@ import {
   BelongsTo,
   Column,
   CreatedAt,
+  Default,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -75,6 +76,15 @@ class Prompt extends Model<Prompt> {
 
   @BelongsTo(() => Queue)
   queue: Queue;
+
+  /**
+   * Prompt usado como último fallback para tickets que não têm prompt de fila
+   * nem de conexão (ver helpers/ResolveAIPrompt.ts). Único por empresa — a
+   * exclusividade é garantida nos services de criação/edição, não no banco.
+   */
+  @Default(false)
+  @Column
+  isDefault: boolean;
 
   @ForeignKey(() => Company)
   @Column

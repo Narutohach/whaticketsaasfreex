@@ -31,6 +31,7 @@ import {
 } from "microsoft-cognitiveservices-speech-sdk";
 import moment from "moment";
 import { ExecuteAIService } from "../AI/ExecuteAIService";
+import ResolveAIPrompt from "../../helpers/ResolveAIPrompt";
 import { Op } from "sequelize";
 import { debounce } from "../../helpers/Debounce";
 import formatBody from "../../helpers/Mustache";
@@ -683,12 +684,7 @@ const handleOpenAi = async (
   if (!bodyMessage) return;
 
 
-  let { prompt } = await ShowWhatsAppService(wbot.id, ticket.companyId);
-
-
-  if (!prompt && !isNil(ticket?.queue?.prompt)) {
-    prompt = ticket.queue.prompt;
-  }
+  const prompt = await ResolveAIPrompt(wbot.id, ticket);
 
   if (!prompt) return;
 

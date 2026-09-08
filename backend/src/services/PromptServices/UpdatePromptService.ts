@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { Op } from "sequelize";
 import AppError from "../../errors/AppError";
 import Prompt from "../../models/Prompt";
 import ShowPromptService from "./ShowPromptService";
@@ -22,6 +23,7 @@ interface PromptData {
     voice?: string;
     voiceKey?: string;
     voiceRegion?: string;
+    isDefault?: boolean;
 }
 
 interface Request {
@@ -48,7 +50,7 @@ const UpdatePromptService = async ({
         maxMessages: Yup.number().required("ERR_PROMPT_MAX_MESSAGES_INVALID")
     });
 
-    const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = promptData;
+    const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion, isDefault } = promptData;
 
     try {
         await promptSchema.validate({ name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages });
@@ -70,6 +72,14 @@ const UpdatePromptService = async ({
         credentials.voiceKey = voiceKey;
     }
 
+    // Só uma empresa pode ter um prompt padrão por vez.
+    if (isDefault) {
+        await Prompt.update(
+            { isDefault: false },
+            { where: { companyId, id: { [Op.ne]: promptTable.id } } }
+        );
+    }
+
     await promptTable.update({
         name,
         ...credentials,
@@ -84,7 +94,8 @@ const UpdatePromptService = async ({
         queueId,
         maxMessages,
         voice,
-        voiceRegion
+        voiceRegion,
+        isDefault: isDefault ?? promptTable.isDefault
     });
     await promptTable.reload();
     return promptTable;

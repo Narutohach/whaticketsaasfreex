@@ -6,6 +6,7 @@ import ListPromptsService from "../services/PromptServices/ListPromptsService";
 import ShowPromptService from "../services/PromptServices/ShowPromptService";
 import UpdatePromptService from "../services/PromptServices/UpdatePromptService";
 import Whatsapp from "../models/Whatsapp";
+import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../models/Prompt";
 import { verify } from "jsonwebtoken";
 import authConfig from "../config/auth";
 
@@ -23,6 +24,21 @@ type IndexQuery = {
   pageNumber?: string | number;
 };
 
+/**
+ * Remove as credenciais do provedor de IA antes de devolver o prompt na
+ * resposta ou emitir pelo socket — o registro criado/atualizado ainda as
+ * carrega em memória.
+ */
+const withoutSecrets = (prompt: Prompt) => {
+  const plain = prompt.toJSON ? prompt.toJSON() : { ...prompt };
+
+  PROMPT_SECRET_ATTRIBUTES.forEach(attribute => {
+    delete (plain as Record<string, unknown>)[attribute];
+  });
+
+  return plain;
+};
+
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { pageNumber, searchParam } = req.query as IndexQuery;
   const { companyId } = req.user;
@@ -36,13 +52,15 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = req.body;
   const promptTable = await CreatePromptService({ name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, companyId, voice, voiceKey, voiceRegion });
 
+  const safePrompt = withoutSecrets(promptTable);
+
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit("prompt", {
     action: "update",
-    prompt: promptTable
+    prompt: safePrompt
   });
 
-  return res.status(200).json(promptTable);
+  return res.status(200).json(safePrompt);
 };
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
@@ -63,13 +81,15 @@ export const update = async (
 
   const prompt = await UpdatePromptService({ promptData, promptId: promptId, companyId });
 
+  const safePrompt = withoutSecrets(prompt);
+
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit("prompt", {
     action: "update",
-    prompt
+    prompt: safePrompt
   });
 
-  return res.status(200).json(prompt);
+  return res.status(200).json(safePrompt);
 };
 
 export const remove = async (

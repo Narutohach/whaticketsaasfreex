@@ -37,8 +37,10 @@ const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
 
     try {
         await promptSchema.validate({ name, apiKey, prompt, queueId, maxMessages, companyId });
-    } catch (err) {
-        throw new AppError(`${JSON.stringify(err, undefined, 2)}`);
+    } catch (err: any) {
+        // Serializar o erro do Yup inteiro devolvia o `value` validado ao
+        // cliente — ou seja, a própria apiKey na mensagem de erro.
+        throw new AppError(err.errors?.[0] || err.message || "ERR_PROMPT_INVALID", 400);
     }
 
     const encryptedApiKey = apiKey ? encrypt(apiKey) : "";

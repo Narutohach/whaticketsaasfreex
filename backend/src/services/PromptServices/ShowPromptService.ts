@@ -1,5 +1,5 @@
 import AppError from "../../errors/AppError";
-import Prompt from "../../models/Prompt";
+import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../../models/Prompt";
 import Queue from "../../models/Queue";
 
 interface Data {
@@ -13,6 +13,7 @@ const ShowPromptService = async ({ promptId, companyId }: Data): Promise<Prompt>
       id: promptId,
       companyId
     },
+    attributes: { exclude: PROMPT_SECRET_ATTRIBUTES },
     include: [
       {
         model: Queue,

@@ -62,7 +62,8 @@ const PromptSchema = Yup.object().shape({
     voice: Yup.string().required("Informe o modo para Voz"),
     max_tokens: Yup.number().required("Informe o número máximo de tokens"),
     temperature: Yup.number().required("Informe a temperatura"),
-    apikey: Yup.string().required("Informe a API Key"),
+    // A apiKey é validada no backend: na edição ela pode vir vazia, o que
+    // significa manter a chave já cadastrada.
     queueId: Yup.number().required("Informe a fila"),
     max_messages: Yup.number().required("Informe o número máximo de mensagens")
 });
@@ -250,7 +251,13 @@ const PromptModal = ({ open, onClose, promptId }) => {
                                         name="apiKey"
                                         type={showApiKey ? 'text' : 'password'}
                                         error={touched.apiKey && Boolean(errors.apiKey)}
-                                        helperText={touched.apiKey && errors.apiKey}
+                                        placeholder={promptId ? "•••••••• (chave já configurada)" : ""}
+                                        helperText={
+                                            (touched.apiKey && errors.apiKey) ||
+                                            (promptId
+                                                ? "Deixe em branco para manter a chave atual."
+                                                : "")
+                                        }
                                         variant="outlined"
                                         margin="dense"
                                         fullWidth

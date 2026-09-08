@@ -24,7 +24,10 @@ export const initIO = (httpServer: Server): SocketIO => {
     let tokenData = null;
     try {
       tokenData = verify(token as string, authConfig.secret);
-      logger.debug(tokenData, "io-onConnection: tokenData");
+      // Nao logar o payload do JWT inteiro; apenas os identificadores nao sensiveis
+      logger.debug(
+        `io-onConnection: userId=${tokenData?.id} companyId=${tokenData?.companyId}`
+      );
     } catch (error) {
       logger.warn(`[libs/socket.ts] Error decoding token: ${error?.message}`);
       socket.disconnect();

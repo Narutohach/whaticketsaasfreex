@@ -10,6 +10,7 @@ import puppeteer from "puppeteer";
 import axios from 'axios';
 import UpdateTicketService from "../TicketServices/UpdateTicketService";
 import fs from 'fs';
+import { logger } from "../../utils/logger";
 
 export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, companyId: number, contact: Contact, wbot: WASocket) => {
   const filaescolhida = ticket.queue?.name
@@ -239,8 +240,10 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
 
                         await sleep(2000)
                         fs.unlink(nomePDF, function (err) {
-                          if (err) throw err;
-                          console.log(err);
+                          if (err) {
+                            logger.error(`[providers][mkauth] Falha ao remover PDF temporario: ${err?.message}`);
+                            throw err;
+                          }
                         })
 
                         await UpdateTicketService({
@@ -675,7 +678,7 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
 
             axios.request(options as any).then(async function (response) {
               if (response.data.type === 'error') {
-                console.log("Error response", response.data.message);
+                logger.warn(`[providers][ixc:cliente] Resposta de erro: ${response.data?.message}`);
                 const body = {
                   text: formatBody(`*Opss!!!!*\nOcorreu um erro! Digite *#* e fale com um *Atendente*!`, contact),
                 };
@@ -775,7 +778,8 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
 
                     axios.request(boletopdf as any).then(function (response) {
                     }).catch(function (error) {
-                      console.error(error);
+                      // Somente a mensagem: o erro do axios carrega o header Authorization do IXC
+                      logger.error(`[providers][ixc:get_boleto] Falha na requisicao: ${error?.message}`);
                     });
                   }
 
@@ -924,7 +928,7 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
                                   });
                                 }
                               }).catch(function (error) {
-                                console.error(error);
+                                logger.error(`[providers][ixc:radusuarios] Falha na requisicao: ${error?.message}`);
                               });
                               //FIM DA DESCONEXÃO
                             } else {
@@ -1110,7 +1114,7 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
                                   });
                                 }
                               }).catch(function (error) {
-                                console.error(error);
+                                logger.error(`[providers][ixc:radusuarios] Falha na requisicao: ${error?.message}`);
                               });
                               //FIM DA DESCONEXÃO
                             } else {
@@ -1152,14 +1156,14 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
                       ///VE SE ESTA BLOQUEADO PARA LIBERAR!
                     }
                   }).catch(function (error) {
-                    console.error(error);
+                    logger.error(`[providers][ixc:get_pix] Falha na requisicao: ${error?.message}`);
                   });
                   //FIM DO PÌX
 
 
 
                 }).catch(function (error) {
-                  console.error(error);
+                  logger.error(`[providers][ixc:boleto] Falha na requisicao: ${error?.message}`);
                 });
 
               }
@@ -1443,7 +1447,7 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
                             });
                           }
                         }).catch(function (error) {
-                          console.error(error);
+                          logger.error(`[providers][ixc:radusuarios] Falha na requisicao: ${error?.message}`);
                         });
                         //FIM DA DESCONEXÃO
 

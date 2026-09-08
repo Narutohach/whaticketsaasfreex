@@ -8,9 +8,11 @@ import "reflect-metadata";
 import "./bootstrap";
 
 import bodyParser from 'body-parser';
+import multer from "multer";
 import uploadConfig from "./config/upload";
 import "./database";
 import AppError from "./errors/AppError";
+import { UploadError } from "./helpers/UploadSecurity";
 import { messageQueue, sendScheduledMessages } from "./queues";
 import routes from "./routes";
 import { logger } from "./utils/logger";
@@ -34,7 +36,18 @@ app.set("queues", {
 app.use(helmet({ contentSecurityPolicy: false }));
 
 const bodyparser = require('body-parser');
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(
+  bodyParser.json({
+    limit: '10mb',
+    // Guarda o corpo bruto para validação de assinatura HMAC (webhook da Meta:
+    // X-Hub-Signature-256). O hash tem que ser calculado sobre os bytes
+    // originais — re-serializar o JSON parseado muda a ordem/espaçamento e
+    // invalida a assinatura.
+    verify: (req: Request, _res: Response, buf: Buffer) => {
+      (req as any).rawBody = buf;
+    }
+  })
+);
 
 app.use(
   cors({
@@ -52,8 +65,20 @@ app.use(Sentry.Handlers.errorHandler());
 
 app.use(async (err: Error, req: Request, res: Response, _: NextFunction) => {
   if (err instanceof AppError) {
-    logger.warn(err);
+    logger.warn(err.message);
     return res.status(err.statusCode).json({ error: err.message });
+  }
+
+  // Rejeição de upload (extensão/MIME/caminho inválido) e os erros do próprio
+  // multer são culpa da requisição, não falha do servidor.
+  if (err instanceof UploadError) {
+    logger.warn(err.message);
+    return res.status(err.statusCode).json({ error: err.message });
+  }
+
+  if (err instanceof multer.MulterError) {
+    logger.warn(`Upload rejeitado: ${err.code}`);
+    return res.status(400).json({ error: `ERR_UPLOAD_${err.code}` });
   }
 
   logger.error(err);

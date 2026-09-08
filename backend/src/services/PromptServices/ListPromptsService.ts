@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import Prompt from "../../models/Prompt";
+import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../../models/Prompt";
 import Queue from "../../models/Queue";
 
 interface Request {
@@ -33,6 +33,7 @@ const ListPromptsService = async ({
 
   const { count, rows: prompts } = await Prompt.findAndCountAll({
     where: { ...whereCondition, companyId },
+    attributes: { exclude: PROMPT_SECRET_ATTRIBUTES },
     include: [
       {
         model: Queue,

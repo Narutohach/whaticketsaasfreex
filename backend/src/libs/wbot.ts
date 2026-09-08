@@ -386,9 +386,11 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
           "presence.update",
           async ({ id: remoteJid, presences }) => {
             try {
+              // Nao logar remoteJid/presences: sao telefones de contatos (LGPD)
               logger.debug(
-                { remoteJid, presences },
-                "Received contact presence"
+                `Received contact presence (${
+                  Object.keys(presences || {}).length
+                } entries)`
               );
               if (!presences[remoteJid]?.lastKnownPresence) {
                 return;

@@ -40,7 +40,10 @@ const UpdatePromptService = async ({
     const promptSchema = Yup.object().shape({
         name: Yup.string().required("ERR_PROMPT_NAME_INVALID"),
         prompt: Yup.string().required("ERR_PROMPT_PROMPT_INVALID"),
-        apiKey: Yup.string().required("ERR_PROMPT_APIKEY_INVALID"),
+        // A apiKey não é mais devolvida ao cliente, então na edição ela chega
+        // vazia quando o usuário não quer trocá-la: nesse caso a chave atual é
+        // preservada e o campo não vai no update.
+        apiKey: Yup.string().notRequired(),
         queueId: Yup.number().required("ERR_PROMPT_QUEUEID_INVALID"),
         maxMessages: Yup.number().required("ERR_PROMPT_MAX_MESSAGES_INVALID")
     });
@@ -49,19 +52,27 @@ const UpdatePromptService = async ({
 
     try {
         await promptSchema.validate({ name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages });
-    } catch (err) {
-        throw new AppError(`${JSON.stringify(err, undefined, 2)}`);
+    } catch (err: any) {
+        // Serializar o erro do Yup inteiro devolvia o `value` validado ao
+        // cliente — ou seja, a própria apiKey na mensagem de erro.
+        throw new AppError(err.errors?.[0] || err.message || "ERR_PROMPT_INVALID", 400);
     }
 
-    // Encrypt apiKey if it's newly supplied and not already encrypted
-    let finalApiKey = apiKey;
-    if (apiKey && !apiKey.includes(":")) {
-        finalApiKey = encrypt(apiKey);
+    // Só sobrescreve as credenciais quando o usuário realmente informou uma
+    // nova; campo vazio significa "manter a atual".
+    const credentials: { apiKey?: string; voiceKey?: string } = {};
+
+    if (apiKey) {
+        credentials.apiKey = apiKey.includes(":") ? apiKey : encrypt(apiKey);
+    }
+
+    if (voiceKey) {
+        credentials.voiceKey = voiceKey;
     }
 
     await promptTable.update({
         name,
-        apiKey: finalApiKey,
+        ...credentials,
         prompt,
         provider: provider || promptTable.provider || "openai",
         model: model || promptTable.model || "gpt-4o-mini",
@@ -73,7 +84,6 @@ const UpdatePromptService = async ({
         queueId,
         maxMessages,
         voice,
-        voiceKey,
         voiceRegion
     });
     await promptTable.reload();

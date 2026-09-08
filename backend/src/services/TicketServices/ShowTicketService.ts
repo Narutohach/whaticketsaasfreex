@@ -5,7 +5,7 @@ import User from "../../models/User";
 import Queue from "../../models/Queue";
 import Tag from "../../models/Tag";
 import Whatsapp from "../../models/Whatsapp";
-import Prompt from "../../models/Prompt";
+import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../../models/Prompt";
 
 const ShowTicketService = async (
   id: string | number,
@@ -28,7 +28,14 @@ const ShowTicketService = async (
         model: Queue,
         as: "queue",
         attributes: ["id", "name", "color"],
-        include: ["prompt", "queueIntegrations"]
+        include: [
+          {
+            model: Prompt,
+            as: "prompt",
+            attributes: { exclude: PROMPT_SECRET_ATTRIBUTES }
+          },
+          "queueIntegrations"
+        ]
       },
       {
         model: Whatsapp,

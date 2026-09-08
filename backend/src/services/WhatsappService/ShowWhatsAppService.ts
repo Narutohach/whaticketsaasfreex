@@ -3,7 +3,7 @@ import AppError from "../../errors/AppError";
 import Queue from "../../models/Queue";
 import QueueOption from "../../models/QueueOption";
 import { FindOptions } from "sequelize/types";
-import Prompt from "../../models/Prompt";
+import Prompt, { PROMPT_SECRET_ATTRIBUTES } from "../../models/Prompt";
 
 const ShowWhatsAppService = async (
   id: string | number,
@@ -21,6 +21,7 @@ const ShowWhatsAppService = async (
       {
         model: Prompt,
         as: "prompt",
+        attributes: { exclude: PROMPT_SECRET_ATTRIBUTES }
       }
     ],
     order: [["queues", "orderQueue", "ASC"]]

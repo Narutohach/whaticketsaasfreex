@@ -90,4 +90,11 @@ class Prompt extends Model<Prompt> {
   updatedAt: Date;
 }
 
+/**
+ * Campos que nunca devem sair em resposta de API nem em evento de socket: são
+ * as credenciais do provedor de IA. Ficam disponíveis apenas para quem executa
+ * a IA no servidor (ver services/AI/ExecuteAIService).
+ */
+export const PROMPT_SECRET_ATTRIBUTES = ["apiKey", "voiceKey"];
+
 export default Prompt;

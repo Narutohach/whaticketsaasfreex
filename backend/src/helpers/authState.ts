@@ -5,6 +5,7 @@ import type {
 } from "@whiskeysockets/baileys";
 import { BufferJSON, initAuthCreds, proto } from "@whiskeysockets/baileys";
 import Whatsapp from "../models/Whatsapp";
+import { logger } from "../utils/logger";
 
 const KEY_MAP: { [T in keyof SignalDataTypeMap]: string } = {
   "pre-key": "preKeys",
@@ -27,7 +28,13 @@ const authState = async (
         session: JSON.stringify({ creds, keys }, BufferJSON.replacer, 0)
       });
     } catch (error) {
-      console.log(error);
+      // Nunca logar o objeto de erro inteiro: o erro do Sequelize traz o SQL e os
+      // parametros da query, ou seja, a sessao/credenciais do Baileys por completo.
+      logger.error(
+        `[authState] Falha ao salvar sessao do whatsapp ${whatsapp?.id}: ${
+          error?.message
+        }`
+      );
     }
   };
 

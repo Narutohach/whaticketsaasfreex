@@ -10,7 +10,8 @@ interface IOnWhatsapp {
 const checker = async (number: string, wbot: any) => {
   const [validNumber] = await wbot.onWhatsApp(`${number}@s.whatsapp.net`);
 
-  logger.info(validNumber);
+  // Nao logar o jid/telefone do contato (LGPD); apenas o resultado da checagem
+  logger.debug(`CheckNumber: exists=${!!validNumber?.exists}`);
 
   return validNumber;
 };

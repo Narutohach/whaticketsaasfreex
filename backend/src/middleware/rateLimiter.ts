@@ -5,6 +5,11 @@ interface RateLimitOptions {
   windowMs: number;
   max: number;
   message?: string;
+  // Identificador fixo do bucket. Necessário em rotas com parâmetros na URL
+  // (ex.: /resetpasswords/:email/:token/:password): sem isso a chave usa o
+  // req.path já substituído e cada tentativa de força bruta cairia em um
+  // bucket novo, anulando o limite.
+  keyPrefix?: string;
 }
 
 const memoryStore = new Map<string, { count: number; resetTime: number }>();
@@ -20,11 +25,12 @@ setInterval(() => {
 }, 60000);
 
 export const createRateLimiter = (options: RateLimitOptions) => {
-  const { windowMs, max, message = "ERR_TOO_MANY_REQUESTS" } = options;
+  const { windowMs, max, message = "ERR_TOO_MANY_REQUESTS", keyPrefix } = options;
 
   return (req: Request, res: Response, next: NextFunction): void => {
     const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
-    const key = `${req.baseUrl || ""}${req.path}_${ip}`;
+    const scope = keyPrefix || `${req.baseUrl || ""}${req.path}`;
+    const key = `${scope}_${ip}`;
     const now = Date.now();
 
     const record = memoryStore.get(key);

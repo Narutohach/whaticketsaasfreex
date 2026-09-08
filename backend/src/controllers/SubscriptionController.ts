@@ -9,6 +9,7 @@ import Company from "../models/Company";
 import Invoices from "../models/Invoices";
 import Subscriptions from "../models/Subscriptions";
 import { getIO } from "../libs/socket";
+import { logger } from "../utils/logger";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
 
 const app = express();
@@ -137,7 +138,11 @@ export const createWebhook = async (
     const create = await gerencianet.pixConfigWebhook(params, body);
     return res.json(create);
   } catch (error) {
-    console.log(error);
+    // Somente a mensagem: o erro do axios carrega as credenciais do Gerencianet
+    // no config.headers e a chave Pix do cliente no corpo da requisicao.
+    logger.error(
+      `[SubscriptionController] Falha ao configurar webhook Pix: ${error?.message}`
+    );
   }
 };
 

@@ -3,10 +3,18 @@ import sequelize from "sequelize";
 import database from "../../database";
 import Setting from "../../models/Setting";
 import { config } from "dotenv";
+import { logger } from "../../utils/logger";
 config();
 interface UserData {
   companyId: number;
 }
+
+// Mantem apenas a inicial do usuario e o dominio, para nao logar o e-mail completo (LGPD)
+const maskEmail = (address: string): string => {
+  const [user, domain] = (address || "").split("@");
+  if (!user || !domain) return "***";
+  return `${user.slice(0, 1)}***@${domain}`;
+};
 const SendMail = async (email: string, tokenSenha: string) => {
   const { hasResult, data } = await filterEmail(email);
   if (!hasResult) {
@@ -223,9 +231,17 @@ a[x-apple-data-detectors] {
 </html>`
         };
         const info = await transporter.sendMail(mailOptions);
-        console.log("E-mail enviado: " + info.response);
+        logger.info(
+          `[SendMail] E-mail de redefinicao enviado para ${maskEmail(
+            email
+          )} (messageId: ${info?.messageId})`
+        );
       } catch (error) {
-        console.log(error);
+        // Somente a mensagem: o erro do nodemailer carrega o envelope SMTP e,
+        // em varios casos, o objeto auth com usuario e senha do servidor.
+        logger.error(
+          `[SendMail] Falha ao enviar e-mail de redefinicao: ${error?.message}`
+        );
       }
     }
     sendEmail();

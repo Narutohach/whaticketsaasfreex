@@ -247,3 +247,35 @@ export const listTemplates = async (
 
   return res.status(200).json(templates);
 };
+
+/**
+ * Até aqui `ChannelProvider.getStatus()` nunca era chamado: uma conexão Meta
+ * Cloud é criada já como "CONNECTED" (ver CreateWhatsAppService) sem checar se
+ * o token/telefone realmente são válidos, e nada atualiza esse status depois.
+ * Este endpoint consulta o provedor de verdade e persiste o resultado.
+ */
+export const checkStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { whatsappId } = req.params;
+  const { companyId } = req.user;
+
+  const whatsapp = await ShowWhatsAppService(whatsappId, companyId);
+
+  // O Baileys já tem sua própria máquina de estados via eventos de socket
+  // (qrcode, OPENING, PENDING...); o getStatus() genérico só distingue
+  // CONNECTED/DISCONNECTED e sobrescreveria um estado transitório real por um
+  // mais grosseiro. Fica restrito à Meta Cloud, que hoje não tem nenhuma
+  // checagem — a conexão é criada como "CONNECTED" sem validar o token.
+  if (whatsapp.provider !== "meta_cloud" && whatsapp.provider !== "meta") {
+    throw new AppError("Esta conexão não é do tipo Meta Cloud API", 400);
+  }
+
+  const channel = ChannelProviderFactory.getProvider(whatsapp);
+  const status = await channel.getStatus();
+
+  await whatsapp.update({ status });
+
+  return res.status(200).json({ status });
+};

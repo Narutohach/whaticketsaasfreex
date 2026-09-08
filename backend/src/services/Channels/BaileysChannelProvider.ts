@@ -1,3 +1,4 @@
+import { proto, WASocket } from "@whiskeysockets/baileys";
 import {
   ChannelProvider,
   ChannelStatus,
@@ -7,9 +8,8 @@ import {
   SentMessage
 } from "./ChannelProvider";
 import { getWbot } from "../../libs/wbot";
-import AppError from "../../errors/AppError";
-import SendWhatsAppMedia from "../WbotServices/SendWhatsAppMedia";
-import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
+import Message from "../../models/Message";
+import Ticket from "../../models/Ticket";
 
 export class BaileysChannelProvider implements ChannelProvider {
   private whatsappId: number;
@@ -18,6 +18,13 @@ export class BaileysChannelProvider implements ChannelProvider {
     this.whatsappId = whatsappId;
   }
 
+  /**
+   * Envio simplificado, usado hoje só por quem chama o ChannelProvider
+   * genericamente (ex.: checagem de status/testes). O fluxo real de resposta
+   * de ticket (SendWhatsAppMessage/SendWhatsAppMedia) mantém a lógica própria
+   * do Baileys — jid de grupo/lid, citação de mensagem, encaminhamento — que
+   * não cabe na interface genérica de ChannelProvider sem perder informação.
+   */
   async sendText(input: SendTextInput): Promise<SentMessage> {
     const wbot = getWbot(this.whatsappId);
     const jid = `${input.to.replace(/\D/g, "")}@s.whatsapp.net`;
@@ -40,7 +47,9 @@ export class BaileysChannelProvider implements ChannelProvider {
 
     // Send media using Baileys socket directly
     const sent = await wbot.sendMessage(jid, {
-      [input.mediaType.startsWith("image") ? "image" : "document"]: { url: input.mediaPath },
+      [input.mediaType.startsWith("image") ? "image" : "document"]: {
+        url: input.mediaPath
+      },
       caption: input.caption,
       fileName: input.filename
     } as any);
@@ -61,13 +70,36 @@ export class BaileysChannelProvider implements ChannelProvider {
     });
   }
 
+  /**
+   * `messageId` é o id da própria mensagem (Message.id é o wamid, não um
+   * autoincrement — ver models/Message.ts), então dá pra recarregar a
+   * mensagem local e montar o `lastMessages` que o Baileys espera para o
+   * `chatModify`. Antes este método não fazia nada.
+   */
   async markAsRead(messageId: string): Promise<void> {
-    try {
-      const wbot = getWbot(this.whatsappId);
-      // Optional read receipt
-    } catch (err) {
-      // ignore
+    const message = await Message.findByPk(messageId, {
+      include: [{ model: Ticket, as: "ticket", include: ["contact"] }]
+    });
+
+    if (!message?.dataJson || !message.ticket?.contact) {
+      return;
     }
+
+    const wbot = getWbot(this.whatsappId);
+    const lastMessage: proto.IWebMessageInfo = JSON.parse(message.dataJson);
+
+    if (!lastMessage.key || lastMessage.key.fromMe) {
+      return;
+    }
+
+    const jid = `${message.ticket.contact.number}@${
+      message.ticket.isGroup ? "g.us" : "s.whatsapp.net"
+    }`;
+
+    await (wbot as WASocket).chatModify(
+      { markRead: true, lastMessages: [lastMessage] },
+      jid
+    );
   }
 
   async getStatus(): Promise<ChannelStatus> {

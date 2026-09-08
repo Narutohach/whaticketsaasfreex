@@ -9,23 +9,23 @@ import React, {
 import { toast } from "react-toastify";
 import { useParams, useHistory } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { makeStyles } from "../../styles/makeStyles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
-import IconButton from "@material-ui/core/IconButton";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import EditIcon from "@material-ui/icons/Edit";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import BlockIcon from "@material-ui/icons/Block";
+import IconButton from "@mui/material/IconButton";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import BlockIcon from "@mui/icons-material/Block";
 
 import api from "../../services/api";
 import TableRowSkeleton from "../../components/TableRowSkeleton";
@@ -40,7 +40,7 @@ import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { Can } from "../../components/Can";
 import useContactLists from "../../hooks/useContactLists";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 
 import planilhaExemplo from "../../assets/planilha.xlsx";
 import { SocketContext } from "../../context/Socket/SocketContext";
@@ -284,12 +284,24 @@ const ContactListItems = () => {
       </ConfirmationModal>
       <MainHeader>
         <Grid style={{ width: "99.6%" }} container>
-          <Grid xs={12} sm={5} item>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 5
+            }}>
             <Title>{contactList.name}</Title>
           </Grid>
-          <Grid xs={12} sm={7} item>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 7
+            }}>
             <Grid spacing={2} container>
-              <Grid xs={12} sm={6} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   placeholder={i18n.t("contactListItems.searchPlaceholder")}
@@ -305,7 +317,11 @@ const ContactListItems = () => {
                   }}
                 />
               </Grid>
-              <Grid xs={4} sm={2} item>
+              <Grid
+                size={{
+                  xs: 4,
+                  sm: 2
+                }}>
                 <Button
                   fullWidth
                   variant="contained"
@@ -315,7 +331,11 @@ const ContactListItems = () => {
                   {i18n.t("contactListItems.buttons.lists")}
                 </Button>
               </Grid>
-              <Grid xs={4} sm={2} item>
+              <Grid
+                size={{
+                  xs: 4,
+                  sm: 2
+                }}>
                 <Button
                   fullWidth
                   variant="contained"
@@ -328,7 +348,11 @@ const ContactListItems = () => {
                   {i18n.t("contactListItems.buttons.import")}
                 </Button>
               </Grid>
-              <Grid xs={4} sm={2} item>
+              <Grid
+                size={{
+                  xs: 4,
+                  sm: 2
+                }}>
                 <Button
                   fullWidth
                   variant="contained"

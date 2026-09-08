@@ -25,22 +25,16 @@ type IndexQuery = {
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const { pageNumber, searchParam } = req.query as IndexQuery;
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { companyId } = decoded as TokenPayload;
+  const { companyId } = req.user;
   const { prompts, count, hasMore } = await ListPromptsService({ searchParam, pageNumber, companyId });
 
   return res.status(200).json({ prompts, count, hasMore });
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { companyId } = decoded as TokenPayload;
-  const { name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages,voice,voiceKey,voiceRegion } = req.body;
-  const promptTable = await CreatePromptService({ name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, companyId,voice,voiceKey,voiceRegion });
+  const { companyId } = req.user;
+  const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = req.body;
+  const promptTable = await CreatePromptService({ name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, companyId, voice, voiceKey, voiceRegion });
 
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit("prompt", {
@@ -53,10 +47,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { promptId } = req.params;
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { companyId } = decoded as TokenPayload;
+  const { companyId } = req.user;
   const prompt = await ShowPromptService({ promptId, companyId });
 
   return res.status(200).json(prompt);
@@ -68,10 +59,7 @@ export const update = async (
 ): Promise<Response> => {
   const { promptId } = req.params;
   const promptData = req.body;
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { companyId } = decoded as TokenPayload;
+  const { companyId } = req.user;
 
   const prompt = await UpdatePromptService({ promptData, promptId: promptId, companyId });
 
@@ -89,10 +77,7 @@ export const remove = async (
   res: Response
 ): Promise<Response> => {
   const { promptId } = req.params;
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { companyId } = decoded as TokenPayload;
+  const { companyId } = req.user;
   try {
     const { count } = await Whatsapp.findAndCountAll({ where: { promptId: +promptId, companyId } });
 

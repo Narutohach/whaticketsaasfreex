@@ -58,11 +58,15 @@ export const show = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  let companyId: number = 1;
 
-  //const { companyId } = req.user;
-  const companyId = 1;
+  if (req.user && req.user.companyId) {
+    companyId = req.user.companyId;
+  } else if (req.query && req.query.companyId) {
+    companyId = Number(req.query.companyId) || 1;
+  }
+
   const { settingKey } = req.params;
-  
 
   const retornoData = await ShowSettingsService({ settingKey, companyId });
 
@@ -74,27 +78,20 @@ export const mediaUpload = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { body } = req.body;
   const { companyId } = req.user;
-
   const userId = req.user.id;
   const requestUser = await User.findByPk(userId);
 
-  if (requestUser.super === false) {
-    throw new AppError("você nao tem permissão para esta ação!");
+  if (!requestUser || !requestUser.super) {
+    throw new AppError("você nao tem permissão para esta ação!", 403);
   }
 
   if (req.user.profile !== "admin") {
     throw new AppError("ERR_NO_PERMISSION", 403);
   }
 
-  if (companyId !== 1) {
-    throw new AppError("ERR_NO_PERMISSION", 403);
-  }
-
   const files = req.files as Express.Multer.File[];
   const file = head(files);
-  console.log(file);
   return res.send({ mensagem: "Arquivo Anexado" });
 };
 
@@ -103,56 +100,41 @@ export const certUpload = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { body } = req.body;
   const { companyId } = req.user;
-
   const userId = req.user.id;
   const requestUser = await User.findByPk(userId);
 
-  if (requestUser.super === false) {
-    throw new AppError("você nao tem permissão para esta ação!");
+  if (!requestUser || !requestUser.super) {
+    throw new AppError("você nao tem permissão para esta ação!", 403);
   }
 
   if (req.user.profile !== "admin") {
     throw new AppError("ERR_NO_PERMISSION", 403);
   }
 
-  if (companyId !== 1) {
-    throw new AppError("ERR_NO_PERMISSION", 403);
-  }
-
   const files = req.files as Express.Multer.File[];
   const file = head(files);
-  console.log(file);
   return res.send({ mensagem: "Arquivo Anexado" });
 };
-
 
 
 export const docUpload = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { body } = req.body;
   const { companyId } = req.user;
-
   const userId = req.user.id;
   const requestUser = await User.findByPk(userId);
 
-  if (requestUser.super === false) {
-    throw new AppError("você nao tem permissão para esta ação!");
+  if (!requestUser || !requestUser.super) {
+    throw new AppError("você nao tem permissão para esta ação!", 403);
   }
 
   if (req.user.profile !== "admin") {
     throw new AppError("ERR_NO_PERMISSION", 403);
   }
 
-  if (companyId !== 1) {
-    throw new AppError("ERR_NO_PERMISSION", 403);
-  }
-
   const files = req.files as Express.Multer.File[];
   const file = head(files);
-  console.log(file);
   return res.send({ mensagem: "Arquivo Anexado" });
 };

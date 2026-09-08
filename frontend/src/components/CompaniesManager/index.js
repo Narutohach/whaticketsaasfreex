@@ -12,14 +12,15 @@ import {
   TableHead,
   TableRow,
   TextField,
-  makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import ConfirmationModal from "../ConfirmationModal";
 
-import { Edit as EditIcon } from "@material-ui/icons";
+import { Edit as EditIcon } from "@mui/icons-material";
 
 import { has, head, isArray } from "lodash";
 import { toast } from "react-toastify";
@@ -200,7 +201,12 @@ export function CompanyForm(props) {
         {(values, setValues) => (
           <Form className={classes.fullWidth}>
             <Grid spacing={2} justifyContent="flex-end" container>
-              <Grid xs={12} sm={6} md={4} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 4
+                }}>
                 <Field
                   as={TextField}
                   label="Nome"
@@ -210,7 +216,12 @@ export function CompanyForm(props) {
                   margin="dense"
                 />
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <Field
                   as={TextField}
                   label="E-mail"
@@ -221,7 +232,12 @@ export function CompanyForm(props) {
                   required
                 />
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <Field
                   as={TextField}
                   label="Telefone"
@@ -231,7 +247,12 @@ export function CompanyForm(props) {
                   margin="dense"
                 />
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <FormControl margin="dense" variant="outlined" fullWidth>
                   <InputLabel htmlFor="plan-selection">Plano</InputLabel>
                   <Field
@@ -251,7 +272,12 @@ export function CompanyForm(props) {
                   </Field>
                 </FormControl>
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <FormControl margin="dense" variant="outlined" fullWidth>
                   <InputLabel htmlFor="status-selection">Status</InputLabel>
                   <Field
@@ -283,7 +309,12 @@ export function CompanyForm(props) {
                   </Field>
                 </FormControl>
               </Grid>*/}
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <FormControl variant="outlined" fullWidth>
                   <Field
                     as={TextField}
@@ -299,7 +330,12 @@ export function CompanyForm(props) {
                   />
                 </FormControl>
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 2
+                }}>
                 <FormControl margin="dense" variant="outlined" fullWidth>
                   <InputLabel htmlFor="recorrencia-selection">
                     Recorrência
@@ -320,9 +356,13 @@ export function CompanyForm(props) {
                   </Field>
                 </FormControl>
               </Grid>
-              <Grid xs={12} item>
+              <Grid size={12}>
                 <Grid justifyContent="flex-end" spacing={1} container>
-                  <Grid xs={4} md={1} item>
+                  <Grid
+                    size={{
+                      xs: 4,
+                      md: 1
+                    }}>
                     <ButtonWithSpinner
                       className={classes.fullWidth}
                       style={{ marginTop: 7 }}
@@ -335,7 +375,11 @@ export function CompanyForm(props) {
                   </Grid>
                   {record.id !== undefined ? (
                     <>
-                      <Grid xs={6} md={1} item>
+                      <Grid
+                        size={{
+                          xs: 6,
+                          md: 1
+                        }}>
                         <ButtonWithSpinner
                           style={{ marginTop: 7 }}
                           className={classes.fullWidth}
@@ -347,7 +391,11 @@ export function CompanyForm(props) {
                           Excluir
                         </ButtonWithSpinner>
                       </Grid>
-                      <Grid xs={6} md={2} item>
+                      <Grid
+                        size={{
+                          xs: 6,
+                          md: 2
+                        }}>
                         <ButtonWithSpinner
                           style={{ marginTop: 7 }}
                           className={classes.fullWidth}
@@ -359,7 +407,11 @@ export function CompanyForm(props) {
                           + Vencimento
                         </ButtonWithSpinner>
                       </Grid>
-                      <Grid xs={6} md={1} item>
+                      <Grid
+                        size={{
+                          xs: 6,
+                          md: 1
+                        }}>
                         <ButtonWithSpinner
                           style={{ marginTop: 7 }}
                           className={classes.fullWidth}
@@ -373,7 +425,11 @@ export function CompanyForm(props) {
                       </Grid>
                     </>
                   ) : null}
-                  <Grid xs={6} md={1} item>
+                  <Grid
+                    size={{
+                      xs: 6,
+                      md: 1
+                    }}>
                     <ButtonWithSpinner
                       className={classes.fullWidth}
                       style={{ marginTop: 7 }}
@@ -398,6 +454,7 @@ export function CompanyForm(props) {
 export function CompaniesManagerGrid(props) {
   const { records, onSelect } = props;
   const classes = useStyles();
+  const theme = useTheme();
   const { dateToClient } = useDate();
 
   const renderStatus = (row) => {
@@ -428,10 +485,14 @@ export function CompaniesManagerGrid(props) {
       const dueDate = moment(record.dueDate);
       const diff = dueDate.diff(now, "days");
       if (diff >= 1 && diff <= 5) {
-        return { backgroundColor: "#fffead" };
+        return theme.mode === "light"
+          ? { backgroundColor: "#fffead" }
+          : { backgroundColor: "#4a3f0a", color: "#fde68a" };
       }
       if (diff <= 0) {
-        return { backgroundColor: "#fa8c8c" };
+        return theme.mode === "light"
+          ? { backgroundColor: "#fa8c8c" }
+          : { backgroundColor: "#5c1a1a", color: "#fca5a5" };
       }
       // else {
       //   return { backgroundColor: "#affa8c" };
@@ -606,7 +667,7 @@ export default function CompaniesManager() {
   return (
     <Paper className={classes.mainPaper} elevation={0}>
       <Grid spacing={2} container>
-        <Grid xs={12} item>
+        <Grid size={12}>
           <CompanyForm
             initialValue={record}
             onDelete={handleOpenDeleteDialog}
@@ -615,7 +676,7 @@ export default function CompaniesManager() {
             loading={loading}
           />
         </Grid>
-        <Grid xs={12} item>
+        <Grid size={12}>
           <CompaniesManagerGrid records={records} onSelect={handleSelect} />
         </Grid>
       </Grid>

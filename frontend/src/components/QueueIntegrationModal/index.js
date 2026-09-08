@@ -18,10 +18,10 @@ import {
   TextField,
   Grid,
   Paper,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
 
 import { i18n } from "../../translate/i18n";
 
@@ -187,7 +187,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
               <Paper square className={classes.mainPaper} elevation={1}>
                 <DialogContent dividers>
                   <Grid container spacing={1}>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6,
+                        xl: 6
+                      }}>
                       <FormControl
                         variant="outlined"
                         className={classes.formControl}
@@ -217,7 +222,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                     </Grid>
                     {values.type === "dialogflow" && (
                       <>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.name")}
@@ -231,7 +241,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <FormControl
                             variant="outlined"
                             className={classes.formControl}
@@ -259,7 +274,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             </Field>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.projectName")}
@@ -271,7 +291,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             margin="dense"
                           />
                         </Grid>
-                        <Grid item xs={12} md={12} xl={12} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 12,
+                            xl: 12
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.jsonContent")}
@@ -293,7 +318,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
 
                     {(values.type === "n8n" || values.type === "webhook") && (
                       <>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.name")}
@@ -308,7 +338,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={12} xl={12} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 12,
+                            xl: 12
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.urlN8N")}
@@ -326,7 +361,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                     )}
                     {(values.type === "typebot") && (
                       <>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.name")}
@@ -341,7 +381,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={12} xl={12} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 12,
+                            xl: 12
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.urlN8N")}
@@ -355,7 +400,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotSlug")}
@@ -369,7 +419,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotExpires")}
@@ -382,7 +437,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotDelayMessage")}
@@ -395,7 +455,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotKeywordFinish")}
@@ -408,7 +473,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotKeywordRestart")}
@@ -421,7 +491,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={6} xl={6} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 6,
+                            xl: 6
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotUnknownMessage")}
@@ -434,7 +509,12 @@ const QueueIntegration = ({ open, onClose, integrationId }) => {
                             className={classes.textField}
                           />
                         </Grid>
-                        <Grid item xs={12} md={12} xl={12} >
+                        <Grid
+                          size={{
+                            xs: 12,
+                            md: 12,
+                            xl: 12
+                          }}>
                           <Field
                             as={TextField}
                             label={i18n.t("queueIntegrationModal.form.typebotRestartMessage")}

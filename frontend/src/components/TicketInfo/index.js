@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Avatar, CardHeader } from "@material-ui/core";
+import { Avatar, CardHeader } from "@mui/material";
 import { getInitials } from "../../helpers/getInitials";
 import { generateColor } from "../../helpers/colorGenerator";
 import { i18n } from "../../translate/i18n";

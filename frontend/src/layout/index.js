@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import clsx from "clsx";
 import moment from "moment";
 import {
-  makeStyles,
   Drawer,
   AppBar,
   Toolbar,
@@ -14,12 +13,13 @@ import {
   Menu,
   useTheme,
   useMediaQuery,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../styles/makeStyles";
 
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import CachedIcon from "@material-ui/icons/Cached";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import CachedIcon from "@mui/icons-material/Cached";
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -39,8 +39,10 @@ import ChatPopover from "../pages/Chat/ChatPopover";
 import { useDate } from "../hooks/useDate";
 
 import ColorModeContext from "../layout/themeContext";
-import Brightness4Icon from '@material-ui/icons/Brightness4';
-import Brightness7Icon from '@material-ui/icons/Brightness7';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import HactoLogo from "../components/Logo";
+import CommandPalette from "../components/CommandPalette";
 
 const drawerWidth = 240;
 
@@ -53,12 +55,11 @@ const useStyles = makeStyles((theme) => ({
     },
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
-      color: theme.mode === 'light' ? '#FFF' : '#FFF',
-	  backgroundColor: theme.mode === 'light' ? '#2DDD7F' : '#1c1c1c',
-      //border: theme.mode === 'light' ? '1px solid rgba(0 124 102)' : '1px solid rgba(255, 255, 255, 0.5)',
+      color: '#FFFFFF',
+	  backgroundColor: theme.mode === 'light' ? '#059669' : '#1e293b',
     },
     '& .MuiTab-textColorPrimary.Mui-selected': {
-      color: theme.mode === 'light' ? '#2DDD7F' : '#FFF',
+      color: theme.mode === 'light' ? '#059669' : '#34d399',
     }
   },
   avatar: {
@@ -66,21 +67,28 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
-    color: theme.palette.dark.main,
+    color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
     background: theme.palette.barraSuperior,
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
+    boxShadow: "none",
   },
   toolbarIcon: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "0 8px",
-    minHeight: "48px",
+    padding: "0 12px",
+    minHeight: "56px",
+    borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
     [theme.breakpoints.down("sm")]: {
-      height: "48px"
+      height: "56px"
     }
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
+    boxShadow: "none",
+    backgroundColor: "transparent",
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -98,20 +106,25 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   menuButton: {
-    marginRight: 36,
+    marginRight: 20,
+    color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
   },
   menuButtonHidden: {
     display: "none",
   },
   title: {
     flexGrow: 1,
-    fontSize: 14,
-    color: "white",
+    fontSize: 15,
+    fontWeight: 700,
+    color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
+    letterSpacing: "-0.3px",
   },
   drawerPaper: {
     position: "relative",
     whiteSpace: "nowrap",
     width: drawerWidth,
+    borderRight: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
+    backgroundColor: theme.palette.background.paper,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -189,13 +202,14 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   const theme = useTheme();
   const { colorMode } = useContext(ColorModeContext);
   const greaterThenSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const iconColor = theme.palette.mode === "light" ? "#0f172a" : "#f8fafc";
 
   // Definindo os logos para modo claro e escuro
   const logoLight = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/interno.png`;
   const logoDark = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/logo_w.png`;
 
   // Definindo o logo inicial com base no modo de tema atual
-  const initialLogo = theme.palette.type === 'light' ? logoLight : logoDark;
+  const initialLogo = theme.palette.mode === 'light' ? logoLight : logoDark;
   const [logoImg, setLogoImg] = useState(initialLogo);
 
 
@@ -333,8 +347,8 @@ const LoggedInLayout = ({ children, themeToggle }) => {
 
   useEffect(() => {
     // Atualiza o logo sempre que o modo do tema muda
-    setLogoImg(theme.palette.type === 'light' ? logoLight : logoDark);
-  }, [theme.palette.type]);
+    setLogoImg(theme.palette.mode === 'light' ? logoLight : logoDark);
+  }, [theme.palette.mode]);
 
   const toggleColorMode = () => {
     colorMode.toggleColorMode();
@@ -359,8 +373,8 @@ const LoggedInLayout = ({ children, themeToggle }) => {
         }}
         open={drawerOpen}
       >
-        <div className={classes.toolbarIcon}>
-          <img src={`${logoImg}?r=${Math.random()}`} style={{ margin: "0 auto" , width: "50%"}} alt={`${process.env.REACT_APP_NAME_SYSTEM}`} />
+        <div className={classes.toolbarIcon} style={{ justifyContent: "space-between", padding: "0 12px" }}>
+          {drawerOpen ? <HactoLogo size="small" light={theme.palette.mode === "light"} showTagline={false} /> : null}
           <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
             <ChevronLeftIcon />
           </IconButton>
@@ -415,7 +429,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           </Typography>
 
           <IconButton edge="start" onClick={toggleColorMode}>
-            {theme.mode === 'dark' ? <Brightness7Icon style={{ color: "white" }} /> : <Brightness4Icon style={{ color: "white" }} />}
+            {theme.mode === 'dark' ? <Brightness7Icon style={{ color: iconColor }} /> : <Brightness4Icon style={{ color: iconColor }} />}
           </IconButton>
 
           <NotificationsVolume
@@ -428,7 +442,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             aria-label={i18n.t("mainDrawer.appBar.refresh")}
             color="inherit"
           >
-            <CachedIcon style={{ color: "white" }} />
+            <CachedIcon style={{ color: iconColor }} />
           </IconButton>
 
           {user.id && <NotificationsPopOver volume={volume} />}
@@ -444,7 +458,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               aria-haspopup="true"
               onClick={handleMenu}
               variant="contained"
-              style={{ color: "white" }}
+              style={{ color: iconColor }}
             >
               <AccountCircle />
             </IconButton>
@@ -472,7 +486,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-
+        <CommandPalette />
         {children ? children : null}
       </main>
     </div>

@@ -17,6 +17,7 @@ interface Request {
   extraInfo?: ExtraInfo[];
   whatsappId?: number;
   disableBot?: boolean;
+  isLid?: boolean;
 }
 
 const CreateOrUpdateContactService = async ({
@@ -28,7 +29,8 @@ const CreateOrUpdateContactService = async ({
   companyId,
   extraInfo = [],
   whatsappId,
-  disableBot = false
+  disableBot = false,
+  isLid = false
 }: Request): Promise<Contact> => {
   const number = isGroup ? rawNumber : rawNumber.replace(/[^0-9]/g, "");
 
@@ -43,8 +45,12 @@ const CreateOrUpdateContactService = async ({
   });
 
   if (contact) {
+    // isLid is intentionally NOT touched here: it reflects how this chat was
+    // originally addressed by WhatsApp (LID vs real phone number), which the
+    // Signal session was negotiated against. Re-deriving it from every message
+    // (including echoes of our own sent messages, which don't reliably report
+    // the original addressing) would flip it back and forth and break sending.
     contact.update({ profilePicUrl });
-    console.log(contact.whatsappId)
     if (isNil(contact.whatsappId === null)) {
       contact.update({
         whatsappId
@@ -64,7 +70,8 @@ const CreateOrUpdateContactService = async ({
       extraInfo,
       companyId,
       whatsappId,
-      disableBot
+      disableBot,
+      isLid
     });
 
     io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-contact`, {

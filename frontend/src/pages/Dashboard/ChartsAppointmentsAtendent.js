@@ -2,8 +2,8 @@ import "./button.css";
 
 import React, { useEffect, useState } from "react";
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -11,11 +11,11 @@ import { Doughnut } from "react-chartjs-2";
 // Registrar componentes do Chart.js
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { Button, Stack, TextField } from "@mui/material";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { blue, grey } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { blue, grey } from "@mui/material/colors";
 
 import brLocale from "date-fns/locale/pt-BR";
 
@@ -35,20 +35,6 @@ const DATA_COUNT = 5;
 const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.padding,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-  },
-  fixedHeightPaper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    flexDirection: "column",
-    height: 240,
-    overflowY: "auto",
-    ...theme.scrollbarStyles,
-  },
   cardAvatar: {
     fontSize: "55px",
     color: grey[500],
@@ -113,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     //backgroundColor: "palette",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -127,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
     //backgroundColor: "palette",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -140,7 +126,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -153,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -166,7 +152,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -179,7 +165,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -192,7 +178,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -205,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -218,7 +204,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     //backgroundColor: theme.palette.primary.main,
     backgroundColor:
-      theme.palette.type === "dark"
+      theme.palette.mode === "dark"
         ? theme.palette.boxticket.main
         : theme.palette.primary.main,
     color: "#eee",
@@ -341,9 +327,9 @@ const ChartsAppointmentsAtendent = () => {
   };
 
   return (
-    <Grid item xs={12}>
+    <Grid size={12}>
       <Paper className={classes.fixedHeightPaper2}>
-        <Grid item xs={6} className={classes.fixedGridPaper3}>
+        <Grid className={classes.fixedGridPaper3} size={6}>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>
             Atendimentos por Atendentes
           </Typography>
@@ -403,7 +389,7 @@ const ChartsAppointmentsAtendent = () => {
           />
         </Grid>
 
-        <Grid item xs={6} className={classes.fixedGridPaper3}>
+        <Grid className={classes.fixedGridPaper3} size={6}>
           <Typography component="h2" variant="h6" color="primary" gutterBottom>
             Atendimentos por Departamentos/Filas
           </Typography>

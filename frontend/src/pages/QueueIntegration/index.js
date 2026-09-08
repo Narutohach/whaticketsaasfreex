@@ -6,7 +6,7 @@ import dialogflow from "../../assets/dialogflow.png";
 import webhooks from "../../assets/webhook.png";
 import typebot from "../../assets/typebot.jpg";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
 
 import {
   Avatar,
@@ -21,14 +21,14 @@ import {
   TableRow,
   TextField,
   Tooltip
-} from "@material-ui/core";
+} from "@mui/material";
 
 import {
-  DeleteOutline,
+  DeleteOutlineOutlined as DeleteOutline,
   Edit
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
-import SearchIcon from "@material-ui/icons/Search";
+import SearchIcon from "@mui/icons-material/Search";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";

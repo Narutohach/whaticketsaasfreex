@@ -5,27 +5,27 @@ import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { FormControl, Grid, IconButton } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { FormControl, Grid, IconButton } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import moment from "moment"
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { isArray, capitalize } from "lodash";
-import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import AttachFile from "@material-ui/icons/AttachFile";
+import DeleteOutline from "@mui/icons-material/DeleteOutlineOutlined";
+import AttachFile from "@mui/icons-material/AttachFile";
 import { head } from "lodash";
 import ConfirmationModal from "../ConfirmationModal";
 import MessageVariablesPicker from "../MessageVariablesPicker";
@@ -217,8 +217,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	};
 
 	return (
-		<div className={classes.root}>
-			<ConfirmationModal
+        <div className={classes.root}>
+            <ConfirmationModal
 				title={i18n.t("scheduleModal.confirmationModal.deleteTitle")}
 				open={confirmationOpen}
 				onClose={() => setConfirmationOpen(false)}
@@ -226,7 +226,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 			>
 				{i18n.t("scheduleModal.confirmationModal.deleteMessage")}
 			</ConfirmationModal>
-			<Dialog
+            <Dialog
 				open={open}
 				onClose={handleClose}
 				maxWidth="xs"
@@ -296,7 +296,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 										fullWidth
 									/>
 								</div>
-								<Grid item>
+								<Grid>
 									<MessageVariablesPicker
 										disabled={isSubmitting}
 										onClick={value => handleClickMsgVar(value, setFieldValue)}
@@ -319,7 +319,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 									/>
 								</div>
 								{(schedule.mediaPath || attachment) && (
-									<Grid xs={12} item>
+									<Grid size={12}>
 										<Button startIcon={<AttachFile />}>
 											{attachment ? attachment.name : schedule.mediaName}
 										</Button>
@@ -375,8 +375,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 					)}
 				</Formik>
 			</Dialog>
-		</div>
-	);
+        </div>
+    );
 };
 
 export default ScheduleModal;

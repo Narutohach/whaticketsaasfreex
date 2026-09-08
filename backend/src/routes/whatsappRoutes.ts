@@ -11,6 +11,8 @@ whatsappRoutes.post("/whatsapp/", isAuth, WhatsAppController.store);
 
 whatsappRoutes.get("/whatsapp/:whatsappId", isAuth, WhatsAppController.show);
 
+whatsappRoutes.get("/whatsapp/:whatsappId/templates", isAuth, WhatsAppController.listTemplates);
+
 whatsappRoutes.put("/whatsapp/:whatsappId", isAuth, WhatsAppController.update);
 
 whatsappRoutes.post("/whatsapp-restart/", isAuth, WhatsAppController.restart);

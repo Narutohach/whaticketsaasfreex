@@ -1,27 +1,29 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import MicRecorder from "mic-recorder-to-mp3";
 import clsx from "clsx";
 import { isNil } from "lodash";
-import { Reply } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { green, grey } from "@material-ui/core/colors";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
-import IconButton from "@material-ui/core/IconButton";
-import MoodIcon from "@material-ui/icons/Mood";
-import SendIcon from "@material-ui/icons/Send";
-import CancelIcon from "@material-ui/icons/Cancel";
-import ClearIcon from "@material-ui/icons/Clear";
-import MicIcon from "@material-ui/icons/Mic";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import { FormControlLabel, Switch } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Reply } from "@mui/icons-material";
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import CircularProgress from "@mui/material/CircularProgress";
+import { green, grey } from "@mui/material/colors";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import IconButton from "@mui/material/IconButton";
+import MoodIcon from "@mui/icons-material/Mood";
+import SendIcon from "@mui/icons-material/Send";
+import CancelIcon from "@mui/icons-material/Cancel";
+import ClearIcon from "@mui/icons-material/Clear";
+import MicIcon from "@mui/icons-material/Mic";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import LockIcon from "@mui/icons-material/Lock";
+import { toast } from "react-toastify";
+import { FormControlLabel, Switch } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import { isString, isEmpty, isObject, has } from "lodash";
 
 import { i18n } from "../../translate/i18n";
@@ -49,6 +51,48 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+  },
+
+  composerTabs: {
+    display: "flex",
+    width: "100%",
+    backgroundColor: theme.palette.mode === "dark" ? "rgba(15, 23, 42, 0.6)" : "rgba(241, 245, 249, 0.8)",
+    padding: "4px 12px 0 12px",
+    gap: 6,
+    borderBottom: theme.palette.mode === "dark" ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(0, 0, 0, 0.05)",
+  },
+
+  composerTab: {
+    border: "none",
+    background: "transparent",
+    padding: "6px 14px",
+    fontSize: "0.78rem",
+    fontWeight: 600,
+    cursor: "pointer",
+    borderRadius: "8px 8px 0 0",
+    color: theme.palette.mode === "dark" ? "#94a3b8" : "#64748b",
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    transition: "all 0.15s ease",
+    "&.active": {
+      backgroundColor: theme.palette.mode === "dark" ? "#1e293b" : "#ffffff",
+      color: theme.palette.primary.main,
+      borderTop: `2px solid ${theme.palette.primary.main}`,
+    },
+  },
+
+  composerTabNote: {
+    "&.active": {
+      backgroundColor: theme.palette.mode === "dark" ? "rgba(245, 158, 11, 0.15)" : "#fffbeb !important",
+      color: "#f59e0b !important",
+      borderTop: "2px solid #f59e0b !important",
+    },
+  },
+
+  noteModeWrapper: {
+    backgroundColor: theme.palette.mode === "dark" ? "rgba(245, 158, 11, 0.08) !important" : "#fffbeb !important",
+    border: "1px solid rgba(245, 158, 11, 0.35) !important",
   },
 
   newMessageBox: {
@@ -208,8 +252,9 @@ const EmojiOptions = (props) => {
 };
 
 const SignSwitch = (props) => {
-  const { width, setSignMessage, signMessage } = props;
-  if (isWidthUp("md", width)) {
+  const { setSignMessage, signMessage } = props;
+  const isDesktop = useMediaQuery((theme) => theme.breakpoints.up("md"));
+  if (isDesktop) {
     return (
       <FormControlLabel
         style={{ marginRight: 7, color: "gray" }}
@@ -260,6 +305,7 @@ const FileInput = (props) => {
 
 const ActionButtons = (props) => {
   const {
+    inputMode,
     inputMessage,
     loading,
     recording,
@@ -275,15 +321,21 @@ const ActionButtons = (props) => {
   if (inputMessage || showSelectMessageCheckbox) {
     return (
       <IconButton
-      aria-label="sendMessage"
-      component="span"
-      onClick={showSelectMessageCheckbox ? handleOpenModalForward : handleSendMessage}
-      disabled={loading}
-    >
-      {showSelectMessageCheckbox ?
-        <Reply className={classes.ForwardMessageIcons} /> : <SendIcon className={classes.sendMessageIcons} />}      </IconButton>
-  );
-} else if (recording) {
+        aria-label="sendMessage"
+        component="span"
+        onClick={showSelectMessageCheckbox ? handleOpenModalForward : handleSendMessage}
+        disabled={loading}
+      >
+        {showSelectMessageCheckbox ? (
+          <Reply className={classes.ForwardMessageIcons} />
+        ) : inputMode === "note" ? (
+          <LockIcon style={{ color: "#f59e0b" }} />
+        ) : (
+          <SendIcon className={classes.sendMessageIcons} />
+        )}
+      </IconButton>
+    );
+  } else if (recording) {
     return (
       <div className={classes.recorderWrapper}>
         <IconButton
@@ -329,6 +381,7 @@ const ActionButtons = (props) => {
 
 const CustomInput = (props) => {
   const {
+    inputMode,
     loading,
     inputRef,
     ticketStatus,
@@ -407,6 +460,9 @@ useEffect(() => {
   };
 
   const renderPlaceholder = () => {
+    if (inputMode === "note") {
+      return "Escreva uma nota interna para a equipe (não será enviada ao cliente)...";
+    }
     if (ticketStatus === "open") {
       return i18n.t("messagesInput.placeholderOpen");
     }
@@ -422,7 +478,9 @@ useEffect(() => {
   };
 
   return (
-    <div className={classes.messageInputWrapper}>
+    <div className={clsx(classes.messageInputWrapper, {
+      [classes.noteModeWrapper]: inputMode === "note"
+    })}>
       <Autocomplete
         freeSolo
         open={popupOpen}
@@ -483,6 +541,7 @@ useEffect(() => {
 const MessageInputCustom = (props) => {
   const { ticketStatus, ticketId } = props;
   const classes = useStyles();
+  const [inputMode, setInputMode] = useState("message"); // "message" | "note"
   const [percentLoading, setPercentLoading] = useState(0);
   const [medias, setMedias] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -674,6 +733,23 @@ const MessageInputCustom = (props) => {
     if (inputMessage.trim() === "") return;
     setLoading(true);
 
+    if (inputMode === "note") {
+      try {
+        await api.post("/ticket-notes", {
+          note: inputMessage.trim(),
+          ticketId,
+          contactId: props.ticket?.contactId || props.ticket?.contact?.id,
+        });
+        toast.success("Nota interna adicionada com sucesso!");
+        setInputMessage("");
+      } catch (err) {
+        toastError(err);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     const message = {
       read: 1,
       fromMe: true,
@@ -812,26 +888,49 @@ const MessageInputCustom = (props) => {
     return (
       <Paper square elevation={0} className={classes.mainWrapper}>
         {replyingMessage && renderReplyingMessage(replyingMessage)}
+
+        {/* Abas de Modo: WhatsApp vs Nota Interna */}
+        <div className={classes.composerTabs}>
+          <button
+            type="button"
+            className={clsx(classes.composerTab, { active: inputMode === "message" })}
+            onClick={() => setInputMode("message")}
+          >
+            💬 WhatsApp
+          </button>
+          <button
+            type="button"
+            className={clsx(classes.composerTab, classes.composerTabNote, { active: inputMode === "note" })}
+            onClick={() => setInputMode("note")}
+          >
+            <LockIcon style={{ fontSize: 13 }} /> Nota Interna (Privada)
+          </button>
+        </div>
+
         <div className={classes.newMessageBox}>
-          <EmojiOptions
-            disabled={disableOption()}
-            handleAddEmoji={handleAddEmoji}
-            showEmoji={showEmoji}
-            setShowEmoji={setShowEmoji}
-          />
+          {inputMode === "message" && (
+            <>
+              <EmojiOptions
+                disabled={disableOption()}
+                handleAddEmoji={handleAddEmoji}
+                showEmoji={showEmoji}
+                setShowEmoji={setShowEmoji}
+              />
 
-          <FileInput
-            disableOption={disableOption}
-            handleChangeMedias={handleChangeMedias}
-          />
+              <FileInput
+                disableOption={disableOption}
+                handleChangeMedias={handleChangeMedias}
+              />
 
-          <SignSwitch
-            width={props.width}
-            setSignMessage={setSignMessage}
-            signMessage={signMessage}
-          />
+              <SignSwitch
+                setSignMessage={setSignMessage}
+                signMessage={signMessage}
+              />
+            </>
+          )}
 
           <CustomInput
+            inputMode={inputMode}
             loading={loading}
             inputRef={inputRef}
             ticketStatus={ticketStatus}
@@ -846,6 +945,7 @@ const MessageInputCustom = (props) => {
           />
 
           <ActionButtons
+            inputMode={inputMode}
             inputMessage={inputMessage}
             loading={loading}
             recording={recording}
@@ -863,5 +963,5 @@ const MessageInputCustom = (props) => {
   }
 };
 
-export default withWidth()(MessageInputCustom);
+export default MessageInputCustom;
 

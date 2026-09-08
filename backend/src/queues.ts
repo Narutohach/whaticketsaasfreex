@@ -6,6 +6,20 @@ import moment from "moment";
 import path from "path";
 import { Op, QueryTypes } from "sequelize";
 import sequelize from "./database";
+import {
+  createEmptyCampaignStats,
+  recordAttempt,
+  shouldCircuitBreak
+} from "./helpers/CampaignCircuitBreaker";
+import {
+  getDayOffsetForContact,
+  secondsUntilNextMidnight
+} from "./helpers/CampaignDailyLimit";
+import { applyJitter, getBaseIntervalSeconds } from "./helpers/CampaignInterval";
+import {
+  getConnectionAgeDays,
+  getEffectiveDailyLimit
+} from "./helpers/CampaignWarmup";
 import GetDefaultWhatsApp from "./helpers/GetDefaultWhatsApp";
 import GetWhatsappWbot from "./helpers/GetWhatsappWbot";
 import formatBody from "./helpers/Mustache";
@@ -149,7 +163,7 @@ async function handleSendMessage(job) {
                   {
                     model: Contact,
                     as: "contact",
-                    attributes: ["id", "name", "number", "email", "profilePicUrl"],
+                    attributes: ["id", "name", "number", "email", "profilePicUrl", "isLid"],
                     include: ["extraInfo"]
                   }
                 ]
@@ -351,7 +365,7 @@ async function getCampaign(id) {
       {
         model: Whatsapp,
         as: "whatsapp",
-        attributes: ["id", "name"]
+        attributes: ["id", "name", "createdAt"]
       },
       {
         model: CampaignShipping,
@@ -377,6 +391,12 @@ async function getSettings(campaign) {
   let messageInterval: number = 20;
   let longerIntervalAfter: number = 20;
   let greaterInterval: number = 60;
+  // Disabled (0) by default so existing installs keep their current
+  // behavior; admins opt in by adding a "maxMessagesPerDay" CampaignSetting.
+  let maxMessagesPerDay: number = 0;
+  // Ramp-up for freshly connected numbers is on by default; admins can turn
+  // it off for a number they know is already established elsewhere.
+  let warmupEnabled = true;
   let variables: any[] = [];
 
   settings.forEach(setting => {
@@ -389,6 +409,12 @@ async function getSettings(campaign) {
     if (setting.key === "greaterInterval") {
       greaterInterval = JSON.parse(setting.value);
     }
+    if (setting.key === "maxMessagesPerDay") {
+      maxMessagesPerDay = JSON.parse(setting.value);
+    }
+    if (setting.key === "warmupEnabled") {
+      warmupEnabled = JSON.parse(setting.value);
+    }
     if (setting.key === "variables") {
       variables = JSON.parse(setting.value);
     }
@@ -398,8 +424,29 @@ async function getSettings(campaign) {
     messageInterval,
     longerIntervalAfter,
     greaterInterval,
+    maxMessagesPerDay,
+    warmupEnabled,
     variables
   };
+}
+
+async function countMessagesDeliveredTodayForWhatsapp(
+  whatsappId: number
+): Promise<number> {
+  const startOfDay = moment().startOf("day").toDate();
+  return CampaignShipping.count({
+    where: {
+      deliveredAt: { [Op.gte]: startOfDay }
+    },
+    include: [
+      {
+        model: Campaign,
+        as: "campaign",
+        attributes: [],
+        where: { whatsappId }
+      }
+    ]
+  });
 }
 
 export function parseToMilliseconds(seconds) {
@@ -518,6 +565,37 @@ export function randomValue(min, max) {
   return Math.floor(Math.random() * max) + min;
 }
 
+const campaignFailureStats = new Map<number, ReturnType<typeof createEmptyCampaignStats>>();
+
+async function circuitBreakCampaign(campaign, reason: string): Promise<void> {
+  logger.error(`Campanha ${campaign.id} pausada automaticamente: ${reason}`);
+
+  await campaign.update({ status: "CANCELADA" });
+
+  const recordsToCancel = await CampaignShipping.findAll({
+    where: {
+      campaignId: campaign.id,
+      jobId: { [Op.not]: null },
+      deliveredAt: null
+    }
+  });
+
+  await Promise.all(
+    recordsToCancel.map(async record => {
+      const pendingJob = await campaignQueue.getJob(+record.jobId);
+      if (pendingJob) {
+        await pendingJob.remove();
+      }
+    })
+  );
+
+  const io = getIO();
+  io.to(`company-${campaign.companyId}-mainchannel`).emit(`company-${campaign.companyId}-campaign`, {
+    action: "update",
+    record: campaign
+  });
+}
+
 async function verifyAndFinalizeCampaign(campaign) {
   const { contacts } = campaign.contactList;
 
@@ -533,6 +611,7 @@ async function verifyAndFinalizeCampaign(campaign) {
 
   if (count1 === count2) {
     await campaign.update({ status: "FINALIZADA", completedAt: moment() });
+    campaignFailureStats.delete(campaign.id);
   }
 
   const io = getIO();
@@ -542,13 +621,9 @@ async function verifyAndFinalizeCampaign(campaign) {
   });
 }
 
-function calculateDelay(index, baseDelay, longerIntervalAfter, greaterInterval, messageInterval) {
+export function calculateDelay(baseDelay: Date): number {
   const diffSeconds = differenceInSeconds(baseDelay, new Date());
-  if (index > longerIntervalAfter) {
-    return diffSeconds * 1000 + greaterInterval
-  } else {
-    return diffSeconds * 1000 + messageInterval
-  }
+  return Math.max(diffSeconds * 1000, 0);
 }
 
 async function handleProcessCampaign(job) {
@@ -566,18 +641,51 @@ async function handleProcessCampaign(job) {
         }));
 
         // const baseDelay = job.data.delay || 0;
-        const longerIntervalAfter = parseToMilliseconds(settings.longerIntervalAfter);
-        const greaterInterval = parseToMilliseconds(settings.greaterInterval);
-        const messageInterval = settings.messageInterval;
+        const { longerIntervalAfter, greaterInterval, messageInterval, maxMessagesPerDay, warmupEnabled } = settings;
+
+        const connectionAgeDays = warmupEnabled
+          ? getConnectionAgeDays(campaign.whatsapp.createdAt)
+          : Infinity;
+        const effectiveMaxPerDay = getEffectiveDailyLimit(connectionAgeDays, maxMessagesPerDay);
+
+        if (effectiveMaxPerDay > 0 && effectiveMaxPerDay !== maxMessagesPerDay) {
+          logger.info(
+            `Campanha ${campaign.id}: número em aquecimento (${connectionAgeDays.toFixed(1)} dia(s) desde a conexão) — limite efetivo de ${effectiveMaxPerDay} msgs/dia aplicado.`
+          );
+        }
+
+        const alreadySentToday = effectiveMaxPerDay > 0
+          ? await countMessagesDeliveredTodayForWhatsapp(campaign.whatsapp.id)
+          : 0;
 
         let baseDelay = campaign.scheduledAt;
+        let previousDayOffset = 0;
+        let deferredCount = 0;
 
         const queuePromises = [];
         for (let i = 0; i < contactData.length; i++) {
-          baseDelay = addSeconds(baseDelay, i > longerIntervalAfter ? greaterInterval : messageInterval);
+          const intervalSeconds = getBaseIntervalSeconds(
+            i,
+            longerIntervalAfter,
+            messageInterval,
+            greaterInterval
+          );
+          baseDelay = addSeconds(baseDelay, applyJitter(intervalSeconds));
+
+          const dayOffset = getDayOffsetForContact(i, alreadySentToday, effectiveMaxPerDay);
+          if (dayOffset > previousDayOffset) {
+            const daysJumped = dayOffset - previousDayOffset;
+            const pushSeconds =
+              secondsUntilNextMidnight(new Date()) + (daysJumped - 1) * 86400;
+            baseDelay = addSeconds(baseDelay, pushSeconds);
+            previousDayOffset = dayOffset;
+          }
+          if (dayOffset > 0) {
+            deferredCount++;
+          }
 
           const { contactId, campaignId, variables } = contactData[i];
-          const delay = calculateDelay(i, baseDelay, longerIntervalAfter, greaterInterval, messageInterval);
+          const delay = calculateDelay(baseDelay);
           const queuePromise = campaignQueue.add(
             "PrepareContact",
             { contactId, campaignId, variables, delay },
@@ -586,6 +694,13 @@ async function handleProcessCampaign(job) {
           queuePromises.push(queuePromise);
           logger.info(`Registro enviado pra fila de disparo: Campanha=${campaign.id};Contato=${contacts[i].name};delay=${delay}`);
         }
+
+        if (effectiveMaxPerDay > 0 && deferredCount > 0) {
+          logger.info(
+            `Campanha ${campaign.id}: ${deferredCount} contato(s) empurrados para os próximos dias por causa do limite de ${effectiveMaxPerDay} mensagens/dia no número.`
+          );
+        }
+
         await Promise.all(queuePromises);
         await campaign.update({ status: "EM_ANDAMENTO" });
       }
@@ -611,7 +726,6 @@ async function handlePrepareContact(job) {
     const messages = getCampaignValidMessages(campaign);
     if (messages.length) {
       const radomIndex = ultima_msg;
-      console.log('ultima_msg:', ultima_msg);
       ultima_msg++;
       if (ultima_msg >= messages.length) {
         ultima_msg = 0;
@@ -681,11 +795,15 @@ async function handlePrepareContact(job) {
   }
 }
 
+const ATTACHMENT_GAP_SECONDS = 4;
+
 async function handleDispatchCampaign(job) {
+  const { data } = job;
+  const { campaignShippingId, campaignId }: DispatchCampaignData = data;
+  let campaign;
+
   try {
-    const { data } = job;
-    const { campaignShippingId, campaignId }: DispatchCampaignData = data;
-    const campaign = await getCampaign(campaignId);
+    campaign = await getCampaign(campaignId);
     const wbot = await GetWhatsappWbot(campaign.whatsapp);
 
     if (!wbot) {
@@ -727,25 +845,20 @@ async function handleDispatchCampaign(job) {
       });
 
       if (!isNil(campaign.fileListId)) {
-        try {
-          const publicFolder = path.resolve(__dirname, "..", "public", `company${campaign.companyId}`);
-          const files = await ShowFileService(campaign.fileListId, campaign.companyId);
-          const folder = path.resolve(publicFolder, "fileList", String(files.id));
-      
-          for (const [index, file] of files.options.entries()) {
-            const options = await getMessageOptions(file.path, path.resolve(folder, file.path), file.name);
-            await wbot.sendMessage(chatId, { ...options });
-          }
-        } finally {
-          // Caso precise executar alguma ação independentemente de erro
+        const publicFolder = path.resolve(__dirname, "..", "public", `company${campaign.companyId}`);
+        const files = await ShowFileService(campaign.fileListId, campaign.companyId);
+        const folder = path.resolve(publicFolder, "fileList", String(files.id));
+
+        for (const [index, file] of files.options.entries()) {
+          await sleep(applyJitter(ATTACHMENT_GAP_SECONDS));
+          const options = await getMessageOptions(file.path, path.resolve(folder, file.path), file.name);
+          await wbot.sendMessage(chatId, { ...options });
         }
       }
-      
 
       if (campaign.mediaPath) {
-        //const filePath = path.resolve("public", campaign.mediaPath);
+        await sleep(applyJitter(ATTACHMENT_GAP_SECONDS));
         const filePath = path.resolve(`public/company${campaign.companyId}`, campaign.mediaPath);
-        //const options = await getMessageOptions(campaign.mediaName, filePath);
         const options = await getMessageOptions(campaign.mediaName, filePath);
         if (Object.keys(options).length) {
           await wbot.sendMessage(chatId, { ...options });
@@ -765,10 +878,31 @@ async function handleDispatchCampaign(job) {
     logger.info(
       `Campanha enviada para: Campanha=${campaignId};Contato=${campaignShipping.contact.name}`
     );
+
+    campaignFailureStats.set(
+      campaignId,
+      recordAttempt(campaignFailureStats.get(campaignId) ?? createEmptyCampaignStats(), true)
+    );
   } catch (err: any) {
     Sentry.captureException(err);
     logger.error(err.message);
     console.log(err.stack);
+
+    if (campaign) {
+      const stats = recordAttempt(
+        campaignFailureStats.get(campaignId) ?? createEmptyCampaignStats(),
+        false
+      );
+      campaignFailureStats.set(campaignId, stats);
+
+      if (shouldCircuitBreak(stats)) {
+        campaignFailureStats.delete(campaignId);
+        await circuitBreakCampaign(
+          campaign,
+          `taxa de falhas elevada (consecutivas=${stats.consecutiveFailures}, total=${stats.totalFailures}/${stats.totalAttempts})`
+        );
+      }
+    }
   }
 }
 

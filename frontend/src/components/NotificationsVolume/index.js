@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 
-import Popover from "@material-ui/core/Popover";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import { makeStyles } from "@material-ui/core/styles";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
-import VolumeDownIcon from "@material-ui/icons/VolumeDown";
+import Popover from "@mui/material/Popover";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import { makeStyles } from "../../styles/makeStyles";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeDownIcon from "@mui/icons-material/VolumeDown";
 
-import { Grid, Slider } from "@material-ui/core";
+import { Grid, Slider } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
     tabContainer: {
@@ -82,10 +82,10 @@ const NotificationsVolume = ({ volume, setVolume }) => {
             >
                 <List dense className={classes.tabContainer}>
                     <Grid container spacing={2}>
-                        <Grid item>
+                        <Grid>
                             <VolumeDownIcon />
                         </Grid>
-                        <Grid item xs>
+                        <Grid size="grow">
                             <Slider
                                 value={volume}
                                 aria-labelledby="continuous-slider"
@@ -97,7 +97,7 @@ const NotificationsVolume = ({ volume, setVolume }) => {
                                 }
                             />
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <VolumeUpIcon />
                         </Grid>
                     </Grid>

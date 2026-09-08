@@ -46,3 +46,28 @@ services:
       - BACKEND_URL=${BACKEND_URL}
       - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
       - REACT_APP_HOURS_CLOSE_TICKETS_AUTO=${REACT_APP_HOURS_CLOSE_TICKETS_AUTO}
+
+  # Reverse proxy terminating TLS. Neither service above publishes a host
+  # port, so this is the only way in from outside the VPS: point
+  # BACKEND_DOMAIN/FRONTEND_DOMAIN's DNS at this server and Caddy will get
+  # and renew Let's Encrypt certificates for them automatically.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - whaticket_backend
+      - whaticket_frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - BACKEND_DOMAIN=${BACKEND_DOMAIN}
+      - FRONTEND_DOMAIN=${FRONTEND_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -59,6 +59,12 @@ class Plan extends Model<Plan> {
   useOpenAi: boolean;
 
   @Column
+  useGemini: boolean;
+
+  @Column
+  maxTokensMonthly: number;
+
+  @Column
   useIntegrations: boolean;
   
   @Column

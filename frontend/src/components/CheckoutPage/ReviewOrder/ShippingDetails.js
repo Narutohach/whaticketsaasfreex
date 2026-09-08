@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid } from '@mui/material';
 import useStyles from './styles';
 
 function PaymentDetails(props) {
@@ -10,7 +10,11 @@ function PaymentDetails(props) {
   const newPlan = JSON.parse(plan);
   const { users, connections, price } = newPlan;
   return (
-    <Grid item xs={12} sm={12}>
+    <Grid
+      size={{
+        xs: 12,
+        sm: 12
+      }}>
       <Typography variant="h6" gutterBottom className={classes.title}>
         Detalhes do plano
       </Typography>

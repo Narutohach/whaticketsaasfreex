@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Drawer from "@material-ui/core/Drawer";
-import Link from "@material-ui/core/Link";
-import InputLabel from "@material-ui/core/InputLabel";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
-import CreateIcon from '@material-ui/icons/Create';
+import { makeStyles } from "../../styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Drawer from "@mui/material/Drawer";
+import Link from "@mui/material/Link";
+import InputLabel from "@mui/material/InputLabel";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import CreateIcon from '@mui/icons-material/Create';
 
 import { i18n } from "../../translate/i18n";
 
 import ContactDrawerSkeleton from "../ContactDrawerSkeleton";
 import MarkdownWrapper from "../MarkdownWrapper";
-import { CardHeader } from "@material-ui/core";
+import { CardHeader } from "@mui/material";
 import { ContactForm } from "../ContactForm";
 import ContactModal from "../ContactModal";
 import { ContactNotes } from "../ContactNotes";

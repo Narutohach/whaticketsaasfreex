@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { green, red } from '@material-ui/core/colors';
-import { CheckCircle, Cancel } from '@material-ui/icons';
+import { green, red } from '@mui/material/colors';
+import { CheckCircle, Cancel } from '@mui/icons-material';
 
 import formatHtmlToNormal from '../../../../../utils/formatHtmlToNormal';
 

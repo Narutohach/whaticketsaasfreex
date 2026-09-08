@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { CssBaseline, IconButton } from "@material-ui/core";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Brightness7Icon from "@material-ui/icons/Brightness7";
+import { makeStyles } from "../../styles/makeStyles";
+import { CssBaseline, IconButton } from "@mui/material";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const useStyles = makeStyles((theme) => ({
     icons: {

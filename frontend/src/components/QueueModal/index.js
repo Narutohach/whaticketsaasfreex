@@ -5,15 +5,15 @@ import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 import { head } from "lodash";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { i18n } from "../../translate/i18n";
 
@@ -31,8 +31,8 @@ import {
   Select,
   Tab,
   Tabs,
-} from "@material-ui/core";
-import { AttachFile, Colorize, DeleteOutline } from "@material-ui/icons";
+} from "@mui/material";
+import { AttachFile, Colorize, DeleteOutlineOutlined as DeleteOutline } from "@mui/icons-material";
 import { QueueOptions } from "../QueueOptions";
 import SchedulesForm from "../SchedulesForm";
 import ConfirmationModal from "../ConfirmationModal";
@@ -243,304 +243,304 @@ const QueueModal = ({ open, onClose, queueId }) => {
 
   return (
     <div className={classes.root}>
-    <ConfirmationModal
-        title={i18n.t("queueModal.confirmationModal.deleteTitle")}
-        open={confirmationOpen}
-        onClose={() => setConfirmationOpen(false)}
-        onConfirm={deleteMedia}
-      ></ConfirmationModal>
-    <Dialog
-    maxWidth="md"
-    fullWidth={true}
-    open={open}
-    onClose={handleClose}
-    scroll="paper"
-  >
-    <DialogTitle>
-      {queueId
-        ? `${i18n.t("queueModal.title.edit")}`
-        : `${i18n.t("queueModal.title.add")}`}
-       <div style={{ display: "none" }}>
-        <input
-          type="file"
-          ref={attachmentFile}
-          onChange={(e) => handleAttachmentFile(e)}
-        />
-      </div>
-    </DialogTitle>
-        <Tabs
-          value={tab}
-          indicatorColor="primary"
-          textColor="primary"
-          onChange={(_, v) => setTab(v)}
-          aria-label="disabled tabs example"
-        >
-          <Tab label="Dados da Fila" />
-          {schedulesEnabled && <Tab label="Horários de Atendimento" />}
-        </Tabs>
-        {tab === 0 && (
-          <Paper>
-            <Formik
-              initialValues={queue}
-              enableReinitialize={true}
-              validationSchema={QueueSchema}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  handleSaveQueue(values);
-                  actions.setSubmitting(false);
-                }, 400);
-              }}
-            >
-              {({ touched, errors, isSubmitting, values }) => (
-                <Form>
-                  <DialogContent dividers>
-                    <Field
-                      as={TextField}
-                      label={i18n.t("queueModal.form.name")}
-                      autoFocus
-                      name="name"
-                      error={touched.name && Boolean(errors.name)}
-                      helperText={touched.name && errors.name}
-                      variant="outlined"
-                      margin="dense"
-                      className={classes.textField}
-                    />
-                    <Field
-                      as={TextField}
-                      label={i18n.t("queueModal.form.color")}
-                      name="color"
-                      id="color"
-                      onFocus={() => {
-                        setColorPickerModalOpen(true);
-                        greetingRef.current.focus();
-                      }}
-                      error={touched.color && Boolean(errors.color)}
-                      helperText={touched.color && errors.color}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <div
-                              style={{ backgroundColor: values.color }}
-                              className={classes.colorAdorment}
-                            ></div>
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <IconButton
-                            size="small"
-                            color="default"
-                            onClick={() => setColorPickerModalOpen(true)}
-                          >
-                            <Colorize />
-                          </IconButton>
-                        ),
-                      }}
-                      variant="outlined"
-                      margin="dense"
-                      className={classes.textField}
-                    />
-                    <ColorPicker
-                      open={colorPickerModalOpen}
-                      handleClose={() => setColorPickerModalOpen(false)}
-                      onChange={(color) => {
-                        values.color = color;
-                        setQueue(() => {
-                          return { ...values, color };
-                        });
-                      }}
-                    />
-                    <Field
-                      as={TextField}
-                      label={i18n.t("queueModal.form.orderQueue")}
-                      name="orderQueue"
-                      type="orderQueue"
-                      error={touched.orderQueue && Boolean(errors.orderQueue)}
-                      helperText={touched.orderQueue && errors.orderQueue}
-                      variant="outlined"
-                      margin="dense"
-                      className={classes.textField1}
-                    />
-                    <div>
-                      <FormControl
-                        variant="outlined"
-                        margin="dense"
-                        className={classes.FormControl}
-                        fullWidth
-                      >
-                        <InputLabel id="integrationId-selection-label">
-                          {i18n.t("queueModal.form.integrationId")}
-                        </InputLabel>
-                        <Field
-                          as={Select}
-                          label={i18n.t("queueModal.form.integrationId")}
-                          name="integrationId"
-                          id="integrationId"
-                          placeholder={i18n.t("queueModal.form.integrationId")}
-                          labelId="integrationId-selection-label"
-                          value={values.integrationId || ""}
-                        >
-                          <MenuItem value={""} >{"Nenhum"}</MenuItem>
-                          {integrations.map((integration) => (
-                            <MenuItem key={integration.id} value={integration.id}>
-                              {integration.name}
-                            </MenuItem>
-                          ))}
-                        </Field>
-
-                      </FormControl>
-                      <FormControl
-                        margin="dense"
-                        variant="outlined"
-                        fullWidth
-                      >
-                        <InputLabel>
-                          {i18n.t("whatsappModal.form.prompt")}
-                        </InputLabel>
-                        <Select
-                          labelId="dialog-select-prompt-label"
-                          id="dialog-select-prompt"
-                          name="promptId"
-                          value={selectedPrompt || ""}
-                          onChange={handleChangePrompt}
-                          label={i18n.t("whatsappModal.form.prompt")}
-                          fullWidth
-                          MenuProps={{
-                            anchorOrigin: {
-                              vertical: "bottom",
-                              horizontal: "left",
-                            },
-                            transformOrigin: {
-                              vertical: "top",
-                              horizontal: "left",
-                            },
-                            getContentAnchorEl: null,
-                          }}
-                        >
-                          {prompts.map((prompt) => (
-                            <MenuItem
-                              key={prompt.id}
-                              value={prompt.id}
-                            >
-                              {prompt.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                    <div style={{ marginTop: 5 }}>
+      <ConfirmationModal
+          title={i18n.t("queueModal.confirmationModal.deleteTitle")}
+          open={confirmationOpen}
+          onClose={() => setConfirmationOpen(false)}
+          onConfirm={deleteMedia}
+        ></ConfirmationModal>
+      <Dialog
+      maxWidth="md"
+      fullWidth={true}
+      open={open}
+      onClose={handleClose}
+      scroll="paper"
+    >
+      <DialogTitle>
+        {queueId
+          ? `${i18n.t("queueModal.title.edit")}`
+          : `${i18n.t("queueModal.title.add")}`}
+         <div style={{ display: "none" }}>
+          <input
+            type="file"
+            ref={attachmentFile}
+            onChange={(e) => handleAttachmentFile(e)}
+          />
+        </div>
+      </DialogTitle>
+          <Tabs
+            value={tab}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={(_, v) => setTab(v)}
+            aria-label="disabled tabs example"
+          >
+            <Tab label="Dados da Fila" />
+            {schedulesEnabled && <Tab label="Horários de Atendimento" />}
+          </Tabs>
+          {tab === 0 && (
+            <Paper>
+              <Formik
+                initialValues={queue}
+                enableReinitialize={true}
+                validationSchema={QueueSchema}
+                onSubmit={(values, actions) => {
+                  setTimeout(() => {
+                    handleSaveQueue(values);
+                    actions.setSubmitting(false);
+                  }, 400);
+                }}
+              >
+                {({ touched, errors, isSubmitting, values }) => (
+                  <Form>
+                    <DialogContent dividers>
                       <Field
                         as={TextField}
-                        label={i18n.t("queueModal.form.greetingMessage")}
-                        type="greetingMessage"
-                        multiline
-                        inputRef={greetingRef}
-                        rows={5}
-                        fullWidth
-                        name="greetingMessage"
-                        error={
-                          touched.greetingMessage &&
-                          Boolean(errors.greetingMessage)
-                        }
-                        helperText={
-                          touched.greetingMessage && errors.greetingMessage
-                        }
+                        label={i18n.t("queueModal.form.name")}
+                        autoFocus
+                        name="name"
+                        error={touched.name && Boolean(errors.name)}
+                        helperText={touched.name && errors.name}
                         variant="outlined"
                         margin="dense"
+                        className={classes.textField}
                       />
-                      {schedulesEnabled && (
+                      <Field
+                        as={TextField}
+                        label={i18n.t("queueModal.form.color")}
+                        name="color"
+                        id="color"
+                        onFocus={() => {
+                          setColorPickerModalOpen(true);
+                          greetingRef.current.focus();
+                        }}
+                        error={touched.color && Boolean(errors.color)}
+                        helperText={touched.color && errors.color}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <div
+                                style={{ backgroundColor: values.color }}
+                                className={classes.colorAdorment}
+                              ></div>
+                            </InputAdornment>
+                          ),
+                          endAdornment: (
+                            <IconButton
+                              size="small"
+                              color="default"
+                              onClick={() => setColorPickerModalOpen(true)}
+                            >
+                              <Colorize />
+                            </IconButton>
+                          ),
+                        }}
+                        variant="outlined"
+                        margin="dense"
+                        className={classes.textField}
+                      />
+                      <ColorPicker
+                        open={colorPickerModalOpen}
+                        handleClose={() => setColorPickerModalOpen(false)}
+                        onChange={(color) => {
+                          values.color = color;
+                          setQueue(() => {
+                            return { ...values, color };
+                          });
+                        }}
+                      />
+                      <Field
+                        as={TextField}
+                        label={i18n.t("queueModal.form.orderQueue")}
+                        name="orderQueue"
+                        type="orderQueue"
+                        error={touched.orderQueue && Boolean(errors.orderQueue)}
+                        helperText={touched.orderQueue && errors.orderQueue}
+                        variant="outlined"
+                        margin="dense"
+                        className={classes.textField1}
+                      />
+                      <div>
+                        <FormControl
+                          variant="outlined"
+                          margin="dense"
+                          className={classes.FormControl}
+                          fullWidth
+                        >
+                          <InputLabel id="integrationId-selection-label">
+                            {i18n.t("queueModal.form.integrationId")}
+                          </InputLabel>
+                          <Field
+                            as={Select}
+                            label={i18n.t("queueModal.form.integrationId")}
+                            name="integrationId"
+                            id="integrationId"
+                            placeholder={i18n.t("queueModal.form.integrationId")}
+                            labelId="integrationId-selection-label"
+                            value={values.integrationId || ""}
+                          >
+                            <MenuItem value={""} >{"Nenhum"}</MenuItem>
+                            {integrations.map((integration) => (
+                              <MenuItem key={integration.id} value={integration.id}>
+                                {integration.name}
+                              </MenuItem>
+                            ))}
+                          </Field>
+
+                        </FormControl>
+                        <FormControl
+                          margin="dense"
+                          variant="outlined"
+                          fullWidth
+                        >
+                          <InputLabel>
+                            {i18n.t("whatsappModal.form.prompt")}
+                          </InputLabel>
+                          <Select
+                            labelId="dialog-select-prompt-label"
+                            id="dialog-select-prompt"
+                            name="promptId"
+                            value={selectedPrompt || ""}
+                            onChange={handleChangePrompt}
+                            label={i18n.t("whatsappModal.form.prompt")}
+                            fullWidth
+                            MenuProps={{
+                              anchorOrigin: {
+                                vertical: "bottom",
+                                horizontal: "left",
+                              },
+                              transformOrigin: {
+                                vertical: "top",
+                                horizontal: "left",
+                              },
+                              getContentAnchorEl: null,
+                            }}
+                          >
+                            {prompts.map((prompt) => (
+                              <MenuItem
+                                key={prompt.id}
+                                value={prompt.id}
+                              >
+                                {prompt.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                      <div style={{ marginTop: 5 }}>
                         <Field
                           as={TextField}
-                          label={i18n.t("queueModal.form.outOfHoursMessage")}
-                          type="outOfHoursMessage"
+                          label={i18n.t("queueModal.form.greetingMessage")}
+                          type="greetingMessage"
                           multiline
                           inputRef={greetingRef}
                           rows={5}
                           fullWidth
-                          name="outOfHoursMessage"
+                          name="greetingMessage"
                           error={
-                            touched.outOfHoursMessage &&
-                            Boolean(errors.outOfHoursMessage)
+                            touched.greetingMessage &&
+                            Boolean(errors.greetingMessage)
                           }
                           helperText={
-                            touched.outOfHoursMessage && errors.outOfHoursMessage
+                            touched.greetingMessage && errors.greetingMessage
                           }
                           variant="outlined"
                           margin="dense"
                         />
-                      )}
-                    </div>
-                    <QueueOptions queueId={queueId} />
-                    {(queue.mediaPath || attachment) && (
-                    <Grid xs={12} item>
-                      <Button startIcon={<AttachFile />}>
-                        {attachment != null
-                          ? attachment.name
-                          : queue.mediaName}
+                        {schedulesEnabled && (
+                          <Field
+                            as={TextField}
+                            label={i18n.t("queueModal.form.outOfHoursMessage")}
+                            type="outOfHoursMessage"
+                            multiline
+                            inputRef={greetingRef}
+                            rows={5}
+                            fullWidth
+                            name="outOfHoursMessage"
+                            error={
+                              touched.outOfHoursMessage &&
+                              Boolean(errors.outOfHoursMessage)
+                            }
+                            helperText={
+                              touched.outOfHoursMessage && errors.outOfHoursMessage
+                            }
+                            variant="outlined"
+                            margin="dense"
+                          />
+                        )}
+                      </div>
+                      <QueueOptions queueId={queueId} />
+                      {(queue.mediaPath || attachment) && (
+                      <Grid size={12}>
+                        <Button startIcon={<AttachFile />}>
+                          {attachment != null
+                            ? attachment.name
+                            : queue.mediaName}
+                        </Button>
+                        {queueEditable && (
+                          <IconButton
+                            onClick={() => setConfirmationOpen(true)}
+                            color="secondary"
+                          >
+                            <DeleteOutline />
+                          </IconButton>
+                        )}
+                      </Grid>
+                    )}
+                    </DialogContent>
+                    <DialogActions>
+                    {!attachment && !queue.mediaPath && queueEditable && (
+                      <Button
+                        color="primary"
+                        onClick={() => attachmentFile.current.click()}
+                        disabled={isSubmitting}
+                        variant="outlined"
+                      >
+                        {i18n.t("queueModal.buttons.attach")}
                       </Button>
-                      {queueEditable && (
-                        <IconButton
-                          onClick={() => setConfirmationOpen(true)}
-                          color="secondary"
-                        >
-                          <DeleteOutline />
-                        </IconButton>
-                      )}
-                    </Grid>
-                  )}
-                  </DialogContent>
-                  <DialogActions>
-                  {!attachment && !queue.mediaPath && queueEditable && (
-                    <Button
-                      color="primary"
-                      onClick={() => attachmentFile.current.click()}
-                      disabled={isSubmitting}
-                      variant="outlined"
-                    >
-                      {i18n.t("queueModal.buttons.attach")}
-                    </Button>
-                  )}
-                    <Button
-                      onClick={handleClose}
-                      color="secondary"
-                      disabled={isSubmitting}
-                      variant="outlined"
-                    >
-                      {i18n.t("queueModal.buttons.cancel")}
-                    </Button>
-                    <Button
-                      type="submit"
-                      color="primary"
-                      disabled={isSubmitting}
-                      variant="contained"
-                      className={classes.btnWrapper}
-                    >
-                      {queueId
-                        ? `${i18n.t("queueModal.buttons.okEdit")}`
-                        : `${i18n.t("queueModal.buttons.okAdd")}`}
-                      {isSubmitting && (
-                        <CircularProgress
-                          size={24}
-                          className={classes.buttonProgress}
-                        />
-                      )}
-                    </Button>
-                  </DialogActions>
-                </Form>
-              )}
-            </Formik>
-          </Paper>
-        )}
-        {tab === 1 && (
-          <Paper style={{ padding: 20 }}>
-            <SchedulesForm
-              loading={false}
-              onSubmit={handleSaveSchedules}
-              initialValues={schedules}
-              labelSaveButton="Adicionar"
-            />
-          </Paper>
-        )}
-      </Dialog>
+                    )}
+                      <Button
+                        onClick={handleClose}
+                        color="secondary"
+                        disabled={isSubmitting}
+                        variant="outlined"
+                      >
+                        {i18n.t("queueModal.buttons.cancel")}
+                      </Button>
+                      <Button
+                        type="submit"
+                        color="primary"
+                        disabled={isSubmitting}
+                        variant="contained"
+                        className={classes.btnWrapper}
+                      >
+                        {queueId
+                          ? `${i18n.t("queueModal.buttons.okEdit")}`
+                          : `${i18n.t("queueModal.buttons.okAdd")}`}
+                        {isSubmitting && (
+                          <CircularProgress
+                            size={24}
+                            className={classes.buttonProgress}
+                          />
+                        )}
+                      </Button>
+                    </DialogActions>
+                  </Form>
+                )}
+              </Formik>
+            </Paper>
+          )}
+          {tab === 1 && (
+            <Paper style={{ padding: 20 }}>
+              <SchedulesForm
+                loading={false}
+                onSubmit={handleSaveSchedules}
+                initialValues={schedules}
+                labelSaveButton="Adicionar"
+              />
+            </Paper>
+          )}
+        </Dialog>
     </div>
   );
 };

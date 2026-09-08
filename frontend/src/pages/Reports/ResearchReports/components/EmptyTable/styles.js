@@ -1,5 +1,5 @@
-import ClearIcon from '@material-ui/icons/Clear';
-import styled from 'styled-components';
+import ClearIcon from '@mui/icons-material/Clear';
+import { styled } from '@mui/material/styles';
 
 export const StyledClearIcon = styled(ClearIcon)`
   margin-top: 30px;

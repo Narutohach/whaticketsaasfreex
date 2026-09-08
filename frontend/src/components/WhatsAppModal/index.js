@@ -3,8 +3,9 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
+import { green } from "@mui/material/colors";
 
 import {
   Dialog,
@@ -21,7 +22,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import api from "../../services/api";
 import { i18n } from "../../translate/i18n";
@@ -53,6 +54,25 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -12,
     marginLeft: -12,
   },
+
+  sectionTitle: {
+    fontSize: "0.75rem",
+    fontWeight: 700,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: theme.palette.textPrimary,
+    margin: theme.spacing(3, 0, 1),
+  },
+
+  firstSectionTitle: {
+    marginTop: 0,
+  },
+
+  sectionHelperText: {
+    fontSize: "0.8rem",
+    color: theme.mode === "light" ? "#64748b" : "#94a3b8",
+    margin: theme.spacing(0, 0, 1.5),
+  },
 }));
 
 const SessionSchema = Yup.object().shape({
@@ -64,6 +84,7 @@ const SessionSchema = Yup.object().shape({
 
 const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const initialState = {
     name: "",
     greetingMessage: "",
@@ -72,9 +93,10 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
     ratingMessage: "",
     isDefault: false,
     token: "",
-    provider: "beta",
-    //timeSendQueue: 0,
-    //sendIdQueue: 0,
+    provider: "baileys",
+    phoneNumberId: "",
+    wabaId: "",
+    apiVersion: "v20.0",
     expiresInactiveMessage: "",
     expiresTicket: 0,
     timeUseBotQueues: 0,
@@ -83,11 +105,11 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
   const [whatsApp, setWhatsApp] = useState(initialState);
   const [selectedQueueIds, setSelectedQueueIds] = useState([]);
   const [queues, setQueues] = useState([]);
-  const [selectedQueueId, setSelectedQueueId] = useState(null)
+  const [selectedQueueId, setSelectedQueueId] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [prompts, setPrompts] = useState([]);
   
-    useEffect(() => {
+  useEffect(() => {
     const fetchSession = async () => {
       if (!whatsAppId) return;
 
@@ -97,7 +119,8 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 
         const whatsQueueIds = data.queues?.map((queue) => queue.id);
         setSelectedQueueIds(whatsQueueIds);
-		setSelectedQueueId(data.transferQueueId);
+        setSelectedQueueId(data.transferQueueId);
+        setSelectedPrompt(data.promptId);
       } catch (err) {
         toastError(err);
       }
@@ -128,8 +151,10 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
   }, []);
 
   const handleSaveWhatsApp = async (values) => {
-const whatsappData = {
-      ...values, queueIds: selectedQueueIds, transferQueueId: selectedQueueId,
+    const whatsappData = {
+      ...values,
+      queueIds: selectedQueueIds,
+      transferQueueId: selectedQueueId,
       promptId: selectedPrompt ? selectedPrompt : null
     };
     delete whatsappData["queues"];
@@ -161,7 +186,7 @@ const whatsappData = {
   const handleClose = () => {
     onClose();
     setWhatsApp(initialState);
-	  setSelectedQueueId(null);
+    setSelectedQueueId(null);
     setSelectedQueueIds([]);
   };
 
@@ -190,12 +215,19 @@ const whatsappData = {
             }, 400);
           }}
         >
-          {({ values, touched, errors, isSubmitting }) => (
+          {({ values, touched, errors, isSubmitting, setFieldValue }) => (
             <Form>
               <DialogContent dividers>
+                <div className={`${classes.sectionTitle} ${classes.firstSectionTitle}`}>
+                  Informações Gerais
+                </div>
                 <div className={classes.multFieldLine}>
                   <Grid spacing={2} container>
-                    <Grid item>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <Field
                         as={TextField}
                         label={i18n.t("whatsappModal.form.name")}
@@ -205,10 +237,33 @@ const whatsappData = {
                         helperText={touched.name && errors.name}
                         variant="outlined"
                         margin="dense"
-                        className={classes.textField}
+                        fullWidth
                       />
                     </Grid>
-                    <Grid style={{ paddingTop: 15 }} item>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 4
+                      }}>
+                      <FormControl fullWidth margin="dense" variant="outlined">
+                        <InputLabel>Canal / Provedor</InputLabel>
+                        <Select
+                          label="Canal / Provedor"
+                          name="provider"
+                          value={values.provider || "baileys"}
+                          onChange={(e) => setFieldValue("provider", e.target.value)}
+                        >
+                          <MenuItem value="baileys">WhatsApp Web (Baileys / QR Code)</MenuItem>
+                          <MenuItem value="meta_cloud">WhatsApp Cloud API (Meta Oficial)</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid
+                      style={{ paddingTop: 15 }}
+                      size={{
+                        xs: 12,
+                        sm: 2
+                      }}>
                       <FormControlLabel
                         control={
                           <Field
@@ -223,93 +278,182 @@ const whatsappData = {
                     </Grid>
                   </Grid>
                 </div>
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("queueModal.form.greetingMessage")}
-                    type="greetingMessage"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    name="greetingMessage"
-                    error={
-                      touched.greetingMessage && Boolean(errors.greetingMessage)
-                    }
-                    helperText={
-                      touched.greetingMessage && errors.greetingMessage
-                    }
-                    variant="outlined"
-                    margin="dense"
-                  />
+
+                {values.provider === "meta_cloud" && (
+                  <div style={{ marginTop: 10, padding: 15, border: "1px solid #128c7e", borderRadius: 8, backgroundColor: theme.mode === "light" ? "#f0faf8" : "#0a2e2a" }}>
+                    <h4 style={{ margin: "0 0 10px 0", color: theme.mode === "light" ? "#128c7e" : "#5eead4" }}>⚙️ Configuração WhatsApp Cloud API (Oficial da Meta)</h4>
+                    <Grid spacing={2} container>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 6
+                        }}>
+                        <Field
+                          as={TextField}
+                          label="Phone Number ID"
+                          name="phoneNumberId"
+                          placeholder="Ex: 102938475610293"
+                          variant="outlined"
+                          margin="dense"
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 6
+                        }}>
+                        <Field
+                          as={TextField}
+                          label="WABA ID (WhatsApp Business Account)"
+                          name="wabaId"
+                          placeholder="Ex: 987654321098765"
+                          variant="outlined"
+                          margin="dense"
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 12
+                        }}>
+                        <Field
+                          as={TextField}
+                          label="Permanent Access Token da Meta"
+                          name="token"
+                          type="password"
+                          placeholder="EAAG..."
+                          variant="outlined"
+                          margin="dense"
+                          fullWidth
+                        />
+                      </Grid>
+                    </Grid>
+                    <p style={{ fontSize: "12px", color: "#555", marginTop: 8 }}>
+                      <strong>URL do Webhook para configurar na Meta:</strong><br />
+                      <code>{process.env.REACT_APP_BACKEND_URL || "https://sua-api.com"}/webhooks/meta/whatsapp</code>
+                    </p>
+                  </div>
+                )}
+                <div className={classes.sectionTitle}>
+                  Mensagens Automáticas
                 </div>
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("queueModal.form.complationMessage")}
-                    type="complationMessage"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    name="complationMessage"
-                    error={
-                      touched.complationMessage &&
-                      Boolean(errors.complationMessage)
-                    }
-                    helperText={
-                      touched.complationMessage && errors.complationMessage
-                    }
-                    variant="outlined"
-                    margin="dense"
-                  />
+                <Grid spacing={2} container>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("queueModal.form.greetingMessage")}
+                      type="greetingMessage"
+                      multiline
+                      rows={3}
+                      fullWidth
+                      name="greetingMessage"
+                      error={
+                        touched.greetingMessage && Boolean(errors.greetingMessage)
+                      }
+                      helperText={
+                        touched.greetingMessage && errors.greetingMessage
+                      }
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("queueModal.form.complationMessage")}
+                      type="complationMessage"
+                      multiline
+                      rows={3}
+                      fullWidth
+                      name="complationMessage"
+                      error={
+                        touched.complationMessage &&
+                        Boolean(errors.complationMessage)
+                      }
+                      helperText={
+                        touched.complationMessage && errors.complationMessage
+                      }
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("queueModal.form.outOfHoursMessage")}
+                      type="outOfHoursMessage"
+                      multiline
+                      rows={3}
+                      fullWidth
+                      name="outOfHoursMessage"
+                      error={
+                        touched.outOfHoursMessage &&
+                        Boolean(errors.outOfHoursMessage)
+                      }
+                      helperText={
+                        touched.outOfHoursMessage && errors.outOfHoursMessage
+                      }
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("queueModal.form.ratingMessage")}
+                      type="ratingMessage"
+                      multiline
+                      rows={3}
+                      fullWidth
+                      name="ratingMessage"
+                      error={
+                        touched.ratingMessage && Boolean(errors.ratingMessage)
+                      }
+                      helperText={touched.ratingMessage && errors.ratingMessage}
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </Grid>
+                </Grid>
+
+                <div className={classes.sectionTitle}>
+                  Filas, Token e Prompt
                 </div>
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("queueModal.form.outOfHoursMessage")}
-                    type="outOfHoursMessage"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    name="outOfHoursMessage"
-                    error={
-                      touched.outOfHoursMessage &&
-                      Boolean(errors.outOfHoursMessage)
-                    }
-                    helperText={
-                      touched.outOfHoursMessage && errors.outOfHoursMessage
-                    }
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </div>
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("queueModal.form.ratingMessage")}
-                    type="ratingMessage"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    name="ratingMessage"
-                    error={
-                      touched.ratingMessage && Boolean(errors.ratingMessage)
-                    }
-                    helperText={touched.ratingMessage && errors.ratingMessage}
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </div>
-                <div>
-                  <Field
-                    as={TextField}
-                    label={i18n.t("queueModal.form.token")}
-                    type="token"
-                    fullWidth
-                    name="token"
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </div>
+                <Grid spacing={2} container>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Field
+                      as={TextField}
+                      label={i18n.t("queueModal.form.token")}
+                      type="token"
+                      fullWidth
+                      name="token"
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </Grid>
+                </Grid>
                 <QueueSelect
                   selectedQueueIds={selectedQueueIds}
                   onChange={(selectedIds) => handleChangeQueue(selectedIds)}
@@ -353,10 +497,13 @@ const whatsappData = {
                   </Select>
                 </FormControl>
                 <div>
-                  <h3>{i18n.t("whatsappModal.form.queueRedirection")}</h3>
-                  <p>{i18n.t("whatsappModal.form.queueRedirectionDesc")}</p>
+                  <div className={classes.sectionTitle}>{i18n.t("whatsappModal.form.queueRedirection")}</div>
+                  <p className={classes.sectionHelperText}>{i18n.t("whatsappModal.form.queueRedirectionDesc")}</p>
 				<Grid container spacing={2}>
-                  <Grid item sm={6} >
+                  <Grid
+                    size={{
+                      sm: 6
+                    }}>
                     <Field
                       fullWidth
                       type="number"
@@ -368,12 +515,15 @@ const whatsappData = {
                       variant="outlined"
                       margin="dense"
                       className={classes.textField}
-                      InputLabelProps={{ shrink: values.timeToTransfer ? true : false }}
+                      InputLabelProps={{ shrink: true }}
                     />
 
                   </Grid>
 
-                  <Grid item sm={6}>
+                  <Grid
+                    size={{
+                      sm: 6
+                    }}>
                     <QueueSelect
                       selectedQueueIds={selectedQueueId}
                       onChange={(selectedId) => {
@@ -387,7 +537,11 @@ const whatsappData = {
                   </Grid>
                   <Grid spacing={2} container>
                     {/* ENCERRAR CHATS ABERTOS APÓS X HORAS */}
-                    <Grid xs={12} md={12} item>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 12
+                      }}>
                       <Field
                         as={TextField}
                         label={i18n.t("whatsappModal.form.expiresTicket")}

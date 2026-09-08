@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { i18n } from '../../translate/i18n';
-import { Stepper, Step, StepLabel, Typography, Paper, Grid } from '@material-ui/core';
+import { Stepper, Step, StepLabel, Typography, Paper, Grid } from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import api from '../../services/api';
 import toastError from "../../errors/toastError";

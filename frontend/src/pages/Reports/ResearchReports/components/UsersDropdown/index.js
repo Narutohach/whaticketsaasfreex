@@ -6,7 +6,7 @@ import {
   FormControl,
   Select,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
 
 export default function UsersDropdown({ users, setUser, value }) {
   const handleChange = (event) => {

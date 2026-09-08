@@ -65,13 +65,16 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const newCompany: CompanyData = req.body;
 
   const schema = Yup.object().shape({
-    name: Yup.string().required()
+    name: Yup.string().trim().required("ERR_COMPANY_NAME_REQUIRED"),
+    email: Yup.string().email().notRequired(),
+    phone: Yup.string().notRequired(),
+    password: Yup.string().min(6).notRequired()
   });
 
   try {
     await schema.validate(newCompany);
   } catch (err: any) {
-    throw new AppError(err.message);
+    throw new AppError(err.message, 400);
   }
 
   const company = await CreateCompanyService(newCompany);
@@ -81,6 +84,11 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
+  const { companyId, super: isSuper } = req.user;
+
+  if (!isSuper && companyId.toString() !== id.toString()) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
 
   const company = await ShowCompanyService(id);
 
@@ -122,6 +130,11 @@ export const updateSchedules = async (
 ): Promise<Response> => {
   const { schedules }: SchedulesData = req.body;
   const { id } = req.params;
+  const { companyId, super: isSuper } = req.user;
+
+  if (!isSuper && companyId.toString() !== id.toString()) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
 
   const company = await UpdateSchedulesService({
     id,
@@ -138,63 +151,42 @@ export const remove = async (
   const userId = req.user.id;
   const requestUser = await User.findByPk(userId);
 
-  if (requestUser.super === false) {
-    throw new AppError("você nao tem permissão para este consulta");
+  if (!requestUser || !requestUser.super) {
+    throw new AppError("você nao tem permissão para esta ação!", 403);
   }
   const { id } = req.params;
 
   if (fs.existsSync(`${publicFolder}/company${id}/`)) {
-
-    const removefolder = await fs.rmdirSync(`${publicFolder}/company${id}/`, {
+    await fs.rmdirSync(`${publicFolder}/company${id}/`, {
       recursive: true,
     });
-
   }
 
   const company = await DeleteCompanyService(id);
-
-
-  //fs.remove(`${publicFolder}/company${id}/`);
 
   return res.status(200).json(company);
 };
 
 export const listPlan = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
+  const { companyId, super: isSuper } = req.user;
 
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { id: requestUserId, profile, companyId } = decoded as TokenPayload;
-  const requestUser = await User.findByPk(requestUserId);
-
-  if (requestUser.super === true) {
-    const company = await ShowPlanCompanyService(id);
-    return res.status(200).json(company);
-  } else if (companyId.toString() !== id) {
-    return res.status(400).json({ error: "Você não possui permissão para acessar este recurso!" });
-  } else {
+  if (isSuper || companyId.toString() === id.toString()) {
     const company = await ShowPlanCompanyService(id);
     return res.status(200).json(company);
   }
 
+  throw new AppError("Você não possui permissão para acessar este recurso!", 403);
 };
 
 export const indexPlan = async (req: Request, res: Response): Promise<Response> => {
   const { searchParam, pageNumber } = req.query as IndexQuery;
+  const { super: isSuper } = req.user;
 
-  const authHeader = req.headers.authorization;
-  const [, token] = authHeader.split(" ");
-  const decoded = verify(token, authConfig.secret);
-  const { id, profile, companyId } = decoded as TokenPayload;
-  // const company = await Company.findByPk(companyId);
-  const requestUser = await User.findByPk(id);
-
-  if (requestUser.super === true) {
-    const companies = await ListCompaniesPlanService();
-    return res.json({ companies });
-  } else {
-    return res.status(400).json({ error: "Você não possui permissão para acessar este recurso!" });
+  if (!isSuper) {
+    throw new AppError("Você não possui permissão para acessar este recurso!", 403);
   }
 
+  const companies = await ListCompaniesPlanService();
+  return res.json({ companies });
 };

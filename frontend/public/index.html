@@ -1,112 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <title>Whaticket SaaS</title>
+    <meta charset="utf-8" />
+    <title>HACTO Desk | Atendimento Omnichannel & IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     />
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />
+    <link rel="alternate icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
-    <link rel="icon" href="%REACT_APP_BACKEND_URL%/public/logotipos/favicon.ico" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <meta name="theme-color" content="#222222" />
+    <meta name="theme-color" content="#090d16" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #080c14;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
         #splash-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: fixed;
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #111e33 0%, #080c14 75%);
+            z-index: 99999;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.03);
+            pointer-events: none;
+        }
+
+        .splash-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            max-width: 440px;
+            width: 90%;
+        }
+
+        /* Animated Logo Container */
+        .logo-container {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .logo-glow {
+            position: absolute;
             width: 100%;
             height: 100%;
-            background-color: white;
-            z-index: 9999;
-        }
-
-        #splash-content {
-            text-align: center;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #e0e0e0;
-            border-top: 5px solid #2DDD7F;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(14, 165, 233, 0.15) 50%, transparent 70%);
+            filter: blur(16px);
+            animation: pulseGlow 2.5s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .logo-svg {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 8px 24px rgba(16, 185, 129, 0.4));
+            animation: floatLogo 3s ease-in-out infinite;
         }
 
-        .progress-container {
-            width: 75%;
-            height: 8px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin-top: 15px;
+        /* Typography */
+        .brand-title {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .brand-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .brand-tagline {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        /* Ultra-modern Progress Bar */
+        .progress-wrapper {
+            width: 240px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
             overflow: hidden;
-            margin-left: auto;
-            margin-right: auto;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        .progress-bar {
+        .progress-bar-fill {
             height: 100%;
-            background-color: #2DDD7F;
-            width: 0;
-            transition: width 0.3s;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #06b6d4 60%, #3b82f6 100%);
+            border-radius: 99px;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        .loading-status {
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #94a3b8;
+            letter-spacing: 0.2px;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Keyframe Animations */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(0.9);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.25);
+                opacity: 0.95;
+            }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Premium Splash Screen -->
     <div id="splash-screen">
-        <div id="splash-content">
-            <div class="spinner"></div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
+        <div class="splash-card">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="splashGradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#1677FF" />
+                            <stop offset="100%" stop-color="#0EA5E9" />
+                        </linearGradient>
+                        <linearGradient id="splashGradGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#10B981" />
+                            <stop offset="100%" stop-color="#34D399" />
+                        </linearGradient>
+                        <linearGradient id="splashGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0B1F2A" />
+                            <stop offset="100%" stop-color="#1E293B" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Pillars -->
+                    <rect x="8" y="10" width="36" height="36" rx="10" fill="url(#splashGradDark)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
+                    <rect x="56" y="10" width="36" height="36" rx="10" fill="url(#splashGradBlue)" />
+                    <rect x="8" y="54" width="36" height="36" rx="10" fill="url(#splashGradGreen)" />
+                    <rect x="56" y="54" width="36" height="36" rx="10" fill="url(#splashGradBlue)" />
+
+                    <!-- Bridge Wave -->
+                    <path
+                        d="M26 48 C 38 48, 48 38, 54 26 C 62 42, 72 48, 82 48"
+                        stroke="rgba(15, 23, 42, 0.45)"
+                        stroke-width="9.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                    <path
+                        d="M26 48 C 38 48, 48 38, 54 26 C 62 42, 72 48, 82 48"
+                        stroke="#FFFFFF"
+                        stroke-width="6.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <!-- Energy Dot -->
+                    <circle cx="54" cy="26" r="4.5" fill="#34D399" />
+                </svg>
+            </div>
+
+            <div class="brand-title">
+                HACTO <span class="brand-gradient">DESK</span>
+            </div>
+            <div class="brand-tagline">
+                OMNICHANNEL & INTELIGÊNCIA ARTIFICIAL
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-bar-fill" id="splash-progress"></div>
+            </div>
+
+            <div class="loading-status" id="splash-status">
+                Iniciando ambiente seguro...
             </div>
         </div>
     </div>
+
     <div id="root"></div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>Você precisa habilitar o JavaScript para executar esta aplicação.</noscript>
 
     <script>
-        let progress = 0;
-        const progressBar = document.getElementById('progress-bar');
-        const interval = setInterval(() => {
-            if (progress < 60) {
-                progress += 8;
-            } else if (progress < 90) {
-                progress += 5;
-            } else {
-                progress += (100 - progress) / 10;
-            }
-            progressBar.style.width = progress + '%';
+        (function() {
+            let progress = 0;
+            const bar = document.getElementById("splash-progress");
+            const status = document.getElementById("splash-status");
+            const splash = document.getElementById("splash-screen");
 
-            if (progress >= 100) {
-                clearInterval(interval);
+            const messages = [
+                "Iniciando ambiente seguro...",
+                "Carregando módulos de atendimento...",
+                "Sincronizando canais e IA...",
+                "Pronto para conectar!"
+            ];
+
+            let msgIndex = 0;
+
+            const interval = setInterval(() => {
+                if (progress < 40) {
+                    progress += 14;
+                } else if (progress < 75) {
+                    progress += 8;
+                    if (msgIndex === 0) {
+                        msgIndex = 1;
+                        if (status) status.innerText = messages[1];
+                    }
+                } else if (progress < 92) {
+                    progress += 4;
+                    if (msgIndex === 1) {
+                        msgIndex = 2;
+                        if (status) status.innerText = messages[2];
+                    }
+                } else {
+                    progress += (100 - progress) / 6;
+                }
+
+                if (bar) bar.style.width = Math.min(progress, 100) + "%";
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    if (status) status.innerText = messages[3];
+                    setTimeout(() => {
+                        if (splash) {
+                            splash.classList.add("fade-out");
+                            setTimeout(() => {
+                                splash.remove();
+                            }, 500);
+                        }
+                    }, 250);
+                }
+            }, 300);
+
+            window.finishProgress = function() {
+                progress = 100;
+                if (bar) bar.style.width = "100%";
                 setTimeout(() => {
-                    document.getElementById('splash-screen').remove();
-                }, 300);
-            }
-        }, 800);
-
-        window.finishProgress = () => {
-            progress = 100;
-        };
-
-        window.onload = () => {
-            // Optional: Remove splash screen after window is fully loaded
-        };
+                    if (splash) {
+                        splash.classList.add("fade-out");
+                        setTimeout(() => splash.remove(), 500);
+                    }
+                }, 150);
+            };
+        })();
     </script>
 </body>
 </html>

@@ -2,11 +2,14 @@ import * as Yup from "yup";
 import AppError from "../../errors/AppError";
 import Prompt from "../../models/Prompt";
 import ShowPromptService from "./ShowPromptService";
+import { encrypt } from "../../helpers/crypto";
 
 interface PromptData {
     name: string;
     apiKey: string;
     prompt: string;
+    provider?: string;
+    model?: string;
     maxTokens?: number;
     temperature?: number;
     promptTokens?: number;
@@ -21,7 +24,7 @@ interface PromptData {
 }
 
 const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
-    const { name, apiKey, prompt, queueId,maxMessages,companyId } = promptData;
+    const { name, apiKey, prompt, queueId, maxMessages, companyId } = promptData;
 
     const promptSchema = Yup.object().shape({
         name: Yup.string().required("ERR_PROMPT_NAME_INVALID"),
@@ -33,12 +36,19 @@ const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
     });
 
     try {
-        await promptSchema.validate({ name, apiKey, prompt, queueId,maxMessages,companyId });
+        await promptSchema.validate({ name, apiKey, prompt, queueId, maxMessages, companyId });
     } catch (err) {
         throw new AppError(`${JSON.stringify(err, undefined, 2)}`);
     }
 
-    let promptTable = await Prompt.create(promptData);
+    const encryptedApiKey = apiKey ? encrypt(apiKey) : "";
+
+    let promptTable = await Prompt.create({
+        ...promptData,
+        apiKey: encryptedApiKey,
+        provider: promptData.provider || "openai",
+        model: promptData.model || "gpt-4o-mini"
+    });
     promptTable = await ShowPromptService({ promptId: promptTable.id, companyId });
 
     return promptTable;

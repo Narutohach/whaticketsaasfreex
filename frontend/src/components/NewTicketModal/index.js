@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
 
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Autocomplete, {
 	createFilterOptions,
-} from "@material-ui/lab/Autocomplete";
-import CircularProgress from "@material-ui/core/CircularProgress";
+} from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import ContactModal from "../ContactModal";
 import toastError from "../../errors/toastError";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
 import { AuthContext } from "../../context/Auth/AuthContext";
-import {  WhatsApp } from "@material-ui/icons";
-import { Grid, ListItemText, MenuItem, Select } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import {  WhatsApp } from "@mui/icons-material";
+import { Grid, ListItemText, MenuItem, Select } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { toast } from "react-toastify";
 //import ShowTicketOpen from "../ShowTicketOpenModal";
 
@@ -232,7 +232,7 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
   const renderContactAutocomplete = () => {
     if (initialContact === undefined || initialContact.id === undefined) {
       return (
-        <Grid xs={12} item>
+        <Grid size={12}>
           <Autocomplete
             fullWidth
             options={options}
@@ -273,7 +273,7 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
             )}
           />
         </Grid>
-      )
+      );
     }
     return null;
   }
@@ -295,7 +295,7 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
             {/* CONTATO */}
             {renderContactAutocomplete()}
             {/* FILA */}
-            <Grid xs={12} item>
+            <Grid size={12}>
               <Select
                 required
                 fullWidth
@@ -334,7 +334,7 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
               </Select>
             </Grid>
             {/* CONEXAO */}
-            <Grid xs={12} item>
+            <Grid size={12}>
               <Select
                 required
                 fullWidth

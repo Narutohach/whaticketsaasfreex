@@ -8,6 +8,7 @@ import CreateContactService from "../services/ContactServices/CreateContactServi
 import ShowContactService from "../services/ContactServices/ShowContactService";
 import UpdateContactService from "../services/ContactServices/UpdateContactService";
 import DeleteContactService from "../services/ContactServices/DeleteContactService";
+import DeleteAllContactService from "../services/ContactServices/DeleteAllContactService";
 import GetContactService from "../services/ContactServices/GetContactService";
 
 import CheckContactNumber from "../services/WbotServices/CheckNumber";
@@ -199,6 +200,30 @@ export const remove = async (
   return res.status(200).json({ message: "Contact deleted" });
 };
 
+export const removeAll = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { contactIds } = req.body as { contactIds: (string | number)[] };
+  const { companyId } = req.user;
+
+  if (!Array.isArray(contactIds) || contactIds.length === 0) {
+    throw new AppError("ERR_NO_CONTACTS_SELECTED", 400);
+  }
+
+  await DeleteAllContactService({ contactIds, companyId });
+
+  const io = getIO();
+  contactIds.forEach(contactId => {
+    io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-contact`, {
+      action: "delete",
+      contactId
+    });
+  });
+
+  return res.status(200).json({ message: "Contacts deleted" });
+};
+
 export const list = async (req: Request, res: Response): Promise<Response> => {
   const { name } = req.query as unknown as SearchContactParams;
   const { companyId } = req.user;
@@ -238,16 +263,12 @@ export const getContactVcard = async (
   const numberUser = vNumber.toString().substr(-8, 8);
 
   if (numberDDD <= '30' && numberDDI === '55') {
-    console.log("menor 30")
     vNumber = `${numberDDI + numberDDD + 9 + numberUser}@s.whatsapp.net`;
   } else if (numberDDD > '30' && numberDDI === '55') {
-    console.log("maior 30")
     vNumber = `${numberDDI + numberDDD + numberUser}@s.whatsapp.net`;
   } else {
     vNumber = `${number}@s.whatsapp.net`;
   }
-
-  console.log(vNumber);
 
   const contact = await GetContactService({
     name,

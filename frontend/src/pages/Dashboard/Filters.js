@@ -10,7 +10,7 @@ import {
     Paper,
     // Select,
     TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import Title from "./Title";
 
@@ -33,7 +33,7 @@ const Filters = ({
     const [dateEnd, setDateEnd] = React.useState(dateEndTicket);
 
     return (
-        <Grid item xs={12}>
+        <Grid size={12}>
             <Paper className={classes.customFixedHeightPaperLg} elevation={6}>
                 <Title>Filtros</Title>
                 <Grid container spacing={3}>
@@ -61,7 +61,12 @@ const Filters = ({
                         </FormControl>
                     </Grid> */}
 
-                    <Grid item xs={12} sm={6} md={5}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6,
+                            md: 5
+                        }}>
                         <TextField
                             fullWidth
                             name="dateStart"
@@ -74,7 +79,12 @@ const Filters = ({
                             onChange={(e) => setDateStart(e.target.value)}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={5}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6,
+                            md: 5
+                        }}>
                         <TextField
                             fullWidth
                             name="dateEnd"
@@ -87,7 +97,12 @@ const Filters = ({
                             onChange={(e) => setDateEnd(e.target.value)}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6,
+                            md: 2
+                        }}>
                         <Button
                             fullWidth
                             variant="contained"

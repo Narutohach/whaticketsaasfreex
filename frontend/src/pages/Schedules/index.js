@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useReducer, useCallback, useContext } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import Title from "../../components/Title";
@@ -22,9 +22,9 @@ import usePlans from "../../hooks/usePlans";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import SearchIcon from "@material-ui/icons/Search";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import EditIcon from "@material-ui/icons/Edit";
+import SearchIcon from "@mui/icons-material/Search";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 
 import "./Schedules.css"; // Importe o arquivo CSS
 
@@ -98,6 +98,23 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     overflowY: "scroll",
     ...theme.scrollbarStyles,
+  },
+  calendarWrapper: {
+    "& .rbc-off-range-bg": {
+      backgroundColor: theme.mode === "light" ? "#e6e6e6" : "#0b1220",
+    },
+    "& .rbc-today": {
+      backgroundColor: theme.mode === "light" ? "#eaf6ff" : "#1e293b",
+    },
+    "& .rbc-off-range": {
+      color: theme.mode === "light" ? "rgba(0, 0, 0, 0.38)" : "rgba(255, 255, 255, 0.38)",
+    },
+    "& .rbc-header, & .rbc-month-view, & .rbc-day-bg, & .rbc-time-view, & .rbc-agenda-view table.rbc-agenda-table": {
+      borderColor: theme.palette.bordabox,
+    },
+    "& .rbc-toolbar button": {
+      color: theme.palette.text.primary,
+    },
   },
 }));
 
@@ -284,7 +301,7 @@ const Schedules = () => {
           </Button>
         </MainHeaderButtonsWrapper>
       </MainHeader>
-      <Paper className={classes.mainPaper} variant="outlined" onScroll={handleScroll}>
+      <Paper className={`${classes.mainPaper} ${classes.calendarWrapper}`} variant="outlined" onScroll={handleScroll}>
         <Calendar
           messages={defaultMessages}
           formats={{

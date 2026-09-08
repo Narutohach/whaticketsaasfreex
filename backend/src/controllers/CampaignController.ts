@@ -15,6 +15,8 @@ import UpdateService from "../services/CampaignService/UpdateService";
 import Campaign from "../models/Campaign";
 
 import AppError from "../errors/AppError";
+import GetDefaultWhatsApp from "../helpers/GetDefaultWhatsApp";
+import { getWbot } from "../libs/wbot";
 import Contact from "../models/Contact";
 import ContactList from "../models/ContactList";
 import ContactListItem from "../models/ContactListItem";
@@ -22,6 +24,7 @@ import Ticket from "../models/Ticket";
 import TicketTag from "../models/TicketTag";
 import { CancelService } from "../services/CampaignService/CancelService";
 import { RestartService } from "../services/CampaignService/RestartService";
+import { logger } from "../utils/logger";
 
 type IndexQuery = {
   searchParam: string;
@@ -60,7 +63,6 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
   const data = req.body as StoreData;
-  console.log('data------- store:', data);
 
   const schema = Yup.object().shape({
     name: Yup.string().required()
@@ -91,6 +93,26 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
         const contacts = await Contact.findAll({ where: { id: contactIds } });
 
+        const validNumbers = new Set<string>();
+        if (contacts.length > 0) {
+          try {
+            const defaultWhatsapp = await GetDefaultWhatsApp(companyId);
+            const wbot = getWbot(defaultWhatsapp.id);
+            const results = await wbot.onWhatsApp(
+              ...contacts.map((contact) => `${contact.number}@s.whatsapp.net`)
+            );
+            results.forEach((result) => {
+              if (result?.exists) {
+                validNumbers.add(result.jid.replace(/\D/g, ""));
+              }
+            });
+          } catch (error) {
+            logger.error(
+              `createContactListFromTag -> falha ao validar números no WhatsApp: ${error}`
+            );
+          }
+        }
+
         const randomName = `${campanhaNome} | TAG: ${tagId} - ${formattedDate}` // Implement your own function to generate a random name
         const contactList = await ContactList.create({ name: randomName, companyId: companyId });
 
@@ -102,7 +124,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
           email: contact.email,
           contactListId,
           companyId,
-          isWhatsappValid: true,
+          isWhatsappValid: validNumbers.has(contact.number),
 
         }));
 

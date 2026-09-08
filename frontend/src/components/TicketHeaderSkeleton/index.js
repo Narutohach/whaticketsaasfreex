@@ -1,13 +1,13 @@
 import React from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Card, CardHeader } from "@material-ui/core";
-import Skeleton from "@material-ui/lab/Skeleton";
+import { makeStyles } from "../../styles/makeStyles";
+import { Avatar, Card, CardHeader } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
 
 const useStyles = makeStyles(theme => ({
 	ticketHeader: {
 		display: "flex",
-		backgroundColor: "#eee",
+		backgroundColor: theme.palette.tabHeaderBackground,
 		flex: "none",
 		borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
 	},

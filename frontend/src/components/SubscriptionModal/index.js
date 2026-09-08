@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
 import CheckoutPage from "../CheckoutPage/";
 
 const useStyles = makeStyles((theme) => ({

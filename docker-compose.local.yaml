@@ -1,0 +1,50 @@
+services:
+  whaticket_db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: whaticket
+      POSTGRES_USER: whaticket
+      POSTGRES_PASSWORD: whaticket
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U whaticket -d whaticket"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  whaticket_redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  whaticket_backend:
+    ports:
+      - "3000:3000"
+    environment:
+      DB_DIALECT: postgres
+      DB_HOST: whaticket_db
+      DB_PORT: "5432"
+      DB_USER: whaticket
+      DB_PASS: whaticket
+      DB_NAME: whaticket
+      PORT: "3000"
+      PROXY_PORT: ""
+      BACKEND_URL: http://localhost:3000
+      FRONTEND_URL: http://localhost:3250
+      REDIS_URI: redis://whaticket_redis:6379
+    depends_on:
+      whaticket_db:
+        condition: service_healthy
+      whaticket_redis:
+        condition: service_healthy
+    command: ["bash", "-lc", "sed -i 's/\r$//' add-env-vars.sh && dockerize -wait tcp://$$DB_HOST:$$DB_PORT && sh ./add-env-vars.sh && node dist/server.js"]
+
+  whaticket_frontend:
+    ports:
+      - "3250:3250"
+    environment:
+      REACT_APP_BACKEND_URL: http://localhost:3000
+      REACT_APP_HOURS_CLOSE_TICKETS_AUTO: "0"
+    command: ["sh", "-c", "sed -i 's/\r$//' add-env-vars.sh && sh ./add-env-vars.sh && node server.js"]

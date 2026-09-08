@@ -1,9 +1,10 @@
 import React, { useEffect, useReducer, useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
 import toastError from "../../errors/toastError";
-import Popover from "@material-ui/core/Popover";
-import AnnouncementIcon from "@material-ui/icons/Announcement";
-import Notifications from "@material-ui/icons/Notifications"
+import Popover from "@mui/material/Popover";
+import AnnouncementIcon from "@mui/icons-material/Announcement";
+import Notifications from "@mui/icons-material/Notifications"
 
 import {
   Avatar,
@@ -21,7 +22,7 @@ import {
   DialogActions,
   Button,
   DialogContentText,
-} from "@material-ui/core";
+} from "@mui/material";
 import api from "../../services/api";
 import { isArray } from "lodash";
 import moment from "moment";
@@ -137,6 +138,8 @@ const reducer = (state, action) => {
 
 export default function AnnouncementsPopover() {
   const classes = useStyles();
+  const theme = useTheme();
+  const iconColor = theme.palette.mode === "light" ? "#0f172a" : "#f8fafc";
 
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -256,7 +259,7 @@ export default function AnnouncementsPopover() {
         variant="contained"
         aria-describedby={id}
         onClick={handleClick}
-        style={{ color: "white" }}
+        style={{ color: iconColor }}
       >
         <Badge
           color="secondary"

@@ -7,13 +7,13 @@ import {
   IconButton,
   Paper,
   InputBase
-} from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import whatsBackground from "../../assets/wa-background.png";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "../../styles/makeStyles";
 import MarkdownWrapper from "../MarkdownWrapper";
-import MoodIcon from "@material-ui/icons/Mood";
+import MoodIcon from "@mui/icons-material/Mood";
 import api from "../../services/api";
 import whatsBackgroundDark from "../../assets/wa-background-dark.png"
 
@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
   messagesList: {
     backgroundSize: "370px",
     backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE//
-    display: "flex",
     display: "flex",
     justifyContent: "center",
     flexGrow: 1,

@@ -5,30 +5,30 @@ import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import {
-  makeStyles,
   Table,
   TableHead,
   TableBody,
   TableCell,
   TableRow,
   IconButton,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 import { i18n } from "../../translate/i18n";
 import { head } from "lodash";
 import { ToastContainer, toast } from 'react-toastify';
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import FormHelperText from "@mui/material/FormHelperText";
+import TextField from "@mui/material/TextField";
 import Title from "../Title";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import useSettings from "../../hooks/useSettings";
-import { grey, blue } from "@material-ui/core/colors";
-import { Tabs, Tab } from "@material-ui/core";
+import { grey, blue } from "@mui/material/colors";
+import { Tabs, Tab } from "@mui/material";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 
 
@@ -53,11 +53,11 @@ const useStyles = makeStyles((theme) => ({
     height: 240,
   },
   tab: {
-    background: "#f2f5f3",
+    background: theme.palette.optionsBackground,
     borderRadius: 4,
     width: "100%",
     "& .MuiTab-wrapper": {
-      color: "#128c7e"
+      color: theme.mode === "light" ? "#128c7e" : "#5eead4"
     },
     "& .MuiTabs-flexContainer": {
       justifyContent: "center"
@@ -100,9 +100,6 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     textAlign: "right",
     padding: theme.spacing(1),
-  },
-  fullWidth: {
-    width: "100%",
   },
   fileInput: {
   	background: "red",
@@ -213,7 +210,13 @@ return (
 
       <form onSubmit={handleSubmit} className={classes.fullWidth}>
       
-      	<Grid item xs={12} sm={12} md={12} style={{ display: 'flex' }}>
+      	<Grid
+          style={{ display: 'flex' }}
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="selectOption-label">Escolha uma opção:</InputLabel>
             <Select
@@ -234,7 +237,13 @@ return (
         </Grid>
 
 
-        <Grid item xs={12} sm={12} md={12} style={{ display: 'flex' }}>
+        <Grid
+          style={{ display: 'flex' }}
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
   			<FormControl className={classes.fullWidth}>
    				<label className={classes.fileInputLabel}>
       			<input
@@ -248,7 +257,13 @@ return (
   			</FormControl>
 		</Grid>
         
-        <Grid item xs={12} sm={12} md={12} style={{ display: 'flex' }}>
+        <Grid
+          style={{ display: 'flex' }}
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <ButtonWithSpinner
             type="submit"
             className={`${classes.fullWidth} ${classes.button}`}

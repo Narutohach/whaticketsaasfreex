@@ -5,16 +5,16 @@ import {
   IconButton,
   Input,
   InputAdornment,
-  makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
+import SendIcon from "@mui/icons-material/Send";
 
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { useDate } from "../../hooks/useDate";
 import api from "../../services/api";
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import FormHelperText from "@mui/material/FormHelperText";
+import TextField from "@mui/material/TextField";
 import Title from "../Title";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import useSettings from "../../hooks/useSettings";
 import { ToastContainer, toast } from 'react-toastify';
-import { makeStyles } from "@material-ui/core/styles";
-import { grey, blue } from "@material-ui/core/colors";
-import { Tabs, Tab } from "@material-ui/core";
+import { makeStyles } from "../../styles/makeStyles";
+import { grey, blue } from "@mui/material/colors";
+import { Tabs, Tab } from "@mui/material";
 import OnlyForSuperUser from '../../components/OnlyForSuperUser';
 import useAuth from '../../hooks/useAuth.js';
 
@@ -495,7 +495,12 @@ export default function Options(props) {
   return (
     <>
       <Grid spacing={3} container>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="ratings-label">Avaliações</InputLabel>
             <Select
@@ -513,7 +518,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="schedule-type-label">
               Gerenciamento de Expediente
@@ -534,7 +544,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="group-type-label">
               Ignorar Mensagens de Grupos
@@ -554,7 +569,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="call-type-label">
               Aceitar Chamada
@@ -574,7 +594,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-       <Grid xs={12} sm={12} md={12} item>
+       <Grid
+         size={{
+           xs: 12,
+           sm: 12,
+           md: 12
+         }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="chatbot-type-label">
               Tipo Chatbot
@@ -596,7 +621,12 @@ export default function Options(props) {
           </FormControl>
         </Grid>
 		{/* ENVIAR SAUDAÇÃO AO ACEITAR O TICKET */}
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="sendGreetingAccepted-label">Enviar saudação ao aceitar o ticket</InputLabel>
             <Select
@@ -617,7 +647,12 @@ export default function Options(props) {
 		{/* ENVIAR SAUDAÇÃO AO ACEITAR O TICKET */}
 		
 		{/* ENVIAR MENSAGEM DE TRANSFERENCIA DE SETOR/ATENDENTE */}
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="sendMsgTransfTicket-label">Enviar mensagem de transferencia de Fila/agente</InputLabel>
             <Select
@@ -637,7 +672,12 @@ export default function Options(props) {
         </Grid>
 		
 		{/* ENVIAR SAUDAÇÃO QUANDO HOUVER SOMENTE 1 FILA */}
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="sendGreetingMessageOneQueues-label">Enviar saudação quando houver somente 1 fila</InputLabel>
             <Select
@@ -655,7 +695,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id='viewclosed-label'>
               Operador Visualiza Tickets Fechados?
@@ -676,7 +721,12 @@ export default function Options(props) {
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id='viewgroups-label'>
               Operador Visualiza Grupos?
@@ -698,116 +748,131 @@ export default function Options(props) {
         </Grid>
 		
       </Grid>
-	  
-		<OnlyForSuperUser
-				user={currentUser}
-				yes={() => (
-				  <>
-					<Grid spacing={3} container>
-					  <Tabs
-						indicatorColor='primary'
-						textColor='primary'
-						scrollButtons='on'
-						variant='scrollable'
-						className={classes.tab}
-						style={{
-						  marginBottom: 20,
-						  marginTop: 20,
-						}}
-					  >
-						<Tab label='Configurações Globais' />
-					  </Tabs>
-					</Grid>
+
+      <OnlyForSuperUser
+              user={currentUser}
+              yes={() => (
+                <>
+                  <Grid spacing={3} container>
+                    <Tabs
+                      indicatorColor='primary'
+                      textColor='primary'
+                      scrollButtons='on'
+                      variant='scrollable'
+                      className={classes.tab}
+                      style={{
+                        marginBottom: 20,
+                        marginTop: 20,
+                      }}
+                    >
+                      <Tab label='Configurações Globais' />
+                    </Tabs>
+                  </Grid>
 
 
-            <Grid xs={12} sm={12} md={12} item>
-                <FormControl className={classes.selectContainer}>
-                  <InputLabel id='allowregister-label'>
-                    Registro (Inscrição) Permitida?
-                  </InputLabel>
-                  <Select
-                    labelId='allowregister-label'
-                    value={allowregister}
-                    onChange={async (e) => {
-                      handleallowregister(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={'disabled'}>Não</MenuItem>
-                    <MenuItem value={'enabled'}>Sim</MenuItem>
-                  </Select>
-                  <FormHelperText>
-                    {loadingallowregister && 'Atualizando...'}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 12,
+              md: 12
+            }}>
+              <FormControl className={classes.selectContainer}>
+                <InputLabel id='allowregister-label'>
+                  Registro (Inscrição) Permitida?
+                </InputLabel>
+                <Select
+                  labelId='allowregister-label'
+                  value={allowregister}
+                  onChange={async (e) => {
+                    handleallowregister(e.target.value);
+                  }}
+                >
+                  <MenuItem value={'disabled'}>Não</MenuItem>
+                  <MenuItem value={'enabled'}>Sim</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {loadingallowregister && 'Atualizando...'}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
 
-				  <Grid xs={12} sm={12} md={12} item>
-                <FormControl className={classes.selectContainer}>
-                  <InputLabel id='viewregister-label'>
-                    Registro (Inscrição) Visível?
-                  </InputLabel>
-                  <Select
-                    labelId='viewregister-label'
-                    value={viewregister}
-                    onChange={async (e) => {
-                      handleviewregister(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={'disabled'}>Não</MenuItem>
-                    <MenuItem value={'enabled'}>Sim</MenuItem>
-                  </Select>
-                  <FormHelperText>
-                    {loadingviewregister && 'Atualizando...'}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
-			  
-			                <Grid xs={12} sm={12} md={12} item>
-                <FormControl className={classes.selectContainer}>
-                  <InputLabel id='trial-label'>Tempo de Trial?</InputLabel>
-                  <Select
-                    labelId='trial-label'
-                    value={trial}
-                    onChange={async (e) => {
-                      handletrial(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={'1'}>1</MenuItem>
-                    <MenuItem value={'2'}>2</MenuItem>
-                    <MenuItem value={'3'}>3</MenuItem>
-                    <MenuItem value={'4'}>4</MenuItem>
-                    <MenuItem value={'5'}>5</MenuItem>
-                    <MenuItem value={'6'}>6</MenuItem>
-                    <MenuItem value={'7'}>7</MenuItem>
-                  </Select>
-                  <FormHelperText>
-                    {loadingtrial && 'Atualizando...'}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 12,
+                    md: 12
+                  }}>
+              <FormControl className={classes.selectContainer}>
+                <InputLabel id='viewregister-label'>
+                  Registro (Inscrição) Visível?
+                </InputLabel>
+                <Select
+                  labelId='viewregister-label'
+                  value={viewregister}
+                  onChange={async (e) => {
+                    handleviewregister(e.target.value);
+                  }}
+                >
+                  <MenuItem value={'disabled'}>Não</MenuItem>
+                  <MenuItem value={'enabled'}>Sim</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {loadingviewregister && 'Atualizando...'}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 12,
+                              md: 12
+                            }}>
+              <FormControl className={classes.selectContainer}>
+                <InputLabel id='trial-label'>Tempo de Trial?</InputLabel>
+                <Select
+                  labelId='trial-label'
+                  value={trial}
+                  onChange={async (e) => {
+                    handletrial(e.target.value);
+                  }}
+                >
+                  <MenuItem value={'1'}>1</MenuItem>
+                  <MenuItem value={'2'}>2</MenuItem>
+                  <MenuItem value={'3'}>3</MenuItem>
+                  <MenuItem value={'4'}>4</MenuItem>
+                  <MenuItem value={'5'}>5</MenuItem>
+                  <MenuItem value={'6'}>6</MenuItem>
+                  <MenuItem value={'7'}>7</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {loadingtrial && 'Atualizando...'}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
 
-      </>
-        )}
-      />
-	        <Grid spacing={3} container>
-        <Tabs
-          indicatorColor="primary"
-          textColor="primary"
-          scrollButtons="on"
-          variant="scrollable"
-          className={classes.tab}
-          style={{
-            marginBottom: 20,
-            marginTop: 20
-          }}
-        >
-          <Tab
+    </>
+      )}
+    />
+      <Grid spacing={3} container>
+  <Tabs
+    indicatorColor="primary"
+    textColor="primary"
+    scrollButtons="on"
+    variant="scrollable"
+    className={classes.tab}
+    style={{
+      marginBottom: 20,
+      marginTop: 20
+    }}
+  >
+    <Tab
 
-            label="INTEGRAÇÕES" />
+      label="INTEGRAÇÕES" />
 
-        </Tabs>
+  </Tabs>
 
-      </Grid>
+</Grid>
       {/*-----------------IXC-----------------*/}
       <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
@@ -823,7 +888,12 @@ export default function Options(props) {
             label="IXC" />
 
         </Tabs>
-        <Grid xs={12} sm={6} md={6} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 6
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="ipixc"
@@ -842,7 +912,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={6} md={6} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 6
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="tokenixc"
@@ -875,7 +950,12 @@ export default function Options(props) {
           <Tab label="MK-AUTH" />
 
         </Tabs>
-        <Grid xs={12} sm={12} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="ipmkauth"
@@ -894,7 +974,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="clientidmkauth"
@@ -913,7 +998,12 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid xs={12} sm={12} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="clientsecretmkauth"
@@ -946,7 +1036,12 @@ export default function Options(props) {
           <Tab label="ASAAS" />
 
         </Tabs>
-        <Grid xs={12} sm={12} md={12} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="asaas"

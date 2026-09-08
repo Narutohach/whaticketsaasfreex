@@ -2,30 +2,30 @@ import React, { useState, useEffect, useReducer, useContext, useRef } from "reac
 
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
-import { Tooltip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import Checkbox from '@material-ui/core/Checkbox';
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import IconButton from "@material-ui/core/IconButton";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import EditIcon from "@material-ui/icons/Edit";
+import { Tooltip } from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
+import Checkbox from '@mui/material/Checkbox';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import IconButton from "@mui/material/IconButton";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 import api from "../../services/api";
 import TableRowSkeleton from "../../components/TableRowSkeleton";
 import ContactModal from "../../components/ContactModal";
 import ConfirmationModal from "../../components/ConfirmationModal/";
-import CancelIcon from "@material-ui/icons/Cancel";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { i18n } from "../../translate/i18n";
 import MainHeader from "../../components/MainHeader";
 import Title from "../../components/Title";
@@ -40,14 +40,13 @@ import { generateColor } from "../../helpers/colorGenerator";
 import { getInitials } from "../../helpers/getInitials";
 import {CSVLink} from "react-csv";
 
-import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import {
     ArrowDropDown,
     Backup,
     CloudDownload,
     ContactPhone,
-} from "@material-ui/icons";
-import { Menu, MenuItem } from "@material-ui/core";
+} from "@mui/icons-material";
+import { Menu, MenuItem } from "@mui/material";
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_CONTACTS") {
@@ -121,6 +120,7 @@ const Contacts = () => {
   const [hasMore, setHasMore] = useState(false);
   const [selectAll, setSelectAll] = useState(false); // Estado para controlar se todos os checkboxes estão marcados
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const [importExportAnchorEl, setImportExportAnchorEl] = useState(null);
   const fileUploadRef = useRef(null);
 
   
@@ -250,9 +250,7 @@ const handleCheckboxChange = (contactId) => {
   
   const handleDeleteSelectedContacts = async () => {
     try {
-        for (const contactId of selectedContacts) {
-            await api.delete(`/contacts/${contactId}`);
-        }
+        await api.delete("/contacts", { data: { contactIds: selectedContacts } });
         toast.success(i18n.t("contacts.toasts.deleted"));
         setSelectedContacts([]);
         setSelectAll(false);
@@ -389,22 +387,24 @@ function getDateLastMessage(contact) {
       )}
       />	
 
-         <PopupState variant="popover" popupId="demo-popup-menu">
-             {(popupState) => (
-             <React.Fragment>
+         <>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    {...bindTrigger(popupState)}
+                                    onClick={(event) => setImportExportAnchorEl(event.currentTarget)}
                                 >
                                     Importar / Exportar
                                     <ArrowDropDown />
                                 </Button>
-								<Menu {...bindMenu(popupState)}>
+								<Menu
+                                    anchorEl={importExportAnchorEl}
+                                    open={Boolean(importExportAnchorEl)}
+                                    onClose={() => setImportExportAnchorEl(null)}
+                                >
 									<MenuItem
 										onClick={() => {
 											setConfirmOpen(true);
-											popupState.close();
+											setImportExportAnchorEl(null);
 										}}
 									>
 									<ContactPhone
@@ -420,7 +420,7 @@ function getDateLastMessage(contact) {
 										onClick={() => {
 											fileUploadRef.current.value = null; // Limpa o valor do input
 											fileUploadRef.current.click(); // Dispara o clique no input de upload
-											popupState.close(); // Fecha o menu
+											setImportExportAnchorEl(null); // Fecha o menu
 										}}
 									>
 											<Backup
@@ -449,9 +449,7 @@ function getDateLastMessage(contact) {
                                         
                                     </MenuItem>
                                 </Menu>
-                            </React.Fragment>
-                        )}
-                    </PopupState>
+                    </>
 					
           <Button
             variant="contained"

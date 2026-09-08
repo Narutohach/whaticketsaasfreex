@@ -1,0 +1,7 @@
+{$BACKEND_DOMAIN} {
+	reverse_proxy whaticket_backend:3000
+}
+
+{$FRONTEND_DOMAIN} {
+	reverse_proxy whaticket_frontend:3250
+}

@@ -1,5 +1,5 @@
 import moment from "moment";
-import * as Sentry from "@sentry/node";
+import { logger } from "../../utils/logger";
 import CheckContactOpenTickets from "../../helpers/CheckContactOpenTickets";
 import SetTicketMessagesAsRead from "../../helpers/SetTicketMessagesAsRead";
 import { getIO } from "../../libs/socket";
@@ -50,8 +50,6 @@ const UpdateTicketService = async ({
   ticketId,
   companyId
 }: Request): Promise<Response> => {
-
-  try {
     let { status } = ticketData;
     let { queueId, userId, whatsappId, lastMessage = null } = ticketData;
     let chatbot: boolean | null = ticketData.chatbot || false;
@@ -59,8 +57,6 @@ const UpdateTicketService = async ({
     let promptId: number | null = ticketData.promptId || null;
     let useIntegration: boolean | null = ticketData.useIntegration || false;
     let integrationId: number | null = ticketData.integrationId || null;
-
-    console.log("ticketData", ticketData);
 
     const io = getIO();
 
@@ -128,7 +124,11 @@ const UpdateTicketService = async ({
         ratingMessage ? ratingMessage + "\n\n" : ""
       }Digite de 1 a 5 para qualificar nosso atendimento:\n\n*1* - 😞 _Péssimo_\n*2* - 😕 _Ruim_\n*3* - 😐 _Neutro_\n*4* - 🙂 _Bom_\n*5* - 😊 _Ótimo_`;
 
-      await SendWhatsAppMessage({ body: bodyRatingMessage, ticket });
+      try {
+        await SendWhatsAppMessage({ body: bodyRatingMessage, ticket });
+      } catch (err) {
+        logger.warn(`Não foi possível enviar mensagem de avaliação do ticket ${ticket.id}: ${err}`);
+      }
 
       await ticketTraking.update({
         ratingAt: moment().toDate()
@@ -159,7 +159,11 @@ const UpdateTicketService = async ({
       complationMessage !== ""
     ) {
       const body = `\u200e${complationMessage}`;
-      await SendWhatsAppMessage({ body, ticket });
+      try {
+        await SendWhatsAppMessage({ body, ticket });
+      } catch (err) {
+        logger.warn(`N\u00e3o foi poss\u00edvel enviar mensagem de finaliza\u00e7\u00e3o do ticket ${ticket.id}: ${err}`);
+      }
     }
   }
 
@@ -303,9 +307,6 @@ const UpdateTicketService = async ({
       });
 
     return { ticket, oldStatus, oldUserId };
-  } catch (err) {
-    Sentry.captureException(err);
-  }
 };
 
 export default UpdateTicketService;

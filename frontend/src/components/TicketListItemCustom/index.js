@@ -3,21 +3,21 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { format, isSameDay, parseISO } from "date-fns";
 import { useHistory, useParams } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
-import Badge from "@material-ui/core/Badge";
-import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
-import { blue, green, grey } from "@material-ui/core/colors";
-import { makeStyles } from "@material-ui/core/styles";
-import FaceIcon from "@material-ui/icons/Face";
+import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import { blue, green, grey } from "@mui/material/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import FaceIcon from "@mui/icons-material/Face";
 import { i18n } from "../../translate/i18n";
 
-import { Chip, Tooltip } from "@material-ui/core";
+import { Chip, Tooltip } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { TicketsContext } from "../../context/Tickets/TicketsContext";
@@ -26,8 +26,8 @@ import api from "../../services/api";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import MarkdownWrapper from "../MarkdownWrapper";
 
-import AndroidIcon from "@material-ui/icons/Android";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import AndroidIcon from "@mui/icons-material/Android";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import ContactTag from "../ContactTag";
 import TicketMessagesDialog from "../TicketMessagesDialog";
 import TransferTicketModalCustom from "../TransferTicketModalCustom";
@@ -37,22 +37,27 @@ import { generateColor } from "../../helpers/colorGenerator";
 const useStyles = makeStyles((theme) => ({
   ticket: {
     position: "relative",
+    borderRadius: 10,
+    margin: "3px 6px",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
+      transform: "translateX(2px)",
+    },
   },
 
   pendingTicket: {
     cursor: "unset",
   },
   queueTag: {
-    background: "#FCFCFC",
-    color: "#000",
-    marginRight: 1,
-    padding: 1,
-    fontWeight: 'bold',
-    paddingLeft: 5,
-    paddingRight: 5,
-    borderRadius: 3,
-    fontSize: "0.8em",
-    whiteSpace: "nowrap"
+    background: theme.palette.mode === "dark" ? "rgba(16, 185, 129, 0.15)" : "rgba(16, 185, 129, 0.1)",
+    color: "#10b981",
+    marginRight: 4,
+    padding: "2px 6px",
+    fontWeight: 700,
+    borderRadius: 6,
+    fontSize: "0.75rem",
+    whiteSpace: "nowrap",
   },
   noTicketsDiv: {
     display: "flex",
@@ -78,16 +83,14 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "1.4",
   },
   connectionTag: {
-    background: "green",
-    color: "#FFF",
-    marginRight: 1,
-    padding: 1,
-    fontWeight: 'bold',
-    paddingLeft: 5,
-    paddingRight: 5,
-    borderRadius: 3,
-    fontSize: "0.8em",
-    whiteSpace: "nowrap"
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "#10b981",
+    marginRight: 4,
+    padding: "2px 6px",
+    fontWeight: 700,
+    borderRadius: 6,
+    fontSize: "0.75rem",
+    whiteSpace: "nowrap",
   },
   noTicketsTitle: {
     textAlign: "center",
@@ -100,6 +103,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     marginLeft: "5px",
+    minWidth: 0,
   },
 
   lastMessageTime: {
@@ -107,14 +111,12 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "right",
     position: "relative",
     top: -21,
-    background: '#333333',
-    color: '#ffffff',
-    border: '1px solid #3a3b6c',
-    borderRadius: 5,
-    padding: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
-    fontSize: '0.9em',
+    background: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
+    color: theme.palette.mode === "dark" ? "#94a3b8" : "#64748b",
+    borderRadius: 6,
+    padding: "2px 6px",
+    fontSize: "0.75rem",
+    fontWeight: 500,
   },
 
   closedBadge: {
@@ -129,21 +131,91 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "5px",
   },
 
+  listItemText: {
+    minWidth: 0,
+    paddingRight: 64,
+  },
+
 
   badgeStyle: {
     color: "white",
     backgroundColor: green[500],
   },
 
-  acceptButton: {
-    position: "absolute",
-    right: "108px",
+  avatarContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    minWidth: 56,
   },
-
-
-  acceptButton: {
-    position: "absolute",
-    left: "50%",
+  actionButtonsWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 3,
+    marginTop: 4,
+    width: "100%",
+  },
+  ticketActionButtonAccept: {
+    backgroundColor: "#10b981 !important",
+    color: "#ffffff !important",
+    borderRadius: "6px !important",
+    fontSize: "0.65rem !important",
+    fontWeight: "700 !important",
+    padding: "2px 4px !important",
+    minHeight: "18px !important",
+    minWidth: "50px !important",
+    textTransform: "none !important",
+    boxShadow: "0 1px 3px rgba(16, 185, 129, 0.3) !important",
+    "&:hover": {
+      backgroundColor: "#059669 !important",
+    },
+  },
+  ticketActionButtonClose: {
+    backgroundColor: "#ef4444 !important",
+    color: "#ffffff !important",
+    borderRadius: "6px !important",
+    fontSize: "0.65rem !important",
+    fontWeight: "700 !important",
+    padding: "2px 4px !important",
+    minHeight: "18px !important",
+    minWidth: "50px !important",
+    textTransform: "none !important",
+    boxShadow: "0 1px 3px rgba(239, 68, 68, 0.3) !important",
+    "&:hover": {
+      backgroundColor: "#dc2626 !important",
+    },
+  },
+  ticketActionButtonTransfer: {
+    backgroundColor: "#1677ff !important",
+    color: "#ffffff !important",
+    borderRadius: "6px !important",
+    fontSize: "0.65rem !important",
+    fontWeight: "700 !important",
+    padding: "2px 4px !important",
+    minHeight: "18px !important",
+    minWidth: "50px !important",
+    textTransform: "none !important",
+    boxShadow: "0 1px 3px rgba(22, 119, 255, 0.3) !important",
+    "&:hover": {
+      backgroundColor: "#0284c7 !important",
+    },
+  },
+  ticketActionButtonReopen: {
+    backgroundColor: "#f59e0b !important",
+    color: "#ffffff !important",
+    borderRadius: "6px !important",
+    fontSize: "0.65rem !important",
+    fontWeight: "700 !important",
+    padding: "2px 4px !important",
+    minHeight: "18px !important",
+    minWidth: "50px !important",
+    textTransform: "none !important",
+    boxShadow: "0 1px 3px rgba(245, 158, 11, 0.3) !important",
+    "&:hover": {
+      backgroundColor: "#d97706 !important",
+    },
   },
 
 
@@ -459,37 +531,119 @@ const useStyles = makeStyles((theme) => ({
         <Tooltip arrow placement="right" title={ticket.queue?.name?.toUpperCase() || "SEM FILA"} >
           <span style={{ backgroundColor: ticket.queue?.color || "#7C7C7C" }} className={classes.ticketQueueColor}></span>
         </Tooltip>
-        <ListItemAvatar>
-          {ticket.status !== "pending" ?
-            <Avatar
-              style={{
-                marginTop: "-20px",
-                marginLeft: "-3px",
-                width: "55px",
-                height: "55px",
-                borderRadius: "10%",
-                backgroundColor: generateColor(ticket?.contact?.number),
-              }}
-              src={ticket?.contact?.profilePicUrl}>
-              {getInitials(ticket?.contact?.name || "")}
-              </Avatar>
-            :
-            <Avatar
-              style={{
-                marginTop: "-30px",
-                marginLeft: "0px",
-                width: "50px",
-                height: "50px",
-                borderRadius: "10%",
-                backgroundColor: generateColor(ticket?.contact?.number),
-              }}
-              src={ticket?.contact?.profilePicUrl}>
-              {getInitials(ticket?.contact?.name || "")}
-              </Avatar>
-          }
+        <ListItemAvatar className={classes.avatarContainer}>
+          <Avatar
+            style={{
+              width: "46px",
+              height: "46px",
+              borderRadius: "12px",
+              backgroundColor: generateColor(ticket?.contact?.number),
+            }}
+            src={ticket?.contact?.profilePicUrl}
+          >
+            {getInitials(ticket?.contact?.name || "")}
+          </Avatar>
+
+          {ticket.status === "pending" && (
+            <div className={classes.actionButtonsWrapper}>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonAccept}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleAcepptTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.accept")}
+              </ButtonWithSpinner>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonClose}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleCloseTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.closed")}
+              </ButtonWithSpinner>
+            </div>
+          )}
+
+          {ticket.status === "attending" && (
+            <div className={classes.actionButtonsWrapper}>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonAccept}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleAcepptTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.accept")}
+              </ButtonWithSpinner>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonClose}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleCloseTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.closed")}
+              </ButtonWithSpinner>
+            </div>
+          )}
+
+          {ticket.status !== "closed" && ticket.status !== "pending" && ticket.status !== "attending" && (
+            <div className={classes.actionButtonsWrapper}>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonTransfer}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleOpenTransferModal();
+                }}
+              >
+                {i18n.t("ticketsList.buttons.transfer")}
+              </ButtonWithSpinner>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonClose}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleCloseTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.closed")}
+              </ButtonWithSpinner>
+            </div>
+          )}
+
+          {ticket.status === "closed" && (
+            <div className={classes.actionButtonsWrapper}>
+              <ButtonWithSpinner
+                className={classes.ticketActionButtonReopen}
+                size="small"
+                loading={loading}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleReopenTicket(ticket.id);
+                }}
+              >
+                {i18n.t("ticketsList.buttons.reopen")}
+              </ButtonWithSpinner>
+            </div>
+          )}
         </ListItemAvatar>
         <ListItemText
           disableTypography
+          className={classes.listItemText}
 
           primary={
             <span className={classes.contactNameWrapper}>
@@ -544,7 +698,7 @@ const useStyles = makeStyles((theme) => ({
                 <span style={{ marginTop: 4, }} className={classes.secondaryContentSecond} >
                   {ticket?.whatsapp?.name ? <Badge className={classes.connectionTag}>{ticket?.whatsapp?.name?.toUpperCase()}</Badge> : <br></br>}
                   {ticketUser ? <Badge style={{ backgroundColor: "#000000" }} className={classes.connectionTag}>{ticketUser}</Badge> : <br></br>}				  
-                  <Badge style={{ backgroundColor: ticket.queue?.color || "#7c7c7c" }} className={classes.connectionTag}>{ticket.queue?.name?.toUpperCase() || "SEM FILA"}</Badge>
+                  <Badge style={{ backgroundColor: ticket.queue?.color || "#7c7c7c", color: "#ffffff" }} className={classes.connectionTag}>{ticket.queue?.name?.toUpperCase() || "SEM FILA"}</Badge>
                 </span>
 
                 {/* <span style={{ marginTop: 2, fontSize: 5 }} className={classes.secondaryContentSecond} >
@@ -600,156 +754,6 @@ const useStyles = makeStyles((theme) => ({
           )}
 
         </ListItemSecondaryAction>
-<span className={classes.secondaryContentSecond}>
-  {ticket.status === "pending" && (
-    <>
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'green',
-          color: 'white',
-          padding: '0px',
-          bottom: '17px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleAcepptTicket(ticket.id)}
-      >
-        {i18n.t("ticketsList.buttons.accept")}
-      </ButtonWithSpinner>
-
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'red',
-          color: 'white',
-          padding: '0px',
-          bottom: '0px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleCloseTicket(ticket.id)}
-      >
-        {i18n.t("ticketsList.buttons.closed")}
-      </ButtonWithSpinner>
-    </>
-  )}
-
-  {ticket.status === "attending" && (
-    <>
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'green',
-          color: 'white',
-          padding: '0px',
-          bottom: '17px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleAcepptTicket(ticket.id)}
-      >
-        {i18n.t("ticketsList.buttons.accept")}
-      </ButtonWithSpinner>
-
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'red',
-          color: 'white',
-          padding: '0px',
-          bottom: '0px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleCloseTicket(ticket.id)}
-      >
-        {i18n.t("ticketsList.buttons.closed")}
-      </ButtonWithSpinner>
-    </>
-  )}
-
-  {ticket.status !== "closed" && ticket.status !== "pending" && ticket.status !== "attending" && (
-    <>
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'blue',
-          color: 'white',
-          padding: '0px',
-          bottom: '17px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleOpenTransferModal()}
-      >
-        {i18n.t("ticketsList.buttons.transfer")}
-      </ButtonWithSpinner>
-
-      <ButtonWithSpinner
-        style={{
-          backgroundColor: 'red',
-          color: 'white',
-          padding: '0px',
-          bottom: '0px',
-          borderRadius: '0px',
-          left: '8px',
-          fontSize: '0.6rem'
-        }}
-        variant="contained"
-        className={classes.acceptButton}
-        size="small"
-        loading={loading}
-        onClick={e => handleCloseTicket(ticket.id)}
-      >
-        {i18n.t("ticketsList.buttons.closed")}
-      </ButtonWithSpinner>
-    </>
-  )}
-
-  {ticket.status === "closed" && (
-    <ButtonWithSpinner
-      style={{
-        backgroundColor: 'red',
-        color: 'white',
-        padding: '0px',
-        bottom: '0px',
-        borderRadius: '0px',
-        left: '8px',
-        fontSize: '0.6rem'
-      }}
-      variant="contained"
-      className={classes.acceptButton}
-      size="small"
-      loading={loading}
-      onClick={e => handleReopenTicket(ticket.id)}
-    >
-      {i18n.t("ticketsList.buttons.reopen")}
-    </ButtonWithSpinner>
-  )}
-</span>
-
-      
       </ListItem>
 
       <Divider variant="inset" component="li" />

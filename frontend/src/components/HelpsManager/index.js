@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-    makeStyles,
     Paper,
     Grid,
     TextField,
@@ -10,12 +9,13 @@ import {
     TableCell,
     TableRow,
     IconButton
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 import { Formik, Form, Field } from 'formik';
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import ConfirmationModal from "../ConfirmationModal";
 
-import { Edit as EditIcon } from "@material-ui/icons";
+import { Edit as EditIcon } from "@mui/icons-material";
 
 import { toast } from "react-toastify";
 import useHelps from "../../hooks/useHelps";
@@ -87,7 +87,12 @@ export function HelpManagerForm (props) {
             {(values) => (
                 <Form className={classes.fullWidth}>
                     <Grid spacing={2} justifyContent="flex-end" container>
-                        <Grid xs={12} sm={6} md={3} item>
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 6,
+                                md: 3
+                            }}>
                             <Field
                                 as={TextField}
                                 label="Título"
@@ -97,7 +102,12 @@ export function HelpManagerForm (props) {
                                 margin="dense"
                             />
                         </Grid>
-                        <Grid xs={12} sm={6} md={3} item>
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 6,
+                                md: 3
+                            }}>
                             <Field
                                 as={TextField}
                                 label="Código do Vídeo"
@@ -107,7 +117,12 @@ export function HelpManagerForm (props) {
                                 margin="dense"
                             />
                         </Grid>
-                        <Grid xs={12} sm={12} md={6} item>
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 12,
+                                md: 6
+                            }}>
                             <Field
                                 as={TextField}
                                 label="Descrição"
@@ -117,19 +132,31 @@ export function HelpManagerForm (props) {
                                 margin="dense"
                             />
                         </Grid>
-                        <Grid sm={3} md={1} item>
+                        <Grid
+                            size={{
+                                sm: 3,
+                                md: 1
+                            }}>
                             <ButtonWithSpinner className={classes.fullWidth} loading={loading} onClick={() => onCancel()} variant="contained">
                                 Limpar
                             </ButtonWithSpinner>
                         </Grid>
                         { record.id !== undefined ? (
-                            <Grid sm={3} md={1} item>
+                            <Grid
+                                size={{
+                                    sm: 3,
+                                    md: 1
+                                }}>
                                 <ButtonWithSpinner className={classes.fullWidth} loading={loading} onClick={() => onDelete(record)} variant="contained" color="secondary">
                                     Excluir
                                 </ButtonWithSpinner>
                             </Grid>
                         ) : null}
-                        <Grid sm={3} md={1} item>
+                        <Grid
+                            size={{
+                                sm: 3,
+                                md: 1
+                            }}>
                             <ButtonWithSpinner className={classes.fullWidth} loading={loading} type="submit" variant="contained" color="primary">
                                 Salvar
                             </ButtonWithSpinner>
@@ -138,7 +165,7 @@ export function HelpManagerForm (props) {
                 </Form>
             )}
         </Formik>
-    )
+    );
 }
 
 export function HelpsManagerGrid (props) {
@@ -261,7 +288,7 @@ export default function HelpsManager () {
     return (
         <Paper className={classes.mainPaper} elevation={0}>
             <Grid spacing={2} container>
-                <Grid xs={12} item>
+                <Grid size={12}>
                     <HelpManagerForm 
                         initialValue={record} 
                         onDelete={handleOpenDeleteDialog} 
@@ -270,7 +297,7 @@ export default function HelpsManager () {
                         loading={loading}
                     />
                 </Grid>
-                <Grid xs={12} item>
+                <Grid size={12}>
                     <HelpsManagerGrid 
                         records={records}
                         onSelect={handleSelect}
@@ -286,5 +313,5 @@ export default function HelpsManager () {
                 Deseja realmente excluir esse registro?
             </ConfirmationModal>
         </Paper>
-    )
+    );
 }

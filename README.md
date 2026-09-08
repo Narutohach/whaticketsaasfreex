@@ -1,147 +1,90 @@
-# WhaTicket Versão Saas com Módulo Kanban, Modo Noturno e as seguintes integrações:</br>
+# Hacto Desk
 
-🚨 Atenção: 
+Plataforma de atendimento omnichannel via WhatsApp, com Kanban, campanhas, agendamentos, chat interno e integração com agentes de IA (OpenAI e Google Gemini).
 
-Para adquirir a versão mais atualizada 6.0.0 e ter acesso a outras versões que são vendidas no mercado como bônus, acesse uma das opções de checkout a seguir:
+![Tela de login](docs/screenshots/01-login.png)
 
-InfinityPay:
-https://loja.infinitepay.io/launcher-tecnologia/aep0253-script-crm-whaticket-gold-com-saas-e-kanba
+## Principais recursos
 
-Kirvano:
-https://pay.kirvano.com/a5103244-08d5-418f-8221-7172849dd65f
+- WhatsApp Web (Baileys / QR Code) e WhatsApp Cloud API (Meta Oficial)
+- Kanban de atendimentos
+- Campanhas de disparo em massa
+- Respostas rápidas e chatbot por filas
+- Integração com prompts de IA (OpenAI e Gemini)
+- Agendamento de mensagens
+- Multiempresa com planos configuráveis
+- Dashboard e relatórios
 
-DFG:
-https://www.dfg.com.br/pt/outros/script-crm-whaticket-gold-com-saas-e-kanban-inclusos-939289065
+## Requisitos
 
-Você deve ter um usuário do Github e juntar-se à nossa organização para acesso ao diretório privado com a última versão, você receberá também as credencias do Github para instalação, usuário e token. 
-O acesso é vitalício, as credencias são periodicamente renovadas, você sempre terá a informação das novas.
+- Node.js 20+
+- PostgreSQL
+- Redis
+- Docker (opcional, recomendado para deploy)
 
-Baseado no Whaticket Gold da PLW Designer
+## Rodando com Docker
 
-Distribuido por Launcher & Co.
-
-🗣️ DialogFlow</br>
-🔄 N8N</br>
-🌐 WebHooks</br>
-🤖 TypeBot</br>
-💬 ChatGPT</br>
-
-Sugestão de VPS:
-
-BASIC: 4 vCores, 6 GB de RAM e 100 GB de SSD NVMe $4.99 USD Mensal com taxa de setup de $4.99.
-
-STANDARD: 6 vCores, 12 GB de RAM e 200 GB de SSD NVMe $9.99 USD Mensal com taxa de setup de $5.99.
-
-Utilize o cupom WHATICKET e obtenha 25% de desconto no primeiro pagamento.
-
-```
-https://control.peramix.com/?affid=14
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.local.yaml up -d
 ```
 
-VPS 1000 G11: 4 vCores, 8 GB de RAM e 256 GB de SSD NVMe €5.75 Mensal.
+## Estrutura do projeto
 
-VPS 2000 G11: 8 vCores, 16 GB de RAM e 512 GB de SSD NVMe €12.60 USD Mensal.
+- `backend/` — API Node.js/TypeScript (Express, Sequelize, Baileys)
+- `frontend/` — Aplicação React (Material-UI)
 
-https://www.netcup.com/en/?ref=257888
+## Capturas de tela
 
-Voucher de 5 euros:
+### Dashboard
 
-```
-36nc17424834870
-```
-```
-36nc17415489990
-```
-```
-36nc17424834870
-```
-```
-36nc17415489990
-```
+Visão geral de conexões ativas, tickets, contatos e tempo médio de atendimento.
 
-Arquivos para Docker em https://github.com/launcherbr/whaticketdocker
+![Dashboard](docs/screenshots/02-dashboard.png)
 
-⚠️ Este diretório é uma cortesia da Launcher & Co. se você pagou por este acesso, foi enganado, recomendamos solicitar o estorno no seu cartão de crédito ou no seu banco.
+### Atendimentos
 
-📅 16/04/2025 – Versão 6.0.0 - Versão Paga
+Inbox omnichannel com filas, transferência e finalização de tickets.
 
-🌑 Correções no Darkmode (dentro das mensagens)</br>
-🔄 Botão Light/Dark movido (está no perfil)</br>
-📊 Estilos dos cards da Dashboard alterados (removido botão de impressão)</br>
-🎟️ Estilo de ticket alterado</br>
-⚡ Respostas rápidas (layout novo)</br>
-📂 Correção no envio de menu (filas) – na 3ª tentativa, é enviado automaticamente para a 1ª fila</br>
-🌍 Botão de tradução</br>
-⚠️ Aviso de contato (caso o ticket esteja aberto, é emitido um aviso)</br>
-🔧 Página de conexão reformulada</br>
-👑 Adicionada opção de SuperAdmin (dentro do popup do usuário)</br>
-📆 Correção no agendamento (agora envia imagem com texto)</br>
-♻️ Agendamento reformulado (com suporte a ciclos)</br> 
-🔐 Novo layout da tela de login</br>
-📝 Novo layout da tela de signup</br>
-🛠️ Correção de vazamento no WebSocket</br>
+![Atendimentos](docs/screenshots/03-atendimentos.png)
 
-📅 13/12/2024 – Versão 5.5.0
+### Conexões
 
-🛠️ Correção ao redimensionar área de ticket</br>
-✅ Validação de número no ContactModal</br>
-🔄 Regressão OpenAI para versão 3.3.0 e wbotMessageListener.ts</br>
-🎧 Áudio no iPhone</br>
-📵 Recusando chamadas automaticamente</br>
-📲 Filas da conexão ao requisitar novo QR Code</br>
-📊 Dashboard reformulado</br>
-📈 Página de relatórios</br>
-🗂️ Kanban reformulado</br>
+Gerenciamento de números conectados via WhatsApp Web ou Cloud API.
 
-📅 07/11/2024 – Versão 5.3.5
+![Conexões](docs/screenshots/04-conexoes.png)
 
-📅 Correção da Data de Vencimento no Topo: Data agora permanece fixa. </br>
-🔄 Automação em Grupos: Não envia automações para grupos. </br>
-🚫 Botão disableBot: Desabilita bots ou automações. </br>
-✉️ Correção de Mensagem Citada. </br>
-🔗 Permissão para Conexões com Mesmo Nome. </br>
-⏳ Expiração de Conexões: Desconexão automática após vencimento da empresa. </br>
-🗑️ Seleção para Deletar Contatos: Opção de seleção para exclusão na página “Contatos”. </br>
-🎵 Correção no Envio de Áudio OGG em respostas rápidas. </br>
-📂 Visualização de Tickets Fechados por Operador: Aba removida do painel de usuários. </br>
-📜 Visualização de Grupos por Operador: Aba removida do painel de usuários. </br>
-💸 Atualização Financeira após Alteração de Plano: Valor ajustado automaticamente na lista do Financeiro. </br>
+### Kanban
 
-24/07/2024 – Versão 5.2.6 = Versão Gratuita
+Organização visual dos atendimentos por etapa.
 
-✅ Fechar todos os tickets abertos ou em espera. </br>
-👍 Reagir a uma mensagem. </br>
-🔄 Encaminhar mensagens para outro ticket. </br>
-🎨 Aparência do menu aprimorada. </br>
-🚪 Botão “Sair” adicionado ao menu. </br>
-🗑️ Notificação quando uma mensagem é apagada no WhatsApp, informando no chat. </br>
-🔄 API atualizada. </br>
-🆕 Novo layout da página de login. </br>
-💬 Indicação “Digitando” ou “Gravando” aparece no ticket, no canto inferior direito, ao lado do nome. </br>
+![Kanban](docs/screenshots/05-kanban.png)
 
-Biblioteca Baileys Atualizada:</br>
+### Contatos
 
-V 6.7.16
+Base de contatos com histórico de interação e status.
 
-Instalador atualizado, versao NodeJS 20:
+![Contatos](docs/screenshots/06-contatos.png)
 
-https://github.com/launcherbr/instalador.git
+### Filas & Chatbot
 
-Arquivos para gerar imagem docker:
+Configuração de filas de atendimento e fluxo automático do chatbot.
 
-https://github.com/launcherbr/whaticketdocker
+![Filas](docs/screenshots/07-filas.png)
 
-Notas Rápidas: </br>
-Requer servidor Ubuntu 20.04 LTS com ao menos 4 vcore e 8gb de ram.</br>
-Recomendamos Peramix, Contabo, e Hetzner</br>
-Não recomendamos Hostinger, Hostgator e Locaweb.</br>
-Evite latencia muito baixa e muito alta (servidor local e servidores na Europa)</br>
+### IA (OpenAI/Gemini)
 
-Siga o arquivo de Instruções para instalação:</br>
-https://drive.google.com/drive/folders/1KfRvnsT7YF3Vj5ROXGS3ZsIdfWjV1023?usp=sharing
+Cadastro de prompts de IA, com escolha de provedor (OpenAI ou Google Gemini) e modelo.
 
-Confira no pdf aqui como gerar um webhook de retorno automático de pagamento da Efi.</br>
-https://drive.google.com/file/d/1Kjd-9NurK-7gw7_22-uIsZoB0MZ74YFp/view?usp=drive_link
+![IA](docs/screenshots/08-ia-prompts.png)
 
-Personalizações:</br>
-As instruções para alteração de cores, logo, icones e nome da instalação estão no arquivo de instruções.
+### Respostas Rápidas
+
+Atalhos de texto para agilizar o atendimento.
+
+![Respostas Rápidas](docs/screenshots/09-respostas-rapidas.png)
+
+### Agendamentos
+
+Calendário de mensagens agendadas.
+
+![Agendamentos](docs/screenshots/10-agendamentos.png)

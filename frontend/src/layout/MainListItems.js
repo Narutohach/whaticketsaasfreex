@@ -1,71 +1,122 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
+import clsx from "clsx";
 
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Divider from "@material-ui/core/Divider";
-import { Badge, Collapse, List } from "@material-ui/core";
-import DashboardOutlinedIcon from "@material-ui/icons/DashboardOutlined";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import SyncAltIcon from "@material-ui/icons/SyncAlt";
-import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
-import AutorenewIcon from '@material-ui/icons/Autorenew';
-import SearchIcon from '@material-ui/icons/Search';
-import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
-import ContactPhoneOutlinedIcon from "@material-ui/icons/ContactPhoneOutlined";
-import AccountTreeOutlinedIcon from "@material-ui/icons/AccountTreeOutlined";
-import FlashOnIcon from "@material-ui/icons/FlashOn";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import CodeRoundedIcon from "@material-ui/icons/CodeRounded";
-import EventIcon from "@material-ui/icons/Event";
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import EventAvailableIcon from "@material-ui/icons/EventAvailable";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import PeopleIcon from "@material-ui/icons/People";
-import ListIcon from "@material-ui/icons/ListAlt";
-import AnnouncementIcon from "@material-ui/icons/Announcement";
-import ForumIcon from "@material-ui/icons/Forum";
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
-import RotateRight from "@material-ui/icons/RotateRight";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import Divider from "@mui/material/Divider";
+import { Badge, Collapse, List } from "@mui/material";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import SearchIcon from '@mui/icons-material/Search';
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import ContactPhoneOutlinedIcon from "@mui/icons-material/ContactPhoneOutlined";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutlineOutlined";
+import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
+import EventIcon from "@mui/icons-material/Event";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import PeopleIcon from "@mui/icons-material/People";
+import ListIcon from "@mui/icons-material/ListAlt";
+import AnnouncementIcon from "@mui/icons-material/Announcement";
+import ForumIcon from "@mui/icons-material/Forum";
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import RotateRight from "@mui/icons-material/RotateRight";
 import { i18n } from "../translate/i18n";
 import { WhatsAppsContext } from "../context/WhatsApp/WhatsAppsContext";
 import { AuthContext } from "../context/Auth/AuthContext";
-import LoyaltyRoundedIcon from '@material-ui/icons/LoyaltyRounded';
+import LoyaltyRoundedIcon from '@mui/icons-material/LoyaltyRounded';
 import { Can } from "../components/Can";
 import { SocketContext } from "../context/Socket/SocketContext";
 import { isArray } from "lodash";
-import TableChartIcon from '@material-ui/icons/TableChart';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import api from "../services/api";
-import BorderColorIcon from '@material-ui/icons/BorderColor';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ToDoList from "../pages/ToDoList/";
 import toastError from "../errors/toastError";
-import { makeStyles } from "@material-ui/core/styles";
-import { AllInclusive, AttachFile, BlurCircular, Description, DeviceHubOutlined, Schedule } from '@material-ui/icons';
+import { makeStyles } from "../styles/makeStyles";
+import { AllInclusive, AttachFile, BlurCircular, Description, DeviceHubOutlined, Schedule } from '@mui/icons-material';
 import usePlans from "../hooks/usePlans";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import useVersion from "../hooks/useVersion";
-import LogLauncher from "../pages/LogLauncher";
 
 const useStyles = makeStyles((theme) => ({
   ListSubheader: {
-    height: 26,
-    marginTop: "-15px",
-    marginBottom: "-10px",
+    height: "auto",
+    padding: "16px 16px 4px 16px",
+    fontFamily: "'Inter', sans-serif",
+    fontSize: "0.68rem",
+    fontWeight: 800,
+    letterSpacing: "1.2px",
+    textTransform: "uppercase",
+    color: theme.palette.mode === "light" ? "#94a3b8" : "#64748b",
+    backgroundColor: "transparent",
+    lineHeight: "1.4",
   },
-    logoutButton: {
+  menuItem: {
     borderRadius: 10,
-    marginTop: 10,
-    backgroundColor: theme.palette.sair.main,
-    color: theme.palette.text.sair,
-	},
+    margin: "2px 8px",
+    padding: "7px 12px",
+    color: theme.palette.mode === "light" ? "#334155" : "#cbd5e1",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.12)",
+      color: "#10b981",
+      transform: "translateX(3px)",
+    },
+  },
+  menuItemActive: {
+    backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.12)" : "rgba(16, 185, 129, 0.18)",
+    color: "#10b981 !important",
+    fontWeight: 700,
+    boxShadow: "inset 3px 0 0 #10b981",
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.22)",
+    },
+  },
+  menuIcon: {
+    minWidth: 36,
+    color: theme.palette.mode === "light" ? "#64748b" : "#94a3b8",
+    transition: "color 0.2s ease",
+  },
+  menuIconActive: {
+    color: "#10b981 !important",
+  },
+  menuText: {
+    fontSize: "0.88rem",
+    fontWeight: 500,
+  },
+  menuTextActive: {
+    fontWeight: 700,
+    color: "#10b981",
+  },
+  logoutButton: {
+    borderRadius: 10,
+    margin: "8px 8px",
+    backgroundColor: "rgba(239, 68, 68, 0.08)",
+    color: "#ef4444",
+    transition: "all 0.2s ease",
+    "&:hover": {
+      backgroundColor: "rgba(239, 68, 68, 0.16)",
+      color: "#dc2626",
+      transform: "translateX(3px)",
+    },
+  },
 }));
-
 
 function ListItemLink(props) {
   const { icon, primary, to, className } = props;
+  const location = useLocation();
+  const isActive = location.pathname === to;
+  const classes = useStyles();
 
   const renderLink = React.useMemo(
     () =>
@@ -77,9 +128,19 @@ function ListItemLink(props) {
 
   return (
     <li>
-      <ListItem button dense component={renderLink} className={className}>
-        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-        <ListItemText primary={primary} />
+      <ListItem
+        button
+        dense
+        component={renderLink}
+        className={clsx(classes.menuItem, isActive && classes.menuItemActive, className)}
+      >
+        {icon ? <ListItemIcon className={clsx(classes.menuIcon, isActive && classes.menuIconActive)}>{icon}</ListItemIcon> : null}
+        <ListItemText
+          primary={primary}
+          classes={{
+            primary: clsx(classes.menuText, isActive && classes.menuTextActive)
+          }}
+        />
       </ListItem>
     </li>
   );
@@ -303,15 +364,10 @@ const MainListItems = (props) => {
           <>
             <ListSubheader
               hidden={collapsed}
-              style={{
-                position: "relative",
-                fontSize: "17px",
-                textAlign: "left",
-                paddingLeft: 20
-              }}
+              className={classes.ListSubheader}
               inset
               color="inherit">
-              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Atendimento")} </Typography>
+              {i18n.t("Atendimento")}
             </ListSubheader>
             <>
 
@@ -386,16 +442,10 @@ const MainListItems = (props) => {
           <>
             <ListSubheader
               hidden={collapsed}
-              style={{
-                position: "relative",
-                fontSize: "17px",
-                textAlign: "left",
-                paddingLeft: 20
-              }}
+              className={classes.ListSubheader}
               inset
               color="inherit">
-
-              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Gerência")} </Typography>
+              {i18n.t("Gerência")}
             </ListSubheader>
 
             <ListItemLink
@@ -424,15 +474,10 @@ const MainListItems = (props) => {
               <>
                 <ListSubheader
                   hidden={collapsed}
-                  style={{
-                    position: "relative",
-                    fontSize: "17px",
-                    textAlign: "left",
-                    paddingLeft: 20
-                  }}
+                  className={classes.ListSubheader}
                   inset
                   color="inherit">
-                  <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Campanhas")} </Typography>
+                  {i18n.t("Campanhas")}
                 </ListSubheader>
 
                 <ListItemLink
@@ -518,15 +563,10 @@ const MainListItems = (props) => {
 
             <ListSubheader
               hidden={collapsed}
-              style={{
-                position: "relative",
-                fontSize: "17px",
-                textAlign: "left",
-                paddingLeft: 20
-              }}
+              className={classes.ListSubheader}
               inset
               color="inherit">
-              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Administração")} </Typography>
+              {i18n.t("Administração")}
             </ListSubheader>
 
             {user.super && (
@@ -601,26 +641,13 @@ const MainListItems = (props) => {
 		{user.super && (	
 			<ListSubheader
               hidden={collapsed}
-              style={{
-                position: "relative",
-                fontSize: "17px",
-                textAlign: "left",
-                paddingLeft: 20
-              }}
+              className={classes.ListSubheader}
               inset
               color="inherit">
-              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Sistema")} </Typography>
+              {i18n.t("Sistema")}
             </ListSubheader>
 			)}
-			{user.super && (
-			<ListItemLink
-              to="/LogLauncher"
-              primary={i18n.t("mainDrawer.listItems.LogLauncher")}
-              icon={<AutorenewIcon />}
-            />
-			)}
-			
-			
+
             {!collapsed && (
               <React.Fragment>
                 <Divider />

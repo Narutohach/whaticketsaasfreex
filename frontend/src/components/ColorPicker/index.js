@@ -1,13 +1,12 @@
-import { Dialog } from "@material-ui/core";
+import { Button, Dialog, DialogActions, DialogContent, Grid } from "@mui/material";
 import React, { useState } from "react";
-
-import { BlockPicker } from "react-color";
 
 const ColorPicker = ({ onChange, currentColor, handleClose, open }) => {
 	const [selectedColor, setSelectedColor] = useState(currentColor);
 
 	const handleChange = color => {
 		setSelectedColor(color.hex);
+		onChange(color.hex);
 		handleClose();
 	};
 
@@ -65,21 +64,44 @@ const ColorPicker = ({ onChange, currentColor, handleClose, open }) => {
 	];
 
 	return (
-		<Dialog
+        <Dialog
 			onClose={handleClose}
 			aria-labelledby="simple-dialog-title"
 			open={open}
 		>
-			<BlockPicker
-				width={"100%"}
-				triangle="hide"
-				color={selectedColor}
-				colors={colors}
-				onChange={handleChange}
-				onChangeComplete={color => onChange(color.hex)}
-			/>
-		</Dialog>
-	);
+            <DialogContent>
+				<Grid container spacing={1} sx={{ width: 280 }}>
+					{colors.map(color => (
+						<Grid key={color}>
+							<button
+								type="button"
+								aria-label={`Selecionar cor ${color}`}
+								onClick={() => handleChange({ hex: color })}
+								style={{
+									width: 28,
+									height: 28,
+									borderRadius: 6,
+									border: selectedColor === color ? '3px solid #0f172a' : '1px solid rgba(15, 23, 42, .18)',
+									backgroundColor: color,
+									cursor: 'pointer',
+								}}
+							/>
+						</Grid>
+					))}
+				</Grid>
+				<input
+					type="color"
+					value={selectedColor || '#10b981'}
+					onChange={event => handleChange({ hex: event.target.value })}
+					aria-label="Escolher uma cor personalizada"
+					style={{ display: 'block', width: '100%', height: 42, marginTop: 16, cursor: 'pointer' }}
+				/>
+			</DialogContent>
+            <DialogActions>
+				<Button onClick={handleClose}>Cancelar</Button>
+			</DialogActions>
+        </Dialog>
+    );
 };
 
 export default ColorPicker;

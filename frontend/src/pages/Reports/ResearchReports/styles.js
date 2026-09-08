@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import { styled } from '@mui/material/styles';
 
-export const FiltersContainer = styled.div`
+export const FiltersContainer = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

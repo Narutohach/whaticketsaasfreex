@@ -5,20 +5,20 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 
-import { Box } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
-import { ChevronLeft } from '@material-ui/icons'; 
-import InfoIcon from '@material-ui/icons/Info';
-import PdfIcon from '@material-ui/icons/PictureAsPdf';
+import { Box } from '@mui/material';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import { makeStyles } from "../../../styles/makeStyles";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import { ChevronLeft } from '@mui/icons-material'; 
+import InfoIcon from '@mui/icons-material/Info';
+import PdfIcon from '@mui/icons-material/PictureAsPdf';
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 

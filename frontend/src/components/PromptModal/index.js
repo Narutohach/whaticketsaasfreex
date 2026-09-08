@@ -4,19 +4,19 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import CircularProgress from "@mui/material/CircularProgress";
 import { i18n } from "../../translate/i18n";
-import { MenuItem, FormControl, InputLabel, Select } from "@material-ui/core";
-import { Visibility, VisibilityOff } from "@material-ui/icons";
-import { InputAdornment, IconButton } from "@material-ui/core";
+import { MenuItem, FormControl, InputLabel, Select } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { InputAdornment, IconButton } from "@mui/material";
 import QueueSelectSingle from "../../components/QueueSelectSingle";
 
 import api from "../../services/api";
@@ -79,6 +79,8 @@ const PromptModal = ({ open, onClose, promptId }) => {
     const initialState = {
         name: "",
         prompt: "",
+        provider: "openai",
+        model: "gpt-4o-mini",
         voice: "texto",
         voiceKey: "",
         voiceRegion: "",
@@ -164,7 +166,7 @@ const PromptModal = ({ open, onClose, promptId }) => {
                         }, 400);
                     }}
                 >
-                    {({ touched, errors, isSubmitting, values }) => (
+                    {({ touched, errors, isSubmitting, values, setFieldValue }) => (
                         <Form style={{ width: "100%" }}>
                             <DialogContent dividers>
                                 <Field
@@ -173,6 +175,70 @@ const PromptModal = ({ open, onClose, promptId }) => {
                                     name="name"
                                     error={touched.name && Boolean(errors.name)}
                                     helperText={touched.name && errors.name}
+                                    variant="outlined"
+                                    margin="dense"
+                                    fullWidth
+                                />
+                                <div className={classes.multFieldLine}>
+                                    <FormControl fullWidth margin="dense" variant="outlined">
+                                        <InputLabel>Provedor de IA</InputLabel>
+                                        <Select
+                                            label="Provedor de IA"
+                                            name="provider"
+                                            value={values.provider || "openai"}
+                                            onChange={(e) => {
+                                                const prov = e.target.value;
+                                                setFieldValue("provider", prov);
+                                                setFieldValue("model", prov === "gemini" ? "gemini-3.8-flash" : "gpt-4o-mini");
+                                            }}
+                                        >
+                                            <MenuItem value="openai">OpenAI (ChatGPT)</MenuItem>
+                                            <MenuItem value="gemini">Google Gemini</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl fullWidth margin="dense" variant="outlined">
+                                        <InputLabel>Modelo Pré-definido</InputLabel>
+                                        <Select
+                                            label="Modelo Pré-definido"
+                                            value={
+                                                (values.provider === "gemini"
+                                                    ? ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-2.5-pro", "gemini-3.5-flash-lite"].includes(values.model)
+                                                    : ["gpt-4o-mini", "gpt-4o", "gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol"].includes(values.model))
+                                                    ? values.model
+                                                    : "custom"
+                                            }
+                                            onChange={(e) => {
+                                                const selected = e.target.value;
+                                                if (selected !== "custom") {
+                                                    setFieldValue("model", selected);
+                                                } else {
+                                                    setFieldValue("model", "");
+                                                }
+                                            }}
+                                        >
+                                            {(values.provider === "gemini") ? [
+                                                <MenuItem key="gemini-3.8-flash" value="gemini-3.8-flash">Gemini 3.8 Flash (Mais Recente)</MenuItem>,
+                                                <MenuItem key="gemini-3.7-flash" value="gemini-3.7-flash">Gemini 3.7 Flash (Estável)</MenuItem>,
+                                                <MenuItem key="gemini-2.5-pro" value="gemini-2.5-pro">Gemini 2.5 Pro (Alta Precisão)</MenuItem>,
+                                                <MenuItem key="gemini-3.5-flash-lite" value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite (Econômico)</MenuItem>,
+                                                <MenuItem key="custom-gemini" value="custom">Outro Modelo Gemini (Digitar manualmente)</MenuItem>
+                                            ] : [
+                                                <MenuItem key="gpt-4o-mini" value="gpt-4o-mini">GPT-4o Mini (Recomendado)</MenuItem>,
+                                                <MenuItem key="gpt-4o" value="gpt-4o">GPT-4o (Multimodal)</MenuItem>,
+                                                <MenuItem key="gpt-5.6-luna" value="gpt-5.6-luna">GPT-5.6 Luna (Econômico)</MenuItem>,
+                                                <MenuItem key="gpt-5.6-terra" value="gpt-5.6-terra">GPT-5.6 Terra (Equilibrado)</MenuItem>,
+                                                <MenuItem key="gpt-5.6-sol" value="gpt-5.6-sol">GPT-5.6 Sol (Alta Capacidade / Raciocínio)</MenuItem>,
+                                                <MenuItem key="custom-openai" value="custom">Outro Modelo OpenAI (Digitar manualmente)</MenuItem>
+                                            ]}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <Field
+                                    as={TextField}
+                                    label="Identificador Exato do Modelo de IA"
+                                    name="model"
+                                    placeholder={values.provider === "gemini" ? "Ex: gemini-3.8-flash, gemini-2.5-pro" : "Ex: gpt-4o-mini, gpt-5.6-terra"}
+                                    helperText="Você pode usar qualquer modelo suportado pelo provedor configurado acima."
                                     variant="outlined"
                                     margin="dense"
                                     fullWidth
@@ -214,12 +280,13 @@ const PromptModal = ({ open, onClose, promptId }) => {
                                 <QueueSelectSingle />
                                 <div className={classes.multFieldLine}>
                                     <FormControl fullWidth margin="dense" variant="outlined">
-                                    <InputLabel>{i18n.t("promptModal.form.voice")}</InputLabel>
+                                    <InputLabel id="voice-select-label">{i18n.t("promptModal.form.voice")}</InputLabel>
                                         <Select
                                             id="type-select"
-                                            labelWidth={60}
+                                            label={i18n.t("promptModal.form.voice")}
+                                            labelId="voice-select-label"
                                             name="voice"
-                                            value={selectedVoice}
+                                            value={selectedVoice ?? ""}
                                             onChange={handleChangeVoice}
                                             multiple={false}
                                         >

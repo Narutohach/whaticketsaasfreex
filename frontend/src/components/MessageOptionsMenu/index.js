@@ -1,12 +1,13 @@
 import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 
-import AddCircleOutlineIcon from '@material-ui/icons/Add';
+import AddCircleOutlineIcon from '@mui/icons-material/Add';
 
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import ConfirmationModal from "../ConfirmationModal";
-import { Menu, MenuItem, MenuList, Grid, Popover, IconButton, makeStyles } from "@material-ui/core";
+import { Menu, MenuItem, MenuList, Grid, Popover, IconButton } from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 import { ReplyMessageContext } from "../../context/ReplyingMessage/ReplyingMessageContext";
 import EditMessageModal from "../EditMessageModal";
 import { ForwardMessageContext } from "../../context/ForwarMessage/ForwardMessageContext";
@@ -144,8 +145,8 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 	};
 
 	return (
-		<>
-			<ForwardModal
+        <>
+            <ForwardModal
 			modalOpen={forwardMessageModalOpen}
 			messages={selectedMessages}
 			onClose={(e) => {
@@ -153,7 +154,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 				setShowSelectMessageCheckbox(false);
 			}}
 				/>
-			<ConfirmationModal
+            <ConfirmationModal
 				title={i18n.t("messageOptionsMenu.confirmationModal.title")}
 				open={confirmationOpen}
 				onClose={setConfirmationOpen}
@@ -161,7 +162,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 			>
 				{i18n.t("messageOptionsMenu.confirmationModal.message")}
 			</ConfirmationModal>
-			<EditMessageModal
+            <EditMessageModal
 				title={i18n.t("messageOptionsMenu.editMessageModal.title")}
 				open={confirmationEditOpen}
 				onClose={setEditMessageOpenModal}
@@ -170,7 +171,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 			>
 				{i18n.t("messageOptionsMenu.confirmationModal.message")}
 			</EditMessageModal>
-			<Menu
+            <Menu
 				anchorEl={anchorEl}
 				getContentAnchorEl={null}
 				anchorOrigin={{
@@ -204,7 +205,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 				{i18n.t("messageOptionsMenu.react")}
 				</MenuItem>
 			</Menu>
-			<Popover
+            <Popover
 					open={Boolean(reactionAnchorEl)}
 					anchorEl={reactionAnchorEl}
 					onClose={closeReactionsMenu}
@@ -223,13 +224,13 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 					<div className={classes.hideScrollbar}>
 					<Grid container spacing={1} className={classes.gridContainer}>
 						{availableReactions.slice(0, 6).map(reaction => (
-							<Grid item key={reaction}>
+							<Grid key={reaction}>
 								<IconButton className={classes.iconButton} onClick={() => handleReactToMessage(reaction)}>
 									{reaction}
 								</IconButton>
 							</Grid>
 						))}
-						<Grid item>
+						<Grid>
 						<IconButton className={classes.addCircleButton} onClick={openMoreReactionsMenu}>
 								<AddCircleOutlineIcon fontSize="normal" />
 							</IconButton>
@@ -237,36 +238,36 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
 					</Grid>
 					</div>
 				</Popover>
-				<Popover
-					open={Boolean(moreAnchorEl)}
-					anchorEl={moreAnchorEl}
-					onClose={closeMoreReactionsMenu}
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'center',
-					}}
-					transformOrigin={{
-						vertical: 'top',
-						horizontal: 'center',
-					}}
-					PaperProps={{
-						style: { width: 'auto', maxWidth: '400px', borderRadius: '6px' }
-					}}
-				>
-					<div className={classes.popoverContent}>
-					<Grid container spacing={1} className={classes.gridContainer}>
-						{availableReactions.map(reaction => (
-							<Grid item key={reaction}>
-								<IconButton className={classes.iconButton} onClick={() => handleReactToMessage(reaction)}>
-									{reaction}
-								</IconButton>
-							</Grid>
-						))}
-					</Grid>
-					</div>
-				</Popover>
-		</>
-	);
+            <Popover
+                open={Boolean(moreAnchorEl)}
+                anchorEl={moreAnchorEl}
+                onClose={closeMoreReactionsMenu}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                PaperProps={{
+                    style: { width: 'auto', maxWidth: '400px', borderRadius: '6px' }
+                }}
+            >
+                <div className={classes.popoverContent}>
+                <Grid container spacing={1} className={classes.gridContainer}>
+                    {availableReactions.map(reaction => (
+                        <Grid key={reaction}>
+                            <IconButton className={classes.iconButton} onClick={() => handleReactToMessage(reaction)}>
+                                {reaction}
+                            </IconButton>
+                        </Grid>
+                    ))}
+                </Grid>
+                </div>
+            </Popover>
+        </>
+    );
 };
 
 MessageOptionsMenu.propTypes = {

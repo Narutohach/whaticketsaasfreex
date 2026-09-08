@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from "@mui/material/Paper";
 
 import { i18n } from "../../translate/i18n";
-import { Button, CircularProgress, Grid, TextField, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Grid, TextField, Typography } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import toastError from "../../errors/toastError";
 import { toast } from "react-toastify";
@@ -119,7 +119,11 @@ const MessagesAPI = () => {
         {({ isSubmitting }) => (
           <Form className={classes.formContainer}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Field
                   as={TextField}
                   label={i18n.t("messagesAPI.textMessage.token")}
@@ -132,7 +136,11 @@ const MessagesAPI = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Field
                   as={TextField}
                   label={i18n.t("messagesAPI.textMessage.number")}
@@ -145,7 +153,7 @@ const MessagesAPI = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Field
                   as={TextField}
                   label={i18n.t("messagesAPI.textMessage.body")}
@@ -158,7 +166,7 @@ const MessagesAPI = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12} className={classes.textRight}>
+              <Grid className={classes.textRight} size={12}>
                 <Button
                   type="submit"
                   color="primary"
@@ -177,7 +185,7 @@ const MessagesAPI = () => {
           </Form>
         )}
       </Formik>
-    )
+    );
   }
 
   const renderFormMessageMedia = () => {
@@ -199,7 +207,11 @@ const MessagesAPI = () => {
         {({ isSubmitting }) => (
           <Form className={classes.formContainer}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Field
                   as={TextField}
                   label={i18n.t("messagesAPI.mediaMessage.token")}
@@ -212,7 +224,11 @@ const MessagesAPI = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Field
                   as={TextField}
                   label={i18n.t("messagesAPI.mediaMessage.number")}
@@ -225,10 +241,10 @@ const MessagesAPI = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <input type="file" name="medias" id="medias" required onChange={(e) => setFile(e.target.files)} />
               </Grid>
-              <Grid item xs={12} className={classes.textRight}>
+              <Grid className={classes.textRight} size={12}>
                 <Button
                   type="submit"
                   color="primary"
@@ -247,7 +263,7 @@ const MessagesAPI = () => {
           </Form>
         )}
       </Formik>
-    )
+    );
   }
 
   return (
@@ -290,7 +306,11 @@ const MessagesAPI = () => {
         1. Mensagens de Texto
       </Typography>
       <Grid container>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography className={classes.elementMargin} component="div">
             <p>Seguem abaixo a lista de informações necessárias para envio das mensagens de texto:</p>
             <b>Endpoint: </b> {getEndpoint()} <br />
@@ -299,7 +319,11 @@ const MessagesAPI = () => {
             <b>Body: </b> {"{ \"number\": \"595985523065\", \"body\": \"Sua mensagem\" }"}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography className={classes.elementMargin}>
             <b>Teste de Envio</b>
           </Typography>
@@ -310,7 +334,11 @@ const MessagesAPI = () => {
         2. Mensagens de Media
       </Typography>
       <Grid container>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography className={classes.elementMargin} component="div">
             <p>Seguem abaixo a lista de informações necessárias para envio das mensagens de texto:</p>
             <b>Endpoint: </b> {getEndpoint()} <br />
@@ -327,7 +355,11 @@ const MessagesAPI = () => {
             </ul>
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography className={classes.elementMargin}>
             <b>Teste de Envio</b>
           </Typography>

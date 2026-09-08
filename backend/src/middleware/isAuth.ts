@@ -9,6 +9,7 @@ interface TokenPayload {
   username: string;
   profile: string;
   companyId: number;
+  super?: boolean;
   iat: number;
   exp: number;
 }
@@ -24,11 +25,12 @@ const isAuth = (req: Request, res: Response, next: NextFunction): void => {
 
   try {
     const decoded = verify(token, authConfig.secret);
-    const { id, profile, companyId } = decoded as TokenPayload;
+    const { id, profile, companyId, super: isSuper } = decoded as TokenPayload;
     req.user = {
       id,
       profile,
-      companyId
+      companyId,
+      super: !!isSuper
     };
   } catch (err) {
     throw new AppError("Invalid token. We'll try to assign a new one on next request", 403 );

@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Avatar, Card, CardHeader, Typography } from "@material-ui/core";
-import Skeleton from "@material-ui/lab/Skeleton";
+import { Avatar, Card, CardHeader, Typography } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { grey } from '@material-ui/core/colors';
+import { makeStyles } from "../../styles/makeStyles";
+import { grey } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => ({
 	cardAvatar: {

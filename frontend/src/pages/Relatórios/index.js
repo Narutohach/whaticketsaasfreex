@@ -10,9 +10,9 @@ import {
   TableCell,
   TableBody,
   Table,
-  makeStyles,
   Badge,
-} from '@material-ui/core'
+} from '@mui/material'
+import { makeStyles } from "../../styles/makeStyles";
 // import Table from "@mui/material/Table";
 // import TableBody from "@mui/material/TableBody";
 // import TableCell from "@mui/material/TableCell";
@@ -45,17 +45,17 @@ import moment from "moment";
 // ShowTicketLogModal from "../../components/ShowTicketLogModal";
 
 import { blue, green } from "@mui/material/colors";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Facebook, Forward, History, Instagram, SaveAlt, Visibility, WhatsApp } from "@mui/icons-material";
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import ContactModal from "../../components/ContactModal";
-import { red } from "@material-ui/core/colors";
+import { red } from "@mui/material/colors";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { isArray, capitalize } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
-    background: 'linear-gradient(to bottom, #e0f7fa, #fff)', // Gradiente de fundo suave
+    backgroundColor: theme.palette.background.default,
     padding: '20px',
   },
   formControl: {
@@ -69,18 +69,18 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
     marginTop: 40,
     borderRadius: 20,
-    border: '1px solid #ddd', // Bordas suaves
+    border: `1px solid ${theme.palette.bordabox}`,
     boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Sombra suave
     marginBottom: 40,
     overflow: 'hidden',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.palette.fancyBackground,
   },
   mainPaperTable: {
     flex: 1,
     overflow: 'auto',
     height: '68vh',
     borderRadius: '10px',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.palette.optionsBackground,
     boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)', // Sombra leve
     ...theme.scrollbarStylesSoftBig,
   },
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     height: '30vh',
     padding: '20px', // Adicionando padding interno
-    backgroundColor: '#f1f3f4',
+    backgroundColor: theme.palette.fancyBackground,
     borderRadius: '10px',
     boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
     ...theme.scrollbarStylesSoftBig,
@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '10px', // Espaçamento entre filtros
   },
   connectionTag: {
-    background: '#4caf50',
+    background: '#059669',
     color: '#FFF',
     padding: '5px 10px',
     fontWeight: 'bold',
@@ -117,18 +117,18 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
   },
   button: {
-    backgroundColor: '#1976d2', // Azul material design
+    backgroundColor: '#059669',
     color: '#fff',
     '&:hover': {
-      backgroundColor: '#1565c0', // Azul escuro no hover
+      backgroundColor: '#047857',
     },
     margin: '5px', // Espaçamento entre botões
     boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)', // Sombra leve
   },
   iconButton: {
-    color: '#4caf50', // Verde no ícone
+    color: '#059669',
     '&:hover': {
-      color: '#388e3c', // Verde mais escuro no hover
+      color: '#047857',
     },
     transition: 'color 0.3s ease', // Transição suave de cor
   },
@@ -364,8 +364,6 @@ const Relatorios = () => {
   };
 
   return (
-
-
     <MainContainer className={classes.mainContainer}>
 
       <Title>{i18n.t("reports.title")}</Title>
@@ -374,7 +372,12 @@ const Relatorios = () => {
         <Paper className={classes.mainPaperFilter}>
           <div style={{ paddingTop: '15px' }} />
           <Grid container spacing={1}>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+                xl: 3
+              }}>
             <FormControl
 										variant="outlined"
 										fullWidth
@@ -395,26 +398,52 @@ const Relatorios = () => {
 										/>
 									</FormControl>
             </Grid>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+                xl: 3
+              }}>
               <WhatsappsFilter onFiltered={handleSelectedWhatsapps} />
             </Grid>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+                xl: 3
+              }}>
               <StatusFilter onFiltered={handleSelectedStatus} />
             </Grid>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+                xl: 3
+              }}>
               <UsersFilter onFiltered={handleSelectedUsers} />
             </Grid>
             {/* <Grid item xs={12} md={4} xl={4}>
               <TagsFilter onFiltered={handleSelectedTags} />
             </Grid> */}
-            <Grid item xs={12} md={3} xl={3} style={{ marginTop: '-13px' }}>
+            <Grid
+              style={{ marginTop: '-13px' }}
+              size={{
+                xs: 12,
+                md: 3,
+                xl: 3
+              }}>
               <QueueSelectCustom
                 selectedQueueIds={queueIds}
                 onChange={values => setQueueIds(values)}
               />
             </Grid>
 
-            <Grid item xs={12} sm={3} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3,
+                md: 3
+              }}>
               <TextField
                 label="Ticket ID"
                 type="text"
@@ -427,7 +456,12 @@ const Relatorios = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3,
+                md: 3
+              }}>
               <TextField
                 label="Data Inicial"
                 type="date"
@@ -441,7 +475,12 @@ const Relatorios = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3,
+                md: 3
+              }}>
               <TextField
                 label="Data Final"
                 type="date"
@@ -455,7 +494,13 @@ const Relatorios = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3} md={3} style={{ display: 'flex-end', justifyContent: 'center' }}>
+            <Grid
+              style={{ display: 'flex-end', justifyContent: 'center' }}
+              size={{
+                xs: 12,
+                sm: 3,
+                md: 3
+              }}>
               <IconButton
                 onClick={exportarGridParaExcel}
                 aria-label="Exportar para Excel"
@@ -555,7 +600,12 @@ const Relatorios = () => {
 
       <div>
         <Grid container>
-          <Grid item xs={12} sm={10} md={10}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 10,
+              md: 10
+            }}>
 
             <Pagination
               count={Math.ceil(totalTickets / pageSize)} // Calcula o nmero total de páginas com base no nmero total de tickets e no tamanho da página
@@ -563,7 +613,12 @@ const Relatorios = () => {
               onChange={(event, value) => handleFilter(value)} // Função de callback para mudanças de página
             />
           </Grid>
-          <Grid item xs={12} sm={2} md={2}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 2,
+              md: 2
+            }}>
 
             <FormControl
               margin="dense"

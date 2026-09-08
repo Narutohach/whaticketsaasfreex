@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import { styled } from '@mui/material/styles';
 
-export const Container = styled.div`
+export const Container = styled('div')`
   footer {
     margin-top: 30px;
     display: flex;
@@ -28,7 +28,7 @@ export const Container = styled.div`
     }
   }
 `;
-export const Total = styled.div`
+export const Total = styled('div')`
   display: flex;
   align-items: baseline;
 
@@ -49,7 +49,7 @@ export const Total = styled.div`
   }
 `;
 
-export const SuccessContent = styled.div`
+export const SuccessContent = styled('div')`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -102,7 +102,7 @@ export const SuccessContent = styled.div`
   }
 `;
 
-export const CheckoutWrapper = styled.div`
+export const CheckoutWrapper = styled('div')`
   width: 100%;
   margin: 0 auto 0;
   max-width: 1110px;

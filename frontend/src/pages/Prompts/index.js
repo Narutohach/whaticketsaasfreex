@@ -10,9 +10,9 @@ import {
   TableHead,
   TableRow,
   Typography // Importar Typography do Material-UI
-} from "@material-ui/core";
+} from "@mui/material";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
@@ -22,7 +22,7 @@ import Title from "../../components/Title";
 import { i18n } from "../../translate/i18n";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
-import { DeleteOutline, Edit } from "@material-ui/icons";
+import { DeleteOutlineOutlined as DeleteOutline, Edit } from "@mui/icons-material";
 import PromptModal from "../../components/PromptModal";
 import { toast } from "react-toastify";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -244,6 +244,9 @@ const Prompts = () => {
                 {i18n.t("prompts.table.name")}
               </TableCell>
               <TableCell align="left">
+                Provedor / Modelo
+              </TableCell>
+              <TableCell align="left">
                 {i18n.t("prompts.table.queue")}
               </TableCell>
               <TableCell align="left">
@@ -259,7 +262,12 @@ const Prompts = () => {
               {prompts.map((prompt) => (
                 <TableRow key={prompt.id}>
                   <TableCell align="left">{prompt.name}</TableCell>
-                  <TableCell align="left">{prompt.queue.name}</TableCell>
+                  <TableCell align="left">
+                    <strong>{prompt.provider === "gemini" ? "Google Gemini" : "OpenAI"}</strong>
+                    <br />
+                    <small style={{ color: "#777" }}>{prompt.model || "padrão"}</small>
+                  </TableCell>
+                  <TableCell align="left">{prompt.queue?.name || "-"}</TableCell>
                   <TableCell align="left">{prompt.maxTokens}</TableCell>
                   <TableCell align="center">
                     <IconButton
@@ -281,7 +289,7 @@ const Prompts = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {loading && <TableRowSkeleton columns={4} />}
+              {loading && <TableRowSkeleton columns={5} />}
             </>
           </TableBody>
         </Table>

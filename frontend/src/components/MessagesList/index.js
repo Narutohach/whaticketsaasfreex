@@ -3,15 +3,15 @@ import React, { useState, useEffect, useReducer, useRef, useContext } from "reac
 import { isSameDay, parseISO, format } from "date-fns";
 import clsx from "clsx";
 
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 import {
   Button,
   CircularProgress,
   Divider,
   IconButton,
-  makeStyles,
   Badge,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 
 import {
   AccessTime,
@@ -21,9 +21,10 @@ import {
   ExpandMore,
   GetApp,
   Reply,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import AudioModal from "../AudioModal";
+import AudioPlayerCustom from "../AudioPlayerCustom";
 import MarkdownWrapper from "../MarkdownWrapper";
 import ModalImageCors from "../ModalImageCors";
 import MessageOptionsMenu from "../MessageOptionsMenu";
@@ -70,15 +71,16 @@ const useStyles = makeStyles((theme) => ({
   },
   relationContainer: {
     marginTop: -10,
-    paddingTop: 5, 
-    fontSize: "12px", 
-    color: "#666", 
-    display: "block", 
+    paddingTop: 5,
+    fontSize: "12px",
+    color: theme.mode === 'light' ? "#666" : "#94a3b8",
+    display: "block",
     textAlign: "left",
   },
   messageLeft: {
     marginRight: 20,
-    marginTop: 2,
+    marginTop: 3,
+    marginBottom: 3,
     minWidth: 100,
     maxWidth: 600,
     height: "auto",
@@ -92,25 +94,20 @@ const useStyles = makeStyles((theme) => ({
     },
 
     whiteSpace: "pre-wrap",
-    backgroundColor: "#ffffff",
-    color: "#303030",
+    backgroundColor: theme.mode === 'light' ? "#ffffff" : "#1e293b",
+    color: theme.mode === 'light' ? "#0f172a" : "#f8fafc",
     alignSelf: "flex-start",
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 8,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 5,
-    paddingBottom: 0,
-    boxShadow: "0 1px 1px #b3b3b3",
+    borderRadius: "16px 16px 16px 4px",
+    padding: "8px 12px 6px 12px",
+    boxShadow: theme.mode === 'light' ? "0 2px 6px rgba(0, 0, 0, 0.05)" : "0 2px 8px rgba(0, 0, 0, 0.25)",
+    border: theme.mode === 'light' ? "1px solid rgba(0, 0, 0, 0.05)" : "1px solid rgba(255, 255, 255, 0.05)",
   },
 
   quotedContainerLeft: {
     margin: "-3px -80px 6px -6px",
     overflow: "hidden",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "7.5px",
+    backgroundColor: theme.mode === 'light' ? "#f1f5f9" : "#0f172a",
+    borderRadius: "8px",
     display: "flex",
     position: "relative",
   },
@@ -127,12 +124,13 @@ const useStyles = makeStyles((theme) => ({
   quotedSideColorLeft: {
     flex: "none",
     width: "4px",
-    backgroundColor: "#6bcbef",
+    backgroundColor: "#1677ff",
   },
 
   messageRight: {
     marginLeft: 20,
-    marginTop: 2,
+    marginTop: 3,
+    marginBottom: 3,
     minWidth: 100,
     maxWidth: 600,
     height: "auto",
@@ -146,24 +144,19 @@ const useStyles = makeStyles((theme) => ({
     },
 
     whiteSpace: "pre-wrap",
-    backgroundColor: "#dcf8c6",
-    color: "#303030",
+    backgroundColor: theme.mode === 'light' ? "#ecfdf5" : "#064e3b",
+    color: theme.mode === 'light' ? "#064e3b" : "#f0fdf4",
     alignSelf: "flex-end",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 0,
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 5,
-    paddingBottom: 0,
-    boxShadow: "0 1px 1px #b3b3b3",
+    borderRadius: "16px 16px 4px 16px",
+    padding: "8px 12px 6px 12px",
+    boxShadow: theme.mode === 'light' ? "0 2px 8px rgba(16, 185, 129, 0.12)" : "0 2px 8px rgba(0, 0, 0, 0.25)",
+    border: theme.mode === 'light' ? "1px solid rgba(16, 185, 129, 0.2)" : "1px solid rgba(16, 185, 129, 0.3)",
   },
 
   quotedContainerRight: {
     margin: "-3px -80px 6px -6px",
     overflowY: "hidden",
-    backgroundColor: "#cfe9ba",
+    backgroundColor: theme.mode === 'light' ? "#cfe9ba" : "#0a4a3c",
     borderRadius: "7.5px",
     display: "flex",
     position: "relative",
@@ -210,7 +203,7 @@ const useStyles = makeStyles((theme) => ({
 
   textContentItemDeleted: {
     fontStyle: "italic",
-    color: "rgba(0, 0, 0, 0.36)",
+    color: theme.mode === 'light' ? "rgba(0, 0, 0, 0.36)" : "rgba(255, 255, 255, 0.5)",
     overflowWrap: "break-word",
     padding: "3px 80px 6px 6px",
   },
@@ -239,7 +232,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     bottom: 0,
     right: 5,
-    color: "#999",
+    color: theme.mode === 'light' ? "#999" : "#a8b3b8",
   },
 
   dailyTimestamp: {
@@ -247,14 +240,14 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     alignSelf: "center",
     width: "110px",
-    backgroundColor: "#e1f3fb",
+    backgroundColor: theme.mode === 'light' ? "#e1f3fb" : "#1e293b",
     margin: "10px",
     borderRadius: "10px",
-    boxShadow: "0 1px 1px #b3b3b3",
+    boxShadow: theme.mode === 'light' ? "0 1px 1px #b3b3b3" : "0 1px 1px rgba(0, 0, 0, 0.4)",
   },
 
   dailyTimestampText: {
-    color: "#808888",
+    color: theme.mode === 'light' ? "#808888" : "#cbd5e1",
     padding: 8,
     alignSelf: "center",
     marginLeft: "0px",
@@ -495,11 +488,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   
           if (message.mediaType === "audio") {
             return (
-              <AudioModal url={message.mediaUrl} />
-              // <audio controls>
-              //   <source src={message.mediaUrl} type="audio/ogg"></source>
-              //   {/* <source src={message.mediaUrl} type="audio/mp3"></source> */}
-              // </audio>
+              <AudioPlayerCustom url={message.mediaUrl} />
             );
           } else
   
@@ -834,14 +823,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
 
 								{/* Adicionando relação abaixo da mensagem */}
 								{message.relation && (
-								  <div style={{
-									marginTop: "-5px", 
-									paddingTop: "2px", 
-									fontSize: "12px", 
-									color: "#666", 
-									display: "block", 
-									textAlign: "left"
-								  }}>
+								  <div className={classes.relationContainer} style={{ marginTop: "-5px", paddingTop: "2px" }}>
 									{message.relation}
 								  </div>
 								)}
@@ -934,13 +916,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
 
 						{/* Exibição da relação abaixo */}
 						{message.relation && (
-						  <div style={{
-							marginTop: "3px",
-							fontSize: "12px",
-							color: "#666",
-							textAlign: "left",
-							display: "block"
-						  }}>
+						  <div className={classes.relationContainer} style={{ marginTop: "3px" }}>
 							{message.relation}
 						  </div>
 						)}

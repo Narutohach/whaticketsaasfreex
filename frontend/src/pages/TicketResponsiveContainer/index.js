@@ -1,14 +1,18 @@
 import React from "react";
-import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import Tickets from "../TicketsCustom"
 import TicketAdvanced from "../TicketsAdvanced";
 
-function TicketResponsiveContainer (props) {
-    if (isWidthUp('md', props.width)) {
+function TicketResponsiveContainer () {
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+    if (isDesktop) {
         return <Tickets />;    
     }
     return <TicketAdvanced />
 }
 
-export default withWidth()(TicketResponsiveContainer);
+export default TicketResponsiveContainer;

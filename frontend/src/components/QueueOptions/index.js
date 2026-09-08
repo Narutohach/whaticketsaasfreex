@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Typography from "@material-ui/core/Typography";
-import { Button, Grid, IconButton, StepContent, TextField } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import SaveIcon from "@material-ui/icons/Save";
-import EditIcon from "@material-ui/icons/Edit";
+import { makeStyles } from "../../styles/makeStyles";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Typography from "@mui/material/Typography";
+import { Button, Grid, IconButton, StepContent, TextField } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import EditIcon from "@mui/icons-material/Edit";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { AttachFile, DeleteOutline } from "@material-ui/icons";
+import { AttachFile, DeleteOutlineOutlined as DeleteOutline } from "@mui/icons-material";
 import { head } from "lodash";
 import {toast} from "react-toastify";
 import {i18n} from "../../translate/i18n";
@@ -168,14 +168,14 @@ export function QueueOptionStepper({ queueId, options, updateOptions }) {
     if (option.edition) {
       return (
         <>
-    <ConfirmationModal
-      title={i18n.t("queueModal.confirmationModal.deleteTitle")}
-      open={confirmationOpen}
-      onClose={() => setConfirmationOpen(false)}
-      onConfirm={() => deleteMedia(option)}
-    >
-      {i18n.t("queueModal.confirmationModal.deleteMessage")}
-    </ConfirmationModal>
+          <ConfirmationModal
+            title={i18n.t("queueModal.confirmationModal.deleteTitle")}
+            open={confirmationOpen}
+            onClose={() => setConfirmationOpen(false)}
+            onConfirm={() => deleteMedia(option)}
+          >
+            {i18n.t("queueModal.confirmationModal.deleteMessage")}
+          </ConfirmationModal>
           <TextField
             value={option.title}
             onChange={(event) => handleOptionChangeTitle(event, index)}
@@ -183,13 +183,13 @@ export function QueueOptionStepper({ queueId, options, updateOptions }) {
             className={classes.input}
             placeholder="Título da opção"
           />
-                    <div style={{ display: "none" }}>
-            <input
-              type="file"
-              ref={attachmentFile}
-              onChange={(e) => handleAttachmentFile(e)}
-            />
-          </div>
+          <div style={{ display: "none" }}>
+  <input
+    type="file"
+    ref={attachmentFile}
+    onChange={(e) => handleAttachmentFile(e)}
+  />
+</div>
           {option.edition && (
             <>
               <IconButton
@@ -222,7 +222,7 @@ export function QueueOptionStepper({ queueId, options, updateOptions }) {
                 </IconButton>
               )}
                              {(option.mediaPath || attachment) && (
-                    <Grid xs={12} item>
+                    <Grid size={12}>
                       <Button startIcon={<AttachFile />}>
                         {attachment != null
                           ? attachment.name

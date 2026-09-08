@@ -18,6 +18,11 @@ import Whatsapp from "../models/Whatsapp";
 import { logger } from "../utils/logger";
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger";
 import authState from "../helpers/authState";
+import {
+  calculateReconnectDelay,
+  hasExceededReconnectAttempts,
+  MAX_RECONNECT_ATTEMPTS
+} from "../helpers/ReconnectBackoff";
 import { Boom } from "@hapi/boom";
 import AppError from "../errors/AppError";
 import { getIO } from "./socket";
@@ -79,6 +84,7 @@ export default function msg() {
 const sessions: Session[] = [];
 
 const retriesQrCodeMap = new Map<number, number>();
+const reconnectAttemptsMap = new Map<number, number>();
 
 export const getWbot = (whatsappId: number): Session => {
   const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
@@ -244,7 +250,26 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
 
               if (disconect !== DisconnectReason.loggedOut) {
                 removeWbot(id, false);
-                setTimeout(() => StartWhatsAppSession(whatsapp, whatsapp.companyId), 2000);
+
+                const attempt = reconnectAttemptsMap.get(id) ?? 0;
+                if (hasExceededReconnectAttempts(attempt)) {
+                  logger.error(
+                    `Sessão ${name} excedeu o limite de ${MAX_RECONNECT_ATTEMPTS} tentativas de reconexão; status marcado como DISCONNECTED`
+                  );
+                  reconnectAttemptsMap.delete(id);
+                  await whatsapp.update({ status: "DISCONNECTED" });
+                  io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                    action: "update",
+                    session: whatsapp
+                  });
+                } else {
+                  reconnectAttemptsMap.set(id, attempt + 1);
+                  const delay = calculateReconnectDelay(attempt);
+                  logger.info(
+                    `Reagendando reconexão da sessão ${name} em ${delay}ms (tentativa ${attempt + 1}/${MAX_RECONNECT_ATTEMPTS})`
+                  );
+                  setTimeout(() => StartWhatsAppSession(whatsapp, whatsapp.companyId), delay);
+                }
               } else {
                 await whatsapp.update({ status: "PENDING", session: "", number: "" });
                 await DeleteBaileysService(whatsapp.id);
@@ -259,6 +284,8 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
             }
 
             if (connection === "open") {
+              reconnectAttemptsMap.delete(id);
+
               await whatsapp.update({
                 status: "CONNECTED",
                 qrcode: "",
@@ -268,6 +295,31 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                     ? jidNormalizedUser((wsocket as WASocket).user.id).split("@")[0]
                     : "-"
               });
+
+              if (whatsapp.number && whatsapp.number !== "-") {
+                const duplicateSession = await Whatsapp.findOne({
+                  where: {
+                    number: whatsapp.number,
+                    companyId: whatsapp.companyId,
+                    status: "CONNECTED",
+                    id: { [Op.ne]: whatsapp.id }
+                  }
+                });
+
+                if (duplicateSession) {
+                  logger.error(
+                    `Número ${whatsapp.number} já está conectado na sessão "${duplicateSession.name}" (id ${duplicateSession.id}); a sessão "${name}" (id ${id}) será desconectada para evitar duas conexões simultâneas com o mesmo número.`
+                  );
+                  await whatsapp.update({ status: "DISCONNECTED", qrcode: "" });
+                  io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                    action: "update",
+                    session: whatsapp
+                  });
+                  removeWbot(id, false);
+                  reject(new AppError("ERR_WAPP_DUPLICATE_NUMBER"));
+                  return;
+                }
+              }
 
                 io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",

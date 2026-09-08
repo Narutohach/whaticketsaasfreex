@@ -21,8 +21,10 @@ interface WhatsappData {
   status?: string;
   isDefault?: boolean;
   token?: string;
-  //sendIdQueue?: number;
-  //timeSendQueue?: number;
+  provider?: string;
+  phoneNumberId?: string;
+  wabaId?: string;
+  apiVersion?: string;
   transferQueueId?: number;
   timeToTransfer?: number;  
   promptId?: number;
@@ -51,14 +53,16 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     isDefault,
     greetingMessage,
     complationMessage,
-	ratingMessage,
+    ratingMessage,
     outOfHoursMessage,
     queueIds,
     token,
-    //timeSendQueue,
-    //sendIdQueue,
-	transferQueueId,
-	timeToTransfer,
+    provider,
+    phoneNumberId,
+    wabaId,
+    apiVersion,
+    transferQueueId,
+    timeToTransfer,
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,
@@ -73,15 +77,17 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     isDefault,
     greetingMessage,
     complationMessage,
-	ratingMessage,
+    ratingMessage,
     outOfHoursMessage,
     queueIds,
     companyId,
     token,
-    //timeSendQueue,
-    //sendIdQueue,
-	transferQueueId,
-	timeToTransfer,	
+    provider: provider || "baileys",
+    phoneNumberId,
+    wabaId,
+    apiVersion,
+    transferQueueId,
+    timeToTransfer,	
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,
@@ -89,7 +95,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     expiresInactiveMessage
   });
 
-  StartWhatsAppSession(whatsapp, companyId);
+  if (whatsapp.provider !== "meta_cloud") {
+    StartWhatsAppSession(whatsapp, companyId);
+  }
 
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
@@ -169,6 +177,9 @@ export const remove = async (
 };
 
 
+import { ChannelProviderFactory } from "../services/Channels/ChannelProviderFactory";
+import { MetaCloudApiChannelProvider } from "../services/Channels/MetaCloudApiChannelProvider";
+
 export const restart = async (
   req: Request,
   res: Response
@@ -182,4 +193,22 @@ export const restart = async (
   await restartWbot(companyId);
 
   return res.status(200).json({ message: "Whatsapp restart." });
+};
+
+export const listTemplates = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { whatsappId } = req.params;
+  const { companyId } = req.user;
+
+  const whatsapp = await ShowWhatsAppService(whatsappId, companyId);
+  if (whatsapp.provider !== "meta_cloud" && whatsapp.provider !== "meta") {
+    throw new AppError("Esta conexão não é do tipo Meta Cloud API", 400);
+  }
+
+  const channel = ChannelProviderFactory.getProvider(whatsapp) as MetaCloudApiChannelProvider;
+  const templates = await channel.fetchTemplates();
+
+  return res.status(200).json(templates);
 };

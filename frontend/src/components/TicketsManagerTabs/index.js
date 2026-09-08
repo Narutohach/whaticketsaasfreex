@@ -5,24 +5,24 @@ import { useHistory } from "react-router-dom";
 
 import {
   Add as AddIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Badge from '@material-ui/core/Badge';
-import PlaylistAddCheckOutlinedIcon from '@material-ui/icons/PlaylistAddCheckOutlined';
-import GroupIcon from '@material-ui/icons/Group';
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from '@mui/material/Paper';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Badge from '@mui/material/Badge';
+import PlaylistAddCheckOutlinedIcon from '@mui/icons-material/PlaylistAddCheckOutlined';
+import GroupIcon from '@mui/icons-material/Group';
 import toastError from '../../errors/toastError';
 import api from '../../services/api';
-import {Snackbar, IconButton } from "@material-ui/core";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import ChatIcon from '@material-ui/icons/Chat';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import { Snackbar, IconButton, Tooltip, Button, Grid } from "@mui/material";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import ChatIcon from '@mui/icons-material/Chat';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import NewTicketModal from '../NewTicketModal';
 import TicketsList from '../TicketsListCustom';
 import TicketsListGroup from '../TicketsListGroup';
@@ -33,7 +33,6 @@ import { i18n } from '../../translate/i18n';
 import { AuthContext } from '../../context/Auth/AuthContext';
 import { Can } from '../Can';
 import TicketsQueueSelect from '../TicketsQueueSelect';
-import { Button, Grid } from '@material-ui/core';
 import { TagsFilter } from '../TagsFilter';
 import { UsersFilter } from '../UsersFilter';
 
@@ -140,6 +139,49 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 30,
   },
 
+  actionButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    padding: 7,
+    marginRight: 6,
+    color: theme.palette.mode === "dark" ? "#f8fafc" : "#0f172a",
+    backgroundColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "dark" ? "rgba(16, 185, 129, 0.18)" : "rgba(16, 185, 129, 0.12)",
+      color: "#10b981",
+      transform: "scale(1.05)",
+    },
+  },
+  actionIcon: {
+    fontSize: 20,
+  },
+  tabLabelContainer: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    fontSize: "0.82rem",
+    fontWeight: 700,
+    letterSpacing: "0.4px",
+  },
+  tabCounterBadge: {
+    backgroundColor: "#10b981",
+    color: "#ffffff",
+    fontSize: "0.72rem",
+    fontWeight: 700,
+    height: 18,
+    minWidth: 18,
+    borderRadius: 9,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 5px",
+    lineHeight: 1,
+    boxShadow: "0 2px 6px rgba(16, 185, 129, 0.35)",
+  },
+
   badge: {
     right: '-10px',
   },
@@ -155,11 +197,6 @@ const TicketsManagerTabs = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [isHoveredAll, setIsHoveredAll] = useState(false);
-  const [isHoveredNew, setIsHoveredNew] = useState(false);
-  const [isHoveredResolve, setIsHoveredResolve] = useState(false);
-  const [isHoveredOpen, setIsHoveredOpen] = useState(false);
-  const [isHoveredClosed, setIsHoveredClosed] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [searchParam, setSearchParam] = useState('');
   const [tab, setTab] = useState('open');
@@ -428,33 +465,16 @@ const TicketsManagerTabs = () => {
           </div>
         ) : (
           <>
-            {
-                (tab === 'open' || tab === 'closed') && ( // Adiciona uma condição para exibir o botão em ambas as guias
-                  <Badge
-                  color="primary"
-                  invisible={
-                    isHoveredAll ||
-                    !isHoveredNew ||
-                    isHoveredResolve ||
-                    isHoveredOpen ||
-                    isHoveredClosed
-                  }
-                  badgeContent={i18n.t("Novo")}
-                  classes={{ badge: classes.tabsBadge }}
+            {(tab === 'open' || tab === 'closed') && (
+              <Tooltip title={i18n.t("tickets.inbox.newTicket")} arrow placement="top">
+                <IconButton
+                  className={classes.actionButton}
+                  onClick={() => setNewTicketModalOpen(true)}
                 >
-                  <IconButton
-                    onMouseEnter={() => setIsHoveredNew(true)}
-                    onMouseLeave={() => setIsHoveredNew(false)}
-                    className={classes.button}
-                    onClick={() => {
-                      setNewTicketModalOpen(true);
-                    }}
-                  >
-                    <AddIcon className={classes.icon} />
-                  </IconButton>
-                </Badge>
-                )
-            }
+                  <AddIcon className={classes.actionIcon} />
+                </IconButton>
+              </Tooltip>
+            )}
             <Snackbar
               open={snackbarOpen}
               onClose={handleSnackbarClose}
@@ -482,28 +502,15 @@ const TicketsManagerTabs = () => {
               }
             />
             {user.profile === "admin" && (
-              <Badge
-                color="primary"
-                invisible={
-                  isHoveredAll ||
-                  isHoveredNew ||
-                  !isHoveredResolve ||
-                  isHoveredOpen ||
-                  isHoveredClosed
-                }
-                badgeContent={i18n.t("tickets.inbox.closedAll")}
-                classes={{ badge: classes.tabsBadge }}
-              >
+              <Tooltip title={i18n.t("tickets.inbox.closedAll")} arrow placement="top">
                 <IconButton
-                  onMouseEnter={() => setIsHoveredResolve(true)}
-                  onMouseLeave={() => setIsHoveredResolve(false)}
-                  className={classes.button}
+                  className={classes.actionButton}
                   onClick={handleSnackbarOpen}
                 >
-                  <PlaylistAddCheckOutlinedIcon style={{ color: "green" }} />
+                  <PlaylistAddCheckOutlinedIcon className={classes.actionIcon} style={{ color: "#10b981" }} />
                 </IconButton>
-              </Badge>
-			   )}
+              </Tooltip>
+			)}
             <Can
               role={user.profile}
               perform='tickets-manager:showall'
@@ -544,25 +551,27 @@ const TicketsManagerTabs = () => {
         >
           <Tab
             label={
-              <Badge
-                className={classes.badge}
-                badgeContent={openCount}
-                color='primary'
-              >
-                {i18n.t('ticketsList.assignedHeader')}
-              </Badge>
+              <span className={classes.tabLabelContainer}>
+                <span>{i18n.t('ticketsList.assignedHeader')}</span>
+                {openCount > 0 && (
+                  <span className={classes.tabCounterBadge}>
+                    {openCount}
+                  </span>
+                )}
+              </span>
             }
             value={'open'}
           />
           <Tab
             label={
-              <Badge
-                className={classes.badge}
-                badgeContent={pendingCount}
-                color='primary'
-              >
-                {i18n.t('ticketsList.pendingHeader')}
-              </Badge>
+              <span className={classes.tabLabelContainer}>
+                <span>{i18n.t('ticketsList.pendingHeader')}</span>
+                {pendingCount > 0 && (
+                  <span className={classes.tabCounterBadge}>
+                    {pendingCount}
+                  </span>
+                )}
+              </span>
             }
             value={'pending'}
           />
@@ -594,25 +603,27 @@ const TicketsManagerTabs = () => {
         >
           <Tab
             label={
-              <Badge
-                className={classes.badge}
-                badgeContent={openCount}
-                color='primary'
-              >
-                {i18n.t('ticketsList.assignedHeader')}
-              </Badge>
+              <span className={classes.tabLabelContainer}>
+                <span>{i18n.t('ticketsList.assignedHeader')}</span>
+                {openCount > 0 && (
+                  <span className={classes.tabCounterBadge}>
+                    {openCount}
+                  </span>
+                )}
+              </span>
             }
             value={'open'}
           />
           <Tab
             label={
-              <Badge
-                className={classes.badge}
-                badgeContent={pendingCount}
-                color='primary'
-              >
-                {i18n.t('ticketsList.pendingHeader')}
-              </Badge>
+              <span className={classes.tabLabelContainer}>
+                <span>{i18n.t('ticketsList.pendingHeader')}</span>
+                {pendingCount > 0 && (
+                  <span className={classes.tabCounterBadge}>
+                    {pendingCount}
+                  </span>
+                )}
+              </span>
             }
             value={'pending'}
           />

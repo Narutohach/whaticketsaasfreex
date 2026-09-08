@@ -7,32 +7,31 @@ import { Link as RouterLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Form, Field } from "formik";
 import usePlans from "../../hooks/usePlans";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import InputMask from 'react-input-mask';
 import {
 	FormControl,
 	InputLabel,
 	MenuItem,
 	Select,
-} from "@material-ui/core";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "../../styles/makeStyles";
+import Container from "@mui/material/Container";
 import { i18n } from "../../translate/i18n";
 
 import { openApi } from "../../services/api";
 import toastError from "../../errors/toastError";
 import moment from "moment";
+import HactoLogo from "../../components/Logo";
 
-
-const logo = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/login.png`;
 const useStyles = makeStyles(theme => ({
 	paper: {
 		marginTop: theme.spacing(8),
@@ -104,11 +103,11 @@ const SignUp = () => {
 
 
 	return (
-		<Container component="main" maxWidth="xs">
-			<CssBaseline />
-			<div className={classes.paper}>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
 				<div>
-					<img style={{ margin: "0 auto", height: "80px", width: "100%" }} src={logo} alt="Whats" />
+					<HactoLogo size="large" />
 				</div>
 				{/*<Typography component="h1" variant="h5">
 					{i18n.t("signup.title")}
@@ -128,7 +127,7 @@ const SignUp = () => {
 					{({ touched, errors, isSubmitting }) => (
 						<Form className={classes.form}>
 							<Grid container spacing={2}>
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										autoComplete="name"
@@ -142,7 +141,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										variant="outlined"
@@ -157,7 +156,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 								
-							<Grid item xs={12}>
+							<Grid size={12}>
 								<Field
 									as={InputMask}
 									mask="(99) 99999-9999"
@@ -181,7 +180,7 @@ const SignUp = () => {
 									)}
 								</Field>
 							</Grid>
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										variant="outlined"
@@ -196,7 +195,7 @@ const SignUp = () => {
 										required
 									/>
 								</Grid>
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<InputLabel htmlFor="plan-selection">Plano</InputLabel>
 									<Field
 										as={Select}
@@ -228,8 +227,8 @@ const SignUp = () => {
 					)}
 				</Formik>
 			</div>
-		</Container>
-	);
+        </Container>
+    );
 };
 
 export default SignUp;

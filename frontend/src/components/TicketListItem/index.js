@@ -4,22 +4,22 @@ import { useHistory, useParams } from "react-router-dom";
 import { parseISO, format, isSameDay } from "date-fns";
 import clsx from "clsx";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
-import Badge from "@material-ui/core/Badge";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import Badge from "@mui/material/Badge";
 
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import MarkdownWrapper from "../MarkdownWrapper";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
 
@@ -64,11 +64,19 @@ const useStyles = makeStyles((theme) => ({
     justifySelf: "flex-end",
   },
 
-  closedBadge: {
+  closedTag: {
     alignSelf: "center",
     justifySelf: "flex-end",
-    marginRight: 32,
+    marginRight: 16,
     marginLeft: "auto",
+    backgroundColor: "rgba(16, 185, 129, 0.12)",
+    color: "#10b981",
+    fontSize: "0.72rem",
+    fontWeight: 700,
+    borderRadius: 6,
+    padding: "2px 8px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
 
   contactLastMessage: {
@@ -177,11 +185,9 @@ const TicketListItem = ({ ticket }) => {
                 {ticket.contact.name}
               </Typography>
               {ticket.status === "closed" && (
-                <Badge
-                  className={classes.closedBadge}
-                  badgeContent={"closed"}
-                  color="primary"
-                />
+                <span className={classes.closedTag}>
+                  Resolvido
+                </span>
               )}
 {/*               {ticket.lastMessage && (
                 <Typography

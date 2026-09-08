@@ -19,15 +19,15 @@ import {
     DialogTitle,
     Divider,
     Grid,
-    makeStyles,
     TextField
-} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 
 import { i18n } from "../../translate/i18n";
 
@@ -244,8 +244,12 @@ const FilesModal = ({ open, onClose, fileListId, reload }) => {
                                                         className={classes.extraAttr}
                                                         key={`${index}-info`}
                                                     >
-                                                        <Grid container  spacing={0}>
-                                                            <Grid xs={6} md={10} item> 
+                                                        <Grid container  spacing={0} style={{ width: "100%" }}>
+                                                            <Grid
+                                                                size={{
+                                                                    xs: 6,
+                                                                    md: 10
+                                                                }}> 
                                                                 <Field
                                                                     as={TextField}
                                                                     label={i18n.t("fileModal.form.extraName")}
@@ -258,7 +262,12 @@ const FilesModal = ({ open, onClose, fileListId, reload }) => {
                                                                     className={classes.textField}
                                                                 />
                                                             </Grid>     
-                                                            <Grid xs={2} md={2} item style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                                            <Grid
+                                                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+                                                                size={{
+                                                                    xs: 2,
+                                                                    md: 2
+                                                                }}>
                                                                 <input
                                                                     type="file"
                                                                     onChange={(e) => {
@@ -289,7 +298,11 @@ const FilesModal = ({ open, onClose, fileListId, reload }) => {
                                                                     <DeleteOutlineIcon />
                                                                 </IconButton>    
                                                             </Grid>
-                                                            <Grid xs={12} md={12} item>
+                                                            <Grid
+                                                                size={{
+                                                                    xs: 12,
+                                                                    md: 12
+                                                                }}>
                                                                 {info.path? info.path : selectedFileNames[index]}                               
                                                             </Grid> 
                                                         </Grid>                                                    

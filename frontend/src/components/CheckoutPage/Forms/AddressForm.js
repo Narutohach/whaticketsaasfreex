@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 import { InputField, SelectField } from "../../FormFields";
 import { AuthContext } from "../../../context/Auth/AuthContext";
 
@@ -52,7 +52,11 @@ export default function AddressForm(props) {
       </Typography>
       <Grid container spacing={3}>
 
-        <Grid item xs={6} sm={6}>
+        <Grid
+          size={{
+            xs: 6,
+            sm: 6
+          }}>
           <InputField name={firstName.name} label={firstName.label} fullWidth
             value={billingName}
             onChange={(e) => {
@@ -61,7 +65,11 @@ export default function AddressForm(props) {
             }}
           />
         </Grid>
-        <Grid item xs={6} sm={6}>
+        <Grid
+          size={{
+            xs: 6,
+            sm: 6
+          }}>
           <SelectField
             name={country.name}
             label={country.label}
@@ -76,7 +84,7 @@ export default function AddressForm(props) {
           />
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid size={4}>
           <InputField
             name={zipcode.name}
             label={zipcode.label}
@@ -88,7 +96,7 @@ export default function AddressForm(props) {
             }}
           />
         </Grid>
-        <Grid item xs={8}>
+        <Grid size={8}>
           <InputField
             name={address1.name}
             label={address1.label}
@@ -102,7 +110,7 @@ export default function AddressForm(props) {
           />
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid size={4}>
           <InputField
             name={state.name}
             label={state.label}
@@ -115,7 +123,7 @@ export default function AddressForm(props) {
             }}
           />
         </Grid>
-        <Grid item xs={8}>
+        <Grid size={8}>
           <InputField
             name={city.name}
             label={city.label}

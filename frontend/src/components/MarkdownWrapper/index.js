@@ -1,4 +1,4 @@
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import Markdown from "markdown-to-jsx";
 import React from "react";
 

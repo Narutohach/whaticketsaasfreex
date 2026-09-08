@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Grid from '@material-ui/core/Grid';
-import StarIcon from '@material-ui/icons/StarBorder';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Grid from '@mui/material/Grid';
+import StarIcon from '@mui/icons-material/StarBorder';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from "../../../styles/makeStyles";
 
-import IconButton from '@material-ui/core/IconButton';
-import MinimizeIcon from '@material-ui/icons/Minimize';
-import AddIcon from '@material-ui/icons/Add';
+import IconButton from '@mui/material/IconButton';
+import MinimizeIcon from '@mui/icons-material/Minimize';
+import AddIcon from '@mui/icons-material/Add';
 
 import usePlans from "../../../hooks/usePlans";
 import useCompanies from "../../../hooks/useCompanies";
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
   cardHeader: {
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[700],
+      theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[700],
   },
   cardPricing: {
     display: 'flex',
@@ -174,7 +174,13 @@ export default function Pricing(props) {
       <Grid container spacing={3}>
         {tiers.map((tier) => (
           // Enterprise card is full width at sm breakpoint
-          <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 12} md={12}>
+          <Grid
+            key={tier.title}
+            size={{
+              xs: 12,
+              sm: tier.title === 'Enterprise' ? 12 : 12,
+              md: 12
+            }}>
             <Card>
               <CardHeader
                 title={tier.title}

@@ -7,13 +7,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Form, Field } from "formik";
 import usePlans from "../../hooks/usePlans";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import InputMask from 'react-input-mask';
 import api from "../../services/api";
 import {
@@ -21,12 +21,13 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
-} from "@material-ui/core";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, useTheme } from "@material-ui/core/styles";  // Added useTheme
-import Container from "@material-ui/core/Container";
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "../../styles/makeStyles";
+import Container from "@mui/material/Container";
 import { i18n } from "../../translate/i18n";
+import HactoLogo from "../../components/Logo";
 
 import { openApi } from "../../services/api";
 import toastError from "../../errors/toastError";
@@ -77,17 +78,9 @@ const UserSchema = Yup.object().shape({
 const SignUp = () => {
 	const classes = useStyles();
 	const history = useHistory();
-	const theme = useTheme();  // Added to access theme
 	const [allowregister, setallowregister] = useState('enabled');
     const [trial, settrial] = useState('3');
-	
-	const logoLight = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/interno.png`;
-	const logoDark = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/logo_w.png`;
 
-	// Use theme.palette.type to set the initial logo based on light or dark mode
-	const initialLogo = theme.palette.type === 'light' ? logoLight : logoDark;
-	const [logoImg, setLogoImg] = useState(initialLogo);
-	
 	let companyId = null;
 
 	useEffect(() => {
@@ -156,11 +149,11 @@ const SignUp = () => {
 	}, []);
 
 	return (
-		<Container component="main" maxWidth="xs">
-			<CssBaseline />
-			<div className={classes.paper}>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
 				<div>
-				<img src={`${logoImg}?r=${Math.random()}`} style={{ margin: "0 auto" , width: "50%"}} alt={`${process.env.REACT_APP_NAME_SYSTEM}`} />
+				<HactoLogo size="large" />
 				</div>
 				<Formik
 					initialValues={user}
@@ -176,7 +169,7 @@ const SignUp = () => {
 					{({ touched, errors, isSubmitting }) => (
 						<Form className={classes.form}>
 							<Grid container spacing={2}>
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										autoComplete="name"
@@ -190,7 +183,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										variant="outlined"
@@ -205,7 +198,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 								
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={InputMask}
 										mask="(99) 99999-9999"
@@ -230,7 +223,7 @@ const SignUp = () => {
 									</Field>
 								</Grid>
 								
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<Field
 										as={TextField}
 										variant="outlined"
@@ -246,7 +239,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 
-								<Grid item xs={12}>
+								<Grid size={12}>
 									<InputLabel htmlFor="plan-selection">Plano</InputLabel>
 									<Field
 										as={Select}
@@ -279,7 +272,7 @@ const SignUp = () => {
 								{i18n.t("signup.buttons.submit")}
 							</Button>
 							<Grid container justifyContent="flex-end">
-								<Grid item>
+								<Grid>
 									<Link component={RouterLink} to="/login" variant="body2">
 										{i18n.t("signup.buttons.login")}
 									</Link>
@@ -289,11 +282,11 @@ const SignUp = () => {
 					)}
 				</Formik>
 			</div>
-			<Box mt={5}>
+            <Box sx={{ mt: 5 }}>
 				<Copyright />
 			</Box>
-		</Container>
-	);
+        </Container>
+    );
 };
 
 export default SignUp;

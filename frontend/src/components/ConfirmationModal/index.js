@@ -1,10 +1,10 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
 
 import { i18n } from "../../translate/i18n";
 
@@ -14,16 +14,26 @@ const ConfirmationModal = ({ title, children, open, onClose, onConfirm }) => {
 			open={open}
 			onClose={() => onClose(false)}
 			aria-labelledby="confirm-dialog"
+			PaperProps={{
+				style: {
+					borderRadius: 20,
+					padding: "8px",
+				},
+			}}
 		>
-			<DialogTitle id="confirm-dialog">{title}</DialogTitle>
+			<DialogTitle id="confirm-dialog" style={{ fontWeight: 800 }}>
+				{title}
+			</DialogTitle>
 			<DialogContent dividers>
-				<Typography>{children}</Typography>
+				<Typography style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+					{children}
+				</Typography>
 			</DialogContent>
-			<DialogActions>
+			<DialogActions style={{ padding: "16px" }}>
 				<Button
-					variant="contained"
+					variant="outlined"
 					onClick={() => onClose(false)}
-					color="default"
+					style={{ borderRadius: 10, textTransform: "none", fontWeight: 600 }}
 				>
 					{i18n.t("confirmationModal.buttons.cancel")}
 				</Button>
@@ -33,7 +43,8 @@ const ConfirmationModal = ({ title, children, open, onClose, onConfirm }) => {
 						onClose(false);
 						onConfirm();
 					}}
-					color="secondary"
+					color="error"
+					style={{ borderRadius: 10, textTransform: "none", fontWeight: 600 }}
 				>
 					{i18n.t("confirmationModal.buttons.confirm")}
 				</Button>

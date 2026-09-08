@@ -2,39 +2,39 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 
 import { useReactToPrint } from "react-to-print";
 
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import Typography from "@material-ui/core/Typography";
-import { Button } from "@material-ui/core";
+import Paper from "@mui/material/Paper";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import FormHelperText from "@mui/material/FormHelperText";
+import Typography from "@mui/material/Typography";
+import { Button } from "@mui/material";
 
-import SpeedIcon from "@material-ui/icons/Speed";
-import GroupIcon from "@material-ui/icons/Group";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import PersonIcon from "@material-ui/icons/Person";
-import CallIcon from "@material-ui/icons/Call";
-import MobileFriendlyIcon from '@material-ui/icons/MobileFriendly';
-import StoreIcon from '@material-ui/icons/Store';
-import RecordVoiceOverIcon from "@material-ui/icons/RecordVoiceOver";
-import GroupAddIcon from "@material-ui/icons/GroupAdd";
-import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import ForumIcon from "@material-ui/icons/Forum";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import ClearIcon from "@material-ui/icons/Clear";
-import SendIcon from "@material-ui/icons/Send";
-import MessageIcon from "@material-ui/icons/Message";
-import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
-import TimerIcon from "@material-ui/icons/Timer";
+import SpeedIcon from "@mui/icons-material/Speed";
+import GroupIcon from "@mui/icons-material/Group";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import PersonIcon from "@mui/icons-material/Person";
+import CallIcon from "@mui/icons-material/Call";
+import MobileFriendlyIcon from '@mui/icons-material/MobileFriendly';
+import StoreIcon from '@mui/icons-material/Store';
+import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ForumIcon from "@mui/icons-material/Forum";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ClearIcon from "@mui/icons-material/Clear";
+import SendIcon from "@mui/icons-material/Send";
+import MessageIcon from "@mui/icons-material/Message";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import TimerIcon from "@mui/icons-material/Timer";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { grey, blue } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { grey, blue } from "@mui/material/colors";
 import { toast } from "react-toastify";
 
 import Chart from "./Chart";
@@ -62,20 +62,6 @@ import ChartsRushHour from "./ChartsRushHour";
 import ChartsDepartamentRatings from "./ChartsDepartamentRatings";
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.padding,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-  },
-  fixedHeightPaper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    flexDirection: "column",
-    height: 240,
-    overflowY: "auto",
-    ...theme.scrollbarStyles,
-  },
   cardAvatar: {
     fontSize: "55px",
     color: grey[500],
@@ -84,29 +70,65 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(7),
   },
   card: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(2.5),
     display: "flex",
     overflow: "hidden",
     flexDirection: "column",
-    height: 120, // Altura menor
-    backgroundColor:
-      theme.palette.type === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#fff",
+    justifyContent: "center",
+    minHeight: 125,
+    borderRadius: 16,
+    background:
+      theme.palette.mode === "dark"
+        ? "linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%)"
+        : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 4px 20px rgba(0, 0, 0, 0.3)"
+        : "0 4px 20px rgba(0, 0, 0, 0.04)",
+    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+    "&:hover": {
+      transform: "translateY(-3px)",
+      boxShadow:
+        theme.palette.mode === "dark"
+          ? "0 10px 25px rgba(0, 0, 0, 0.45)"
+          : "0 10px 25px rgba(0, 0, 0, 0.08)",
+      borderColor: "#10b981",
+    },
   },
   cardIcon: {
-    fontSize: 50, // Ícone menor
-    color: "#fff",
+    fontSize: 28,
+    color: "#10b981",
+  },
+  cardIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(16, 185, 129, 0.14)"
+        : "rgba(16, 185, 129, 0.1)",
+    marginLeft: "auto",
   },
   cardTitle: {
-    fontSize: "15px", // Tamanho menor para o título
-    fontWeight: 700,
+    fontSize: "0.82rem",
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    color: theme.palette.mode === "dark" ? "#94a3b8" : "#64748b",
   },
   cardSubtitle: {
-    fontSize: "25px", // Subtítulo ajustado
-    fontWeight: 600,
-    color: theme.palette.contadordash.main,
+    fontSize: "1.85rem",
+    fontWeight: 800,
+    marginTop: 4,
+    color: theme.palette.mode === "dark" ? "#f8fafc" : "#0f172a",
+    fontFamily: "'Inter', sans-serif",
   },
   alignRight: {
     textAlign: "right",
@@ -128,31 +150,51 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
   },
   fixedHeightPaper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2.5),
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
-    height: 240,
+    height: 260,
+    borderRadius: 16,
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
   },
   customFixedHeightPaper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2.5),
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
-    height: 120,
+    height: 130,
+    borderRadius: 16,
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
   },
   customFixedHeightPaperLg: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2.5),
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
     height: "100%",
+    borderRadius: 16,
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
   },
   fixedHeightPaper2: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2.5),
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
+    borderRadius: 16,
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
   },
 }));
 
@@ -304,7 +346,12 @@ const Dashboard = () => {
     if (filterType === 1) {
       return (
         <>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <TextField
               label="Data Inicial"
               type="date"
@@ -316,7 +363,12 @@ const Dashboard = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <TextField
               label="Data Final"
               type="date"
@@ -332,7 +384,12 @@ const Dashboard = () => {
       );
     } else {
       return (
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="period-selector-label">Período</InputLabel>
             <Select
@@ -363,10 +420,15 @@ const Dashboard = () => {
 		
 {/* CONEXÕES */}
 {user.super && (
-  <Grid item xs={12} sm={6} md={3}>
-    <Paper className={classes.card} elevation={4}>
+  <Grid
+    size={{
+      xs: 12,
+      sm: 6,
+      md: 3
+    }}>
+    <Paper className={classes.card} elevation={1}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={8}>
+        <Grid size={8}>
           <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
             Conexões Ativas
           </Typography>
@@ -374,8 +436,10 @@ const Dashboard = () => {
             {counters.totalWhatsappSessions}
           </Typography>
         </Grid>
-        <Grid item xs={4}>
-          <MobileFriendlyIcon className={classes.cardIcon} />
+        <Grid size={4}>
+          <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(16, 185, 129, 0.12)" }}>
+            <MobileFriendlyIcon className={classes.cardIcon} style={{ color: "#10b981" }} />
+          </div>
         </Grid>
       </Grid>
     </Paper>
@@ -384,10 +448,15 @@ const Dashboard = () => {
 
 {/* EMPRESAS */}
 {user.super && (
-  <Grid item xs={12} sm={6} md={3}>
-    <Paper className={classes.card} elevation={4}>
+  <Grid
+    size={{
+      xs: 12,
+      sm: 6,
+      md: 3
+    }}>
+    <Paper className={classes.card} elevation={1}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={8}>
+        <Grid size={8}>
           <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
             Empresas
           </Typography>
@@ -395,8 +464,10 @@ const Dashboard = () => {
             {counters.totalCompanies}
           </Typography>
         </Grid>
-        <Grid item xs={4}>
-          <StoreIcon className={classes.cardIcon} style={{ color: "#FF34B3" }} />
+        <Grid size={4}>
+          <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(236, 72, 153, 0.12)" }}>
+            <StoreIcon className={classes.cardIcon} style={{ color: "#ec4899" }} />
+          </div>
         </Grid>
       </Grid>
     </Paper>
@@ -404,10 +475,15 @@ const Dashboard = () => {
 )}
 
 {/* EM ATENDIMENTO */}
-<Grid item xs={12} sm={6} md={3}>
-  <Paper className={classes.card} elevation={4}>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper className={classes.card} elevation={1}>
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Em Conversa
         </Typography>
@@ -415,18 +491,25 @@ const Dashboard = () => {
           {counters.supportHappening}
         </Typography>
       </Grid>
-      <Grid item xs={4}>
-        <CallIcon className={classes.cardIcon} />
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(22, 119, 255, 0.12)" }}>
+          <CallIcon className={classes.cardIcon} style={{ color: "#1677ff" }} />
+        </div>
       </Grid>
     </Grid>
   </Paper>
 </Grid>
 
 {/* AGUARDANDO */}
-<Grid item xs={12} sm={6} md={3}>
-  <Paper className={classes.card} elevation={6}>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper className={classes.card} elevation={1}>
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Aguardando
         </Typography>
@@ -434,18 +517,25 @@ const Dashboard = () => {
           {counters.supportPending}
         </Typography>
       </Grid>
-      <Grid item xs={4}>
-        <HourglassEmptyIcon className={classes.cardIcon} />
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(245, 158, 11, 0.12)" }}>
+          <HourglassEmptyIcon className={classes.cardIcon} style={{ color: "#f59e0b" }} />
+        </div>
       </Grid>
     </Grid>
   </Paper>
 </Grid>
 
 {/* NOVOS CONTATOS */}
-<Grid item xs={12} sm={6} md={3}>
-  <Paper className={classes.card} elevation={6}>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper className={classes.card} elevation={1}>
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Novos Contatos
         </Typography>
@@ -453,18 +543,25 @@ const Dashboard = () => {
           {GetContacts(true)}
         </Typography>
       </Grid>
-      <Grid item xs={4}>
-        <GroupAddIcon className={classes.cardIcon} />
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(14, 165, 233, 0.12)" }}>
+          <GroupAddIcon className={classes.cardIcon} style={{ color: "#0ea5e9" }} />
+        </div>
       </Grid>
     </Grid>
   </Paper>
 </Grid>
 
 {/* T.M. DE ATENDIMENTO */}
-<Grid item xs={12} sm={6} md={3}>
-  <Paper className={classes.card} elevation={6}>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper className={classes.card} elevation={1}>
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           T.M. de Conversa
         </Typography>
@@ -472,18 +569,25 @@ const Dashboard = () => {
           {formatTime(counters.avgSupportTime)}
         </Typography>
       </Grid>
-      <Grid item xs={4}>
-        <AccessAlarmIcon className={classes.cardIcon} />
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(139, 92, 246, 0.12)" }}>
+          <AccessAlarmIcon className={classes.cardIcon} style={{ color: "#8b5cf6" }} />
+        </div>
       </Grid>
     </Grid>
   </Paper>
 </Grid>
 
 {/* FINALIZADOS */}
-<Grid item xs={12} sm={6} md={3}>
-  <Paper className={classes.card} elevation={6}>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper className={classes.card} elevation={1}>
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Finalizados
         </Typography>
@@ -491,8 +595,10 @@ const Dashboard = () => {
           {counters.supportFinished}
         </Typography>
       </Grid>
-      <Grid item xs={4}>
-        <CheckCircleIcon className={classes.cardIcon} />
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(16, 185, 129, 0.12)" }}>
+          <CheckCircleIcon className={classes.cardIcon} style={{ color: "#10b981" }} />
+        </div>
       </Grid>
     </Grid>
   </Paper>
@@ -500,43 +606,54 @@ const Dashboard = () => {
 
 
 		{/* T.M. DE ESPERA */}
-		<Grid item xs={12} sm={6} md={3}>
-		  <Paper
-			className={classes.card}
-			style={{ overflow: "hidden" }}
-			elevation={6}
-		  >
-			<Grid container spacing={1} alignItems="center">
-			  {/* Texto */}
-			  <Grid item xs={8}>
-				<Typography 
-				  component="h3" 
-				  variant="subtitle1" 
-				  className={classes.cardTitle}
-				>
-				  T.M. de Espera
-				</Typography>
-				<Typography 
-				  component="h1" 
-				  variant="h6" 
-				  className={classes.cardSubtitle}
-				>
-				  {formatTime(counters.avgWaitTime)}
-				</Typography>
-			  </Grid>
-			  {/* Ícone */}
-			  <Grid item xs={4}>
-				<TimerIcon
-				  className={classes.cardIcon}
-				/>
-			  </Grid>
-			</Grid>
-		  </Paper>
-		</Grid>
+<Grid
+  size={{
+    xs: 12,
+    sm: 6,
+    md: 3
+  }}>
+  <Paper
+    className={classes.card}
+    style={{ overflow: "hidden" }}
+    elevation={1}
+  >
+    <Grid container spacing={1} alignItems="center">
+      <Grid size={8}>
+        <Typography 
+          component="h3" 
+          variant="subtitle1" 
+          className={classes.cardTitle}
+        >
+          T.M. de Espera
+        </Typography>
+        <Typography 
+          component="h1" 
+          variant="h6" 
+          className={classes.cardSubtitle}
+        >
+          {formatTime(counters.avgWaitTime)}
+        </Typography>
+      </Grid>
+      <Grid size={4}>
+        <div className={classes.cardIconContainer} style={{ backgroundColor: "rgba(244, 63, 94, 0.12)" }}>
+          <TimerIcon
+            className={classes.cardIcon}
+            style={{ color: "#f43f5e" }}
+          />
+        </div>
+      </Grid>
+    </Grid>
+  </Paper>
+</Grid>
 
 		  
 		  		          {/* FILTROS */}
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <FormControl className={classes.selectContainer}>
               <InputLabel id="period-selector-label">Tipo de Filtro</InputLabel>
               <Select
@@ -556,7 +673,7 @@ const Dashboard = () => {
           {/* BOTOES DE FILTRO E IMPRESSAO */}
           {visibleButtonsWithPrint && (
             <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-              <Grid item xs={12} className={classes.alignRight}>
+              <Grid className={classes.alignRight} size={12}>
                 <ButtonWithSpinner
                   loading={loading}
                   onClick={() => fetchData()}
@@ -567,7 +684,7 @@ const Dashboard = () => {
                 </ButtonWithSpinner>
               </Grid>
 
-              <Grid item xs={12} className={classes.alignRight}>
+              <Grid className={classes.alignRight} size={12}>
                 <ButtonWithSpinner
                   loading={loading}
                   onClick={() => {
@@ -587,7 +704,7 @@ const Dashboard = () => {
           )}
 
           {/* USUARIOS ONLINE */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             {attendants.length ? (
               <TableAttendantsStatus
                 attendants={attendants}
@@ -597,14 +714,14 @@ const Dashboard = () => {
           </Grid>
 
           {/* TOTAL DE ATENDIMENTOS POR USUARIO */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper className={classes.fixedHeightPaper2}>
               <ChatsUser />
             </Paper>
           </Grid>
 
           {/* TOTAL DE ATENDIMENTOS */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper className={classes.fixedHeightPaper2}>
               <ChartsDate />
             </Paper>

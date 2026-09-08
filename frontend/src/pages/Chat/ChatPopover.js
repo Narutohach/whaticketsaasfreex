@@ -5,10 +5,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
 import toastError from "../../errors/toastError";
-import Popover from "@material-ui/core/Popover";
-import ForumIcon from "@material-ui/icons/Forum";
+import Popover from "@mui/material/Popover";
+import ForumIcon from "@mui/icons-material/Forum";
 import {
   Badge,
   IconButton,
@@ -17,7 +18,7 @@ import {
   ListItemText,
   Paper,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import api from "../../services/api";
 import { isArray } from "lodash";
 import { SocketContext } from "../../context/Socket/SocketContext";
@@ -97,6 +98,8 @@ const reducer = (state, action) => {
 
 export default function ChatPopover() {
   const classes = useStyles();
+  const theme = useTheme();
+  const iconColor = theme.palette.mode === "light" ? "#0f172a" : "#f8fafc";
 
   const { user } = useContext(AuthContext);
 
@@ -228,7 +231,7 @@ export default function ChatPopover() {
         variant="contained"
         color={invisible ? "default" : "inherit"}
         onClick={handleClick}
-        style={{ color: "white" }}
+        style={{ color: iconColor }}
       >
         <Badge color="secondary" variant="dot" invisible={invisible}>
           <ForumIcon />

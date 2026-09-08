@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "../../../styles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
     kanbanSquare: {
@@ -15,11 +15,15 @@ const useStyles = makeStyles(theme => ({
     quantity: {
         fontSize: ".75rem",
         fontWeight: "normal",
-        color: "#000000DE",
-        backgroundColor: "#d9d9d9",
+        color: theme.palette.mode === "light" ? "#000000DE" : "#ffffff",
+        backgroundColor: theme.palette.mode === "light" ? "#d9d9d9" : "#334155",
         padding: "0 8px",
         borderRadius: "5px"
-    }
+    },
+    title: {
+        color: theme.palette.mode === "light" ? "#000000DE" : "#f1f5f9",
+        fontWeight: 600,
+    },
 }));
 
 const LaneTitle = ({squareColor, firstLane, children, quantity}) => {
@@ -28,7 +32,7 @@ const LaneTitle = ({squareColor, firstLane, children, quantity}) => {
     return (
         <div className={classes.container}>
             {!firstLane ? <div className={classes.kanbanSquare} style={{backgroundColor: squareColor}}></div> : <div style={{height: "1.2rem"}}></div>}
-            {children}
+            <span className={classes.title}>{children}</span>
             <div className={classes.quantity}>{quantity}</div>
         </div>
     )

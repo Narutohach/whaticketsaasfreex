@@ -4,17 +4,17 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -104,7 +104,7 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                                 {i18n.t("contactModal.form.mainInfo")}
                             </Typography>
                         </Grid> */}
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <Field
                                 as={TextField}
                                 label={i18n.t("contactModal.form.name")}
@@ -118,7 +118,7 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                                 fullWidth
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <Field
                                 as={TextField}
                                 label={i18n.t("contactModal.form.number")}
@@ -131,7 +131,7 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                                 fullWidth
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <Field
                                 as={TextField}
                                 label={i18n.t("contactModal.form.email")}
@@ -144,9 +144,9 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                                 variant="outlined"
                             />
                         </Grid>
-                        <Grid item xs={12} spacing={1}>
+                        <Grid spacing={1} size={12}>
                             <Grid container spacing={1}>
-                                <Grid xs={6} item>
+                                <Grid size={6}>
                                     <Button
                                         onClick={onCancel}
                                         color="secondary"
@@ -157,7 +157,7 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                                         {i18n.t("contactModal.buttons.cancel")}
                                     </Button>
                                 </Grid>
-                                <Grid classes={classes.textCenter} xs={6} item>
+                                <Grid classes={classes.textCenter} size={6}>
                                     <Button
                                         type="submit"
                                         color="primary"
@@ -183,5 +183,5 @@ export function ContactForm ({ initialContact, onSave, onCancel }) {
                 </Form>
             )}
         </Formik>
-    )
+    );
 }

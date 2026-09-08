@@ -9,12 +9,12 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 import ChatList from "./ChatList";
 import ChatMessages from "./ChatMessages";
 import { UsersFilter } from "../../components/UsersFilter";
@@ -24,7 +24,8 @@ import { SocketContext } from "../../context/Socket/SocketContext";
 import { has, isObject } from "lodash";
 
 import { AuthContext } from "../../context/Auth/AuthContext";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -117,7 +118,7 @@ export function ChatModal({
       <DialogTitle id="alert-dialog-title">Conversa</DialogTitle>
       <DialogContent>
         <Grid spacing={2} container>
-          <Grid xs={12} style={{ padding: 18 }} item>
+          <Grid style={{ padding: 18 }} size={12}>
             <TextField
               label="Título"
               placeholder="Título"
@@ -128,7 +129,7 @@ export function ChatModal({
               fullWidth
             />
           </Grid>
-          <Grid xs={12} item>
+          <Grid size={12}>
             <UsersFilter
               onFiltered={(users) => setUsers(users)}
               initialUsers={users}
@@ -148,8 +149,10 @@ export function ChatModal({
   );
 }
 
-function Chat(props) {
+function Chat() {
   const classes = useStyles();
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const { user } = useContext(AuthContext);
   const history = useHistory();
 
@@ -333,7 +336,11 @@ function Chat(props) {
   const renderGrid = () => {
     return (
       <Grid className={classes.gridContainer} container>
-        <Grid className={classes.gridItem} md={3} item>
+        <Grid
+          className={classes.gridItem}
+          size={{
+            md: 3
+          }}>
           
             <div className={classes.btnContainer}>
               <Button
@@ -360,7 +367,11 @@ function Chat(props) {
             }}
           />
         </Grid>
-        <Grid className={classes.gridItem} md={9} item>
+        <Grid
+          className={classes.gridItem}
+          size={{
+            md: 9
+          }}>
           {isObject(currentChat) && has(currentChat, "id") && (
             <ChatMessages
               chat={currentChat}
@@ -380,7 +391,10 @@ function Chat(props) {
   const renderTab = () => {
     return (
       <Grid className={classes.gridContainer} container>
-        <Grid md={12} item>
+        <Grid
+          size={{
+            md: 12
+          }}>
           <Tabs
             value={tab}
             indicatorColor="primary"
@@ -393,7 +407,11 @@ function Chat(props) {
           </Tabs>
         </Grid>
         {tab === 0 && (
-          <Grid className={classes.gridItemTab} md={12} item>
+          <Grid
+            className={classes.gridItemTab}
+            size={{
+              md: 12
+            }}>
             <div className={classes.btnContainer}>
               <Button
                 onClick={() => setShowDialog(true)}
@@ -413,7 +431,11 @@ function Chat(props) {
           </Grid>
         )}
         {tab === 1 && (
-          <Grid className={classes.gridItemTab} md={12} item>
+          <Grid
+            className={classes.gridItemTab}
+            size={{
+              md: 12
+            }}>
             {isObject(currentChat) && has(currentChat, "id") && (
               <ChatMessages
                 scrollToBottomRef={scrollToBottomRef}
@@ -446,10 +468,10 @@ function Chat(props) {
         handleClose={() => setShowDialog(false)}
       />
       <Paper className={classes.mainContainer}>
-        {isWidthUp("md", props.width) ? renderGrid() : renderTab()}
+        {isDesktop ? renderGrid() : renderTab()}
       </Paper>
     </>
   );
 }
 
-export default withWidth()(Chat);
+export default Chat;

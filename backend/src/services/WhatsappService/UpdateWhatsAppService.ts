@@ -5,6 +5,7 @@ import AppError from "../../errors/AppError";
 import Whatsapp from "../../models/Whatsapp";
 import ShowWhatsAppService from "./ShowWhatsAppService";
 import AssociateWhatsappQueue from "./AssociateWhatsappQueue";
+import { encrypt } from "../../helpers/crypto";
 
 interface WhatsappData {
   name?: string;
@@ -17,8 +18,10 @@ interface WhatsappData {
   ratingMessage?: string;
   queueIds?: number[];
   token?: string;
-  //sendIdQueue?: number;
-  //timeSendQueue?: number;
+  provider?: string;
+  phoneNumberId?: string;
+  wabaId?: string;
+  apiVersion?: string;
   transferQueueId?: number; 
   timeToTransfer?: number;    
   promptId?: number;
@@ -26,7 +29,6 @@ interface WhatsappData {
   timeUseBotQueues?: number;
   expiresTicket?: number;
   expiresInactiveMessage?: string;
-
 }
 
 interface Request {
@@ -62,10 +64,12 @@ const UpdateWhatsAppService = async ({
     ratingMessage,
     queueIds,
     token,
-    //timeSendQueue,
-    //sendIdQueue = null,
+    provider,
+    phoneNumberId,
+    wabaId,
+    apiVersion,
     transferQueueId,	
-	timeToTransfer,	
+    timeToTransfer,	
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,
@@ -100,9 +104,14 @@ const UpdateWhatsAppService = async ({
 
   const whatsapp = await ShowWhatsAppService(whatsappId, companyId);
 
+  let finalToken = token !== undefined ? token : whatsapp.token;
+  if (provider === "meta_cloud" && token && !token.includes(":")) {
+    finalToken = encrypt(token);
+  }
+
   await whatsapp.update({
     name,
-    status,
+    status: provider === "meta_cloud" ? "CONNECTED" : (status || whatsapp.status),
     session,
     greetingMessage,
     complationMessage,
@@ -110,11 +119,13 @@ const UpdateWhatsAppService = async ({
     ratingMessage,
     isDefault,
     companyId,
-    token,
-    //timeSendQueue,
-    //sendIdQueue,
+    token: finalToken,
+    provider: provider || whatsapp.provider,
+    phoneNumberId: phoneNumberId !== undefined ? phoneNumberId : whatsapp.phoneNumberId,
+    wabaId: wabaId !== undefined ? wabaId : whatsapp.wabaId,
+    apiVersion: apiVersion !== undefined ? apiVersion : whatsapp.apiVersion,
     transferQueueId,	
-	timeToTransfer,	
+    timeToTransfer,	
     promptId,
     maxUseBotQueues,
     timeUseBotQueues,

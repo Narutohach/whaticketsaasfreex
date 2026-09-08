@@ -4,18 +4,18 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import CircularProgress from "@mui/material/CircularProgress";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import IconButton from "@mui/material/IconButton";
 import { i18n } from "../../translate/i18n";
 import { head } from "lodash";
 import api from "../../services/api";
@@ -30,7 +30,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
-} from "@material-ui/core";
+} from "@mui/material";
 import ConfirmationModal from "../ConfirmationModal";
 
 import path from "path-browserify";
@@ -227,7 +227,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                         <Form>
                             <DialogContent dividers>
                                 <Grid spacing={2} container>
-                                    <Grid xs={12} item>
+                                    <Grid size={12}>
                                         <Field
                                             as={TextField}
                                             autoFocus
@@ -241,7 +241,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                         />
                                     </Grid>
 									{(profile === "admin") && (
-									  <Grid xs={12} item>
+									  <Grid size={12}>
 										<FormControl variant="outlined" margin="dense" fullWidth>
 										  <InputLabel id="geral-selection-label">
 											{i18n.t("quickMessages.dialog.geral")}
@@ -261,7 +261,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
 										</FormControl>
 									  </Grid>
 									  )}
-                                    <Grid xs={12} item>
+                                    <Grid size={12}>
                                         <Field
                                             as={TextField}
                                             label={i18n.t("quickMessages.dialog.message")}
@@ -277,14 +277,14 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                         // disabled={quickemessage.mediaPath || attachment ? true : false}
                                         />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <MessageVariablesPicker
                                             disabled={isSubmitting}
                                             onClick={value => handleClickMsgVar(value, setFieldValue)}
                                         />
                                     </Grid>
                                     {(quickemessage.mediaPath || attachment) && (
-                                        <Grid xs={12} item>
+                                        <Grid size={12}>
                                             <Button startIcon={<AttachFileIcon />}>
                                                 {attachment ? attachment.name : quickemessage.mediaName}
                                             </Button>

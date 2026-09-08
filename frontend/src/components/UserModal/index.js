@@ -20,12 +20,12 @@ import {
 	IconButton,
 	Switch,
 	FormControlLabel
-  } from '@material-ui/core';
+  } from '@mui/material';
   
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { green } from "@mui/material/colors";
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";

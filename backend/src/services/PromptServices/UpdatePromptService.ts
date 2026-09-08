@@ -2,12 +2,15 @@ import * as Yup from "yup";
 import AppError from "../../errors/AppError";
 import Prompt from "../../models/Prompt";
 import ShowPromptService from "./ShowPromptService";
+import { encrypt } from "../../helpers/crypto";
 
 interface PromptData {
     id?: number;
     name: string;
     apiKey: string;
     prompt: string;
+    provider?: string;
+    model?: string;
     maxTokens?: number;
     temperature?: number;
     promptTokens?: number;
@@ -42,7 +45,7 @@ const UpdatePromptService = async ({
         maxMessages: Yup.number().required("ERR_PROMPT_MAX_MESSAGES_INVALID")
     });
 
-    const { name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = promptData;
+    const { name, apiKey, prompt, provider, model, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion } = promptData;
 
     try {
         await promptSchema.validate({ name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages });
@@ -50,7 +53,29 @@ const UpdatePromptService = async ({
         throw new AppError(`${JSON.stringify(err, undefined, 2)}`);
     }
 
-    await promptTable.update({ name, apiKey, prompt, maxTokens, temperature, promptTokens, completionTokens, totalTokens, queueId, maxMessages, voice, voiceKey, voiceRegion });
+    // Encrypt apiKey if it's newly supplied and not already encrypted
+    let finalApiKey = apiKey;
+    if (apiKey && !apiKey.includes(":")) {
+        finalApiKey = encrypt(apiKey);
+    }
+
+    await promptTable.update({
+        name,
+        apiKey: finalApiKey,
+        prompt,
+        provider: provider || promptTable.provider || "openai",
+        model: model || promptTable.model || "gpt-4o-mini",
+        maxTokens,
+        temperature,
+        promptTokens,
+        completionTokens,
+        totalTokens,
+        queueId,
+        maxMessages,
+        voice,
+        voiceKey,
+        voiceRegion
+    });
     await promptTable.reload();
     return promptTable;
 };

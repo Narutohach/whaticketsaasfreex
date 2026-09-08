@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import "express-async-errors";
+import helmet from "helmet";
 import "reflect-metadata";
 import "./bootstrap";
 
@@ -18,10 +19,19 @@ Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 const app = express();
 
+// Trust the first hop (the reverse proxy terminating TLS, e.g. Caddy/nginx)
+// so req.secure / X-Forwarded-Proto and secure cookies work correctly.
+app.set("trust proxy", 1);
+
 app.set("queues", {
   messageQueue,
   sendScheduledMessages
 });
+
+// CSP is left off: this is an API server, not the one rendering the
+// frontend's HTML, and a default CSP can break the static /public assets
+// (WhatsApp media, email attachments) served below.
+app.use(helmet({ contentSecurityPolicy: false }));
 
 const bodyparser = require('body-parser');
 app.use(bodyParser.json({ limit: '10mb' }));

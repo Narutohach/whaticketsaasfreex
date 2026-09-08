@@ -2,13 +2,13 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from "react-router-dom";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
-import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Modal from "@material-ui/core/Modal";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Modal from "@mui/material/Modal";
 import { AuthContext } from "../../context/Auth/AuthContext";
-import { Button, Divider, } from "@material-ui/core";
-import { useTheme } from "@material-ui/core/styles"; // Importar useTheme
+import { Button, Divider, } from "@mui/material";
+import { useTheme } from "@mui/material/styles"; // Importar useTheme
 import NewTicketModal from "../NewTicketModal";
 
 const VCardPreview = ({ contact, numbers }) => {
@@ -135,7 +135,7 @@ const VCardPreview = ({ contact, numbers }) => {
 
     return (
         <>
-    		{renderQueueModal()}
+            {renderQueueModal()}
             <div style={{
                 minWidth: "250px",
             }}>
@@ -147,15 +147,15 @@ const VCardPreview = ({ contact, numbers }) => {
                 }}
             />
                 <Grid container spacing={1}>
-                    <Grid item xs={1}>
+                    <Grid size={1}>
                         <Avatar src={selectedContact.profilePicUrl} />
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid size={9}>
                         <Typography style={{ marginTop: "12px", marginLeft: "10px", color: theme.palette.text.vcard }} variant="subtitle1" gutterBottom>
                             {selectedContact.name}
                         </Typography>
                     </Grid>
-					<Grid item xs={9}>
+					<Grid size={9}>
                         <Typography style={{ marginLeft: "10px", color: theme.palette.text.vcard }} variant="body2" gutterBottom>
                             <strong>Nome:</strong> {selectedContact.name}
                         </Typography>
@@ -165,7 +165,7 @@ const VCardPreview = ({ contact, numbers }) => {
                             </Typography>
                         </Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                         <Divider />
                         <Button
                             fullWidth

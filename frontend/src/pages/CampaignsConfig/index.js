@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from "@mui/material/Paper";
 import { toast } from "react-toastify";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import Title from "../../components/Title";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import api from "../../services/api";
 
 import { i18n } from "../../translate/i18n";
@@ -27,7 +27,7 @@ import {
   TableRow,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +49,8 @@ const initialSettings = {
   messageInterval: 20,
   longerIntervalAfter: 20,
   greaterInterval: 60,
+  maxMessagesPerDay: 0,
+  warmupEnabled: true,
   variables: [],
 };
 
@@ -124,7 +126,7 @@ const CampaignsConfig = () => {
       </ConfirmationModal>
       <MainHeader>
         <Grid style={{ width: "99.6%" }} container>
-          <Grid xs={12} item>
+          <Grid size={12}>
             <Title>{i18n.t("campaignsConfig.title")}</Title>
           </Grid>
         </Grid>
@@ -132,10 +134,14 @@ const CampaignsConfig = () => {
       <Paper className={classes.mainPaper} variant="outlined">
         <Box className={classes.tabPanelsContainer}>
           <Grid spacing={2} container>
-            <Grid xs={12} item>
+            <Grid size={12}>
               <Typography component={"h3"}>Intervalos</Typography>
             </Grid>
-            <Grid xs={12} md={4} item>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <FormControl
                 variant="outlined"
                 className={classes.formControl}
@@ -160,7 +166,11 @@ const CampaignsConfig = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid xs={12} md={4} item>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <FormControl
                 variant="outlined"
                 className={classes.formControl}
@@ -192,7 +202,11 @@ const CampaignsConfig = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid xs={12} md={4} item>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <FormControl
                 variant="outlined"
                 className={classes.formControl}
@@ -224,7 +238,80 @@ const CampaignsConfig = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid xs={12} className={classes.textRight} item>
+            <Grid size={12}>
+              <Typography component={"h3"}>Limites Anti-Bloqueio</Typography>
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
+              <FormControl
+                variant="outlined"
+                className={classes.formControl}
+                fullWidth
+              >
+                <InputLabel id="maxMessagesPerDay-label">
+                  Limite de Mensagens por Dia (por número)
+                </InputLabel>
+                <Select
+                  name="maxMessagesPerDay"
+                  id="maxMessagesPerDay"
+                  labelId="maxMessagesPerDay-label"
+                  label="Limite de Mensagens por Dia (por número)"
+                  value={settings.maxMessagesPerDay}
+                  onChange={(e) => handleOnChangeSettings(e)}
+                >
+                  <MenuItem value={0}>Sem limite</MenuItem>
+                  <MenuItem value={50}>50 mensagens/dia</MenuItem>
+                  <MenuItem value={100}>100 mensagens/dia</MenuItem>
+                  <MenuItem value={200}>200 mensagens/dia</MenuItem>
+                  <MenuItem value={300}>300 mensagens/dia</MenuItem>
+                  <MenuItem value={500}>500 mensagens/dia</MenuItem>
+                  <MenuItem value={1000}>1000 mensagens/dia</MenuItem>
+                </Select>
+              </FormControl>
+              <Typography variant="caption" color="textSecondary">
+                Quando o limite é atingido, os contatos restantes da campanha são
+                automaticamente reagendados para os próximos dias.
+              </Typography>
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
+              <FormControl
+                variant="outlined"
+                className={classes.formControl}
+                fullWidth
+              >
+                <InputLabel id="warmupEnabled-label">
+                  Aquecimento de Número Novo
+                </InputLabel>
+                <Select
+                  name="warmupEnabled"
+                  id="warmupEnabled"
+                  labelId="warmupEnabled-label"
+                  label="Aquecimento de Número Novo"
+                  value={settings.warmupEnabled}
+                  onChange={(e) => handleOnChangeSettings(e)}
+                >
+                  <MenuItem value={true}>
+                    Ativado (recomendado para números novos)
+                  </MenuItem>
+                  <MenuItem value={false}>
+                    Desativado (número já estabelecido em outro lugar)
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              <Typography variant="caption" color="textSecondary">
+                Enquanto ativado, conexões recém-criadas começam com um limite
+                diário bem menor e vão aumentando aos poucos ao longo de ~3
+                semanas, mesmo sem um limite configurado acima.
+              </Typography>
+            </Grid>
+            <Grid className={classes.textRight} size={12}>
               <Button
                 onClick={() => setShowVariablesForm(!showVariablesForm)}
                 color="primary"
@@ -242,7 +329,11 @@ const CampaignsConfig = () => {
             </Grid>
             {showVariablesForm && (
               <>
-                <Grid xs={12} md={6} item>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <TextField
                     label="Atalho"
                     variant="outlined"
@@ -252,7 +343,11 @@ const CampaignsConfig = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={12} md={6} item>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <TextField
                     label="Conteúdo"
                     variant="outlined"
@@ -262,7 +357,7 @@ const CampaignsConfig = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={12} className={classes.textRight} item>
+                <Grid className={classes.textRight} size={12}>
                   <Button
                     onClick={() => setShowVariablesForm(!showVariablesForm)}
                     color="primary"
@@ -281,7 +376,7 @@ const CampaignsConfig = () => {
               </>
             )}
             {settings.variables.length > 0 && (
-              <Grid xs={12} className={classes.textRight} item>
+              <Grid className={classes.textRight} size={12}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>

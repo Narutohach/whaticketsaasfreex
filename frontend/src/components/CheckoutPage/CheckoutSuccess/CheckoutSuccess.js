@@ -3,7 +3,8 @@ import { useHistory } from "react-router-dom";
 import QRCode from 'react-qr-code';
 import { SuccessContent, Total } from './style';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { FaCopy, FaCheckCircle } from 'react-icons/fa';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { SocketContext } from "../../../context/Socket/SocketContext";
 import { useDate } from "../../../hooks/useDate";
 import { toast } from "react-toastify";
@@ -54,12 +55,12 @@ function CheckoutSuccess(props) {
             {copied ? (
               <>
                 <span>Copiado</span>
-                <FaCheckCircle size={18} />
+                <CheckCircleIcon fontSize="small" />
               </>
             ) : (
               <>
                 <span>Copiar código QR</span>
-                <FaCopy size={18} />
+                <ContentCopyIcon fontSize="small" />
               </>
             )}
           </button>

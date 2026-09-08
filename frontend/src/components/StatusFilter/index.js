@@ -1,5 +1,5 @@
-import { Box, Chip, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Box, Chip, TextField } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import React, { useEffect, useState } from "react";
 import { i18n } from "../../translate/i18n";
 

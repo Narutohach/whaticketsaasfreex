@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { makeStyles, useTheme } from "@material-ui/core/styles"; // Importando useTheme
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import ChatIcon from '@material-ui/icons/Chat';
+import { makeStyles } from "../../styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import ChatIcon from '@mui/icons-material/Chat';
 
 import TicketsManagerTabs from "../../components/TicketsManagerTabs/";
 import Ticket from "../../components/Ticket/";
@@ -14,6 +15,7 @@ import TicketAdvancedLayout from "../../components/TicketAdvancedLayout";
 import { TicketsContext } from "../../context/Tickets/TicketsContext";
 
 import { i18n } from "../../translate/i18n";
+import HactoLogo from "../../components/Logo";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -35,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 const TicketAdvanced = (props) => {
     const classes = useStyles();
-    const theme = useTheme(); // Usando o hook useTheme
+    const theme = useTheme();
     const { ticketId } = useParams();
     const [option, setOption] = useState(0);
     const { currentTicket, setCurrentTicket } = useContext(TicketsContext);
@@ -59,19 +61,11 @@ const TicketAdvanced = (props) => {
         }
     }, [currentTicket]);
 
-    // Definindo os logos para modo claro e escuro
-    const logoLight = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/interno.png`;
-    const logoDark = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/logo_w.png`;
-
-    // Definindo o logo inicial com base no modo de tema atual
-    const initialLogo = theme.palette.type === 'light' ? logoLight : logoDark;
-    const [logoImg, setLogoImg] = useState(initialLogo);
-
     const renderPlaceholder = () => {
         return <Box className={classes.placeholderContainer}>
             {/*<div className={classes.placeholderItem}>{i18n.t("chat.noTicketMessage")}</div>*/}
             <div>
-                <center><img style={{ margin: "0 auto", width: "80%" }} src={`${logoImg}?r=${Math.random()}`} alt={`${process.env.REACT_APP_NAME_SYSTEM}`} /></center>
+                <center><HactoLogo size="large" light={theme.palette.mode === "light"} /></center>
             </div>
             <br />
             <Button onClick={() => setOption(1)} variant="contained" color="primary">

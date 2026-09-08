@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles, TextField, Grid } from "@material-ui/core";
+import { TextField, Grid } from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 import { Formik, Form, FastField, FieldArray } from "formik";
 import { isArray } from "lodash";
 import NumberFormat from "react-number-format";
@@ -76,9 +77,14 @@ function SchedulesForm(props) {
               <Grid spacing={4} container>
                 {values.schedules.map((item, index) => {
                   return (
-                    <Grid key={index} xs={12} md={4} item>
+                    <Grid
+                      key={index}
+                      size={{
+                        xs: 12,
+                        md: 4
+                      }}>
                       <Grid container>
-                        <Grid className={classes.control} xs={12} item>
+                        <Grid className={classes.control} size={12}>
                           <FastField
                             as={TextField}
                             label={i18n.t("queueModal.serviceHours.dayWeek")}
@@ -89,7 +95,12 @@ function SchedulesForm(props) {
                             margin="dense"
                           />
                         </Grid>
-                        <Grid className={classes.control} xs={12} md={6} item>
+                        <Grid
+                          className={classes.control}
+                          size={{
+                            xs: 12,
+                            md: 6
+                          }}>
                           <FastField
                             label={i18n.t("queueModal.serviceHours.startTimeA")}
                             name={`schedules[${index}].startTimeA`}
@@ -107,7 +118,12 @@ function SchedulesForm(props) {
                             )}
                           </FastField>
                         </Grid>
-                        <Grid className={classes.control} xs={12} md={6} item>
+                        <Grid
+                          className={classes.control}
+                          size={{
+                            xs: 12,
+                            md: 6
+                          }}>
                           <FastField
                             label={i18n.t("queueModal.serviceHours.endTimeA")}
                             name={`schedules[${index}].endTimeA`}
@@ -125,7 +141,12 @@ function SchedulesForm(props) {
                             )}
                           </FastField>
                         </Grid>
-                        <Grid className={classes.control} xs={12} md={6} item>
+                        <Grid
+                          className={classes.control}
+                          size={{
+                            xs: 12,
+                            md: 6
+                          }}>
                           <FastField
                             label={i18n.t("queueModal.serviceHours.startTimeB")}
                             name={`schedules[${index}].startTimeB`}
@@ -143,7 +164,12 @@ function SchedulesForm(props) {
                             )}
                           </FastField>
                         </Grid>
-                        <Grid className={classes.control} xs={12} md={6} item>
+                        <Grid
+                          className={classes.control}
+                          size={{
+                            xs: 12,
+                            md: 6
+                          }}>
                           <FastField
                             label={i18n.t("queueModal.serviceHours.endTimeB")}
                             name={`schedules[${index}].endTimeB`}

@@ -121,13 +121,44 @@ export const getMessageOptions = async (
 };
 
 
+import Whatsapp from "../../models/Whatsapp";
+import { ChannelProviderFactory } from "../Channels/ChannelProviderFactory";
+
 const SendWhatsAppMedia = async ({
   media,
   ticket,
   body,
   isForwarded = false
-}: Request): Promise<WAMessage> => {
+}: Request): Promise<any> => {
   try {
+    let whatsapp = ticket.whatsapp;
+    if (!whatsapp && ticket.whatsappId) {
+      whatsapp = await Whatsapp.findByPk(ticket.whatsappId);
+    }
+
+    const bodyMessage = formatBody(body, ticket.contact);
+
+    if (whatsapp && (whatsapp.provider === "meta_cloud" || whatsapp.provider === "meta")) {
+      const channel = ChannelProviderFactory.getProvider(whatsapp);
+      const mediaUrl = `${process.env.BACKEND_URL || "http://localhost:8080"}/public/company${ticket.companyId}/${media.filename || path.basename(media.path)}`;
+      const sent = await channel.sendMedia({
+        to: ticket.contact.number,
+        mediaPath: mediaUrl,
+        mediaType: media.mimetype,
+        caption: bodyMessage,
+        filename: media.originalname
+      });
+
+      await ticket.update({ lastMessage: bodyMessage });
+      return {
+        key: {
+          id: sent.id,
+          remoteJid: `${ticket.contact.number}@s.whatsapp.net`,
+          fromMe: true
+        }
+      };
+    }
+
     const wbot = await GetTicketWbot(ticket);
     const companyId = ticket.companyId.toString();
 
@@ -135,7 +166,6 @@ const SendWhatsAppMedia = async ({
     const mimeType = media.mimetype;
     const typeMessage = mimeType.split("/")[0];
     let options: AnyMessageContent;
-    const bodyMessage = formatBody(body, ticket.contact);
 
     if (typeMessage === "video") {
       options = {
@@ -182,8 +212,14 @@ const SendWhatsAppMedia = async ({
       };
     }
 
+    const jidServer = ticket.isGroup
+      ? "g.us"
+      : ticket.contact.isLid
+        ? "lid"
+        : "s.whatsapp.net";
+
     const sentMessage = await wbot.sendMessage(
-      `${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+      `${ticket.contact.number}@${jidServer}`,
       {
         ...options
       }

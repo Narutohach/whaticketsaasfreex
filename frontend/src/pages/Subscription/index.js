@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "../../styles/makeStyles";
 
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
 import SubscriptionModal from "../../components/SubscriptionModal";
 import MainHeader from "../../components/MainHeader";
@@ -76,7 +76,11 @@ const Contacts = () => {
       <MainHeader>
         <Title>Assinatura</Title>
       </MainHeader>
-      <Grid item xs={12} sm={4}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 4
+        }}>
         <Paper
           className={classes.mainPaper}
           variant="outlined"

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useField } from 'formik';
-import Grid from '@material-ui/core/Grid';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
+import Grid from '@mui/material/Grid';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 export default function DatePickerField(props) {
   const [field, meta, helper] = useField(props);
@@ -38,17 +35,20 @@ export default function DatePickerField(props) {
 
   return (
     <Grid container>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
           {...field}
           {...props}
           value={selectedDate}
           onChange={_onChange}
-          error={isError}
-          invalidDateMessage={isError && error}
-          helperText={isError && error}
+          slotProps={{
+            textField: {
+              error: Boolean(isError),
+              helperText: isError ? error : undefined,
+            },
+          }}
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </Grid>
   );
 }

@@ -5,6 +5,7 @@ import Whatsapp from "../../models/Whatsapp";
 import Company from "../../models/Company";
 import Plan from "../../models/Plan";
 import AssociateWhatsappQueue from "./AssociateWhatsappQueue";
+import { encrypt } from "../../helpers/crypto";
 
 interface Request {
   name: string;
@@ -18,8 +19,9 @@ interface Request {
   isDefault?: boolean;
   token?: string;
   provider?: string;
-  //sendIdQueue?: number;
-  //timeSendQueue?: number;
+  phoneNumberId?: string;
+  wabaId?: string;
+  apiVersion?: string;
   transferQueueId?: number;
   timeToTransfer?: number;    
   promptId?: number;
@@ -45,9 +47,10 @@ const CreateWhatsAppService = async ({
   isDefault = false,
   companyId,
   token = "",
-  provider = "beta",
-  //timeSendQueue,
-  //sendIdQueue,
+  provider = "baileys",
+  phoneNumberId,
+  wabaId,
+  apiVersion = "v20.0",
   transferQueueId,
   timeToTransfer,    
   promptId,
@@ -120,47 +123,28 @@ const CreateWhatsAppService = async ({
     throw new AppError("ERR_WAPP_GREETING_REQUIRED");
   }
 
-  if (token !== null && token !== "") {
-    const tokenSchema = Yup.object().shape({
-      token: Yup.string()
-        .required()
-        .min(2)
-        .test(
-          "Check-token",
-          "This whatsapp token is already used.",
-          async value => {
-            if (!value) return false;
-            const tokenExists = await Whatsapp.findOne({
-              where: { token: value }
-            });
-            return !tokenExists;
-          }
-        )
-    });
-
-    try {
-      await tokenSchema.validate({ token });
-    } catch (err: any) {
-      throw new AppError(err.message);
-    }
+  let finalToken = token;
+  if (provider === "meta_cloud" && token) {
+    finalToken = encrypt(token);
   }
 
   const whatsapp = await Whatsapp.create(
     {
       name,
-      status,
+      status: provider === "meta_cloud" ? "CONNECTED" : status,
       greetingMessage,
       complationMessage,
       outOfHoursMessage,
       ratingMessage,
       isDefault,
       companyId,
-      token,
+      token: finalToken,
       provider,
-      //timeSendQueue,
-      //sendIdQueue,
-	  transferQueueId,
-	  timeToTransfer,	  
+      phoneNumberId,
+      wabaId,
+      apiVersion,
+      transferQueueId,
+      timeToTransfer,	  
       promptId,
       maxUseBotQueues,
       timeUseBotQueues,

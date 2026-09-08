@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "../../styles/makeStyles";
+import Paper from "@mui/material/Paper";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import Title from "../../components/Title";
 
-import { Grid, LinearProgress, Typography } from "@material-ui/core";
+import { Grid, LinearProgress, Typography } from "@mui/material";
 import api from "../../services/api";
 import { has, get, isNull } from "lodash";
 import CardCounter from "../../components/Dashboard/CardCounter";
-import GroupIcon from "@material-ui/icons/Group";
-import ScheduleIcon from "@material-ui/icons/Schedule";
-import EventAvailableIcon from "@material-ui/icons/EventAvailable";
-import DoneIcon from "@material-ui/icons/Done";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
-import ListAltIcon from "@material-ui/icons/ListAlt";
+import GroupIcon from "@mui/icons-material/Group";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import DoneIcon from "@mui/icons-material/Done";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import { useDate } from "../../hooks/useDate";
 
 import { SocketContext } from "../../context/Socket/SocketContext";
@@ -148,7 +148,7 @@ const CampaignReport = () => {
     <MainContainer>
       <MainHeader>
         <Grid style={{ width: "99.6%" }} container>
-          <Grid xs={12} item>
+          <Grid size={12}>
             <Title>Relatório da {campaign.name || "Campanha"}</Title>
           </Grid>
         </Grid>
@@ -158,14 +158,18 @@ const CampaignReport = () => {
           Status: {formatStatus(campaign.status)} {delivered} de {validContacts}
         </Typography>
         <Grid spacing={2} container>
-          <Grid xs={12} item>
+          <Grid size={12}>
             <LinearProgress
               variant="determinate"
               style={{ height: 15, borderRadius: 3, margin: "20px 0" }}
               value={percent}
             />
           </Grid>
-          <Grid xs={12} md={4} item>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4
+            }}>
             <CardCounter
               icon={<GroupIcon fontSize="inherit" />}
               title="Contatos Válidos"
@@ -175,7 +179,11 @@ const CampaignReport = () => {
           </Grid>
           {campaign.confirmation && (
             <>
-              <Grid xs={12} md={4} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <CardCounter
                   icon={<DoneIcon fontSize="inherit" />}
                   title="Confirmações Solicitadas"
@@ -183,7 +191,11 @@ const CampaignReport = () => {
                   loading={loading}
                 />
               </Grid>
-              <Grid xs={12} md={4} item>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <CardCounter
                   icon={<DoneAllIcon fontSize="inherit" />}
                   title="Confirmações"
@@ -193,7 +205,11 @@ const CampaignReport = () => {
               </Grid>
             </>
           )}
-          <Grid xs={12} md={4} item>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4
+            }}>
             <CardCounter
               icon={<CheckCircleIcon fontSize="inherit" />}
               title="Entregues"
@@ -202,7 +218,11 @@ const CampaignReport = () => {
             />
           </Grid>
           {campaign.whatsappId && (
-            <Grid xs={12} md={4} item>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <CardCounter
                 icon={<WhatsAppIcon fontSize="inherit" />}
                 title="Conexão"
@@ -212,7 +232,11 @@ const CampaignReport = () => {
             </Grid>
           )}
           {campaign.contactListId && (
-            <Grid xs={12} md={4} item>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <CardCounter
                 icon={<ListAltIcon fontSize="inherit" />}
                 title="Lista de Contatos"
@@ -221,7 +245,11 @@ const CampaignReport = () => {
               />
             </Grid>
           )}
-          <Grid xs={12} md={4} item>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4
+            }}>
             <CardCounter
               icon={<ScheduleIcon fontSize="inherit" />}
               title="Agendamento"
@@ -229,7 +257,11 @@ const CampaignReport = () => {
               loading={loading}
             />
           </Grid>
-          <Grid xs={12} md={4} item>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4
+            }}>
             <CardCounter
               icon={<EventAvailableIcon fontSize="inherit" />}
               title="Conclusão"

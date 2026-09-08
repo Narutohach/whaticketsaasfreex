@@ -1,17 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-
 import clsx from "clsx";
 import { toast } from "react-toastify";
 
-import { Paper, makeStyles } from "@material-ui/core";
+import { Paper, IconButton, Tooltip } from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
+import PersonIcon from "@mui/icons-material/Person";
 
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { ReplyMessageProvider } from "../../context/ReplyingMessage/ReplyingMessageContext";
 import { SocketContext } from "../../context/Socket/SocketContext";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
-import ContactDrawer from "../ContactDrawer";
+import ContactCrmPanel from "../ContactCrmPanel";
 import MessageInput from "../MessageInputCustom/";
 import MessagesList from "../MessagesList";
 import { TagsContainer } from "../TagsContainer";
@@ -19,14 +20,14 @@ import TicketActionButtons from "../TicketActionButtonsCustom";
 import TicketHeader from "../TicketHeader";
 import TicketInfo from "../TicketInfo";
 
-const drawerWidth = 320;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     height: "100%",
+    width: "100%",
     position: "relative",
     overflow: "hidden",
+    backgroundColor: theme.palette.background.default,
   },
 
   mainWrapper: {
@@ -37,22 +38,40 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
-    borderLeft: "0",
-    marginRight: -drawerWidth,
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
+    borderLeft: 0,
+    borderRight: theme.palette.mode === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.08)",
   },
 
-  mainWrapperShift: {
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginRight: 0,
+  crmWrapper: {
+    width: 320,
+    height: "100%",
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+    transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
+    overflow: "hidden",
+    [theme.breakpoints.down("sm")]: {
+      position: "absolute",
+      right: 0,
+      top: 0,
+      bottom: 0,
+      zIndex: 20,
+      boxShadow: "-4px 0 24px rgba(0, 0, 0, 0.3)",
+    },
+  },
+
+  crmWrapperClosed: {
+    width: 0,
+    opacity: 0,
+    pointerEvents: "none",
+  },
+
+  toggleCrmBtn: {
+    padding: 6,
+    color: theme.palette.mode === "dark" ? "#94a3b8" : "#64748b",
+    "&:hover": {
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -63,7 +82,7 @@ const Ticket = () => {
 
   const { user } = useContext(AuthContext);
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [crmOpen, setCrmOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [contact, setContact] = useState({});
   const [ticket, setTicket] = useState({});
@@ -111,7 +130,6 @@ const Ticket = () => {
       }
 
       if (data.action === "delete" && data.ticketId === ticket.id) {
-        // toast.success("Ticket deleted sucessfully.");
         history.push("/tickets");
       }
     });
@@ -132,12 +150,8 @@ const Ticket = () => {
     };
   }, [ticketId, ticket, history, socketManager]);
 
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
+  const toggleCrm = () => {
+    setCrmOpen((prev) => !prev);
   };
 
   const renderTicketInfo = () => {
@@ -146,7 +160,7 @@ const Ticket = () => {
         <TicketInfo
           contact={contact}
           ticket={ticket}
-          onClick={handleDrawerOpen}
+          onClick={toggleCrm}
         />
       );
     }
@@ -159,37 +173,59 @@ const Ticket = () => {
           ticket={ticket}
           ticketId={ticket.id}
           isGroup={ticket.isGroup}
-        ></MessagesList>
-        <MessageInput ticketId={ticket.id} ticketStatus={ticket.status} />
+        />
+        <MessageInput
+          ticket={ticket}
+          ticketId={ticket.id}
+          ticketStatus={ticket.status}
+        />
       </>
     );
   };
 
   return (
     <div className={classes.root} id="drawer-container">
+      {/* Coluna 2: Chat & Conversa */}
       <Paper
         variant="outlined"
         elevation={0}
-        className={clsx(classes.mainWrapper, {
-          [classes.mainWrapperShift]: drawerOpen,
-        })}
+        className={classes.mainWrapper}
       >
         <TicketHeader loading={loading}>
           {renderTicketInfo()}
-          <TicketActionButtons ticket={ticket} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <TicketActionButtons ticket={ticket} />
+            <Tooltip title={crmOpen ? "Ocultar CRM" : "Exibir CRM"}>
+              <IconButton
+                size="small"
+                className={classes.toggleCrmBtn}
+                onClick={toggleCrm}
+              >
+                <PersonIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </div>
         </TicketHeader>
-        <Paper>
+
+        <Paper square elevation={0}>
           <TagsContainer ticket={ticket} />
         </Paper>
+
         <ReplyMessageProvider>{renderMessagesList()}</ReplyMessageProvider>
       </Paper>
-      <ContactDrawer
-        open={drawerOpen}
-        handleDrawerClose={handleDrawerClose}
-        contact={contact}
-        loading={loading}
-        ticket={ticket}
-      />
+
+      {/* Coluna 3: Painel CRM do Lead */}
+      <div
+        className={clsx(classes.crmWrapper, {
+          [classes.crmWrapperClosed]: !crmOpen,
+        })}
+      >
+        <ContactCrmPanel
+          contact={contact}
+          ticket={ticket}
+          onClose={() => setCrmOpen(false)}
+        />
+      </div>
     </div>
   );
 };

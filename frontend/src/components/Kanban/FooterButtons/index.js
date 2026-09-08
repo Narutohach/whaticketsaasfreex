@@ -1,7 +1,9 @@
-import { IconButton, makeStyles, Tooltip } from "@material-ui/core";
+import { IconButton, Tooltip } from "@mui/material";
+import { makeStyles } from "../../../styles/makeStyles";
 import React, { useState } from "react";
-import { BookOpen, Calendar } from "react-feather";
-import WhatsAppIcon from "@material-ui/icons/WhatsApp";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ScheduleModal from "../../ScheduleModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ContactNotesDialog from "../../ContactNotesDialog";
@@ -46,12 +48,12 @@ export default function FooterButtons({ticket}) {
             <div className={classes.container}>
                 <Tooltip title="Anotações">
                 <IconButton onClick={handleOpenContactNotesModal} size="small">
-                    <BookOpen color={color} size={17} />
+                    <MenuBookIcon style={{ color }} fontSize="small" />
                 </IconButton>
                 </Tooltip>
                 <Tooltip title="Criar agendamento">
                     <IconButton onClick={handleOpenScheduleModal} size="small">
-                        <Calendar color={color} size={17} />
+                        <CalendarTodayIcon style={{ color }} fontSize="small" />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Ir para conversa">   

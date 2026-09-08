@@ -1,8 +1,8 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
-import { green, red } from '@material-ui/core/colors';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
+import { makeStyles } from "../../styles/makeStyles";
+import { green, red } from '@mui/material/colors';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const useStyles = makeStyles(theme => ({
     on: {

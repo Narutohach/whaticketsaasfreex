@@ -6,6 +6,7 @@ import { getBodyMessage } from "../WbotServices/wbotMessageListener";
 import { logger } from "../../utils/logger";
 import { isNil } from "lodash";
 import UpdateTicketService from "../TicketServices/UpdateTicketService";
+import { sendBotMessage } from "../../helpers/SendBotMessage";
 
 
 type Session = WASocket & {
@@ -145,7 +146,7 @@ const typebotListener = async ({
             }
 
             if (messages?.length === 0) {
-                await wbot.sendMessage(`${number}@c.us`, { text: typebotUnknownMessage });
+                await sendBotMessage(wbot, `${number}@c.us`, { text: typebotUnknownMessage });
             } else {
                 for (const message of messages) {
                     if (message.type === 'text') {
@@ -385,7 +386,7 @@ const typebotListener = async ({
 
             await ticket.reload();
 
-            await wbot.sendMessage(`${number}@c.us`, { text: typebotRestartMessage })
+            await sendBotMessage(wbot, `${number}@c.us`, { text: typebotRestartMessage })
 
         }
         if (body === typebotKeywordFinish) {

@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@mui/material/Grid";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 import useSettings from "../../hooks/useSettings/index.js";
 import { toast } from 'react-toastify';
-import { makeStyles } from "@material-ui/core/styles";
-import { grey, blue } from "@material-ui/core/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import { grey, blue } from "@mui/material/colors";
 import OnlyForSuperUser from "../OnlyForSuperUser";
 import useAuth from "../../hooks/useAuth.js/index.js";
 
 import {
   IconButton,
   InputAdornment,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import { Colorize, AttachFile, Delete } from "@material-ui/icons";
+import { Colorize, AttachFile, Delete } from "@mui/icons-material";
 import ColorModeContext from "../../layout/themeContext.js";
 import api from "../../services/api.js";
 import ColorPicker from "../ColorPicker/index.js";
@@ -259,7 +259,12 @@ export default function Whitelabel(props) {
     <>
       <Grid spacing={3} container>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="primary-color-light-field"
@@ -304,7 +309,12 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="primary-color-dark-field"
@@ -541,7 +551,12 @@ export default function Whitelabel(props) {
       <Grid spacing={3} container>
 
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-chatlist-field"
@@ -584,7 +599,12 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-chatlist-field"
@@ -627,9 +647,19 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item></Grid>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}></Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-boxRight-field"
@@ -672,7 +702,12 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-boxRight-field"
@@ -715,9 +750,19 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item></Grid>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}></Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-boxLeft-field"
@@ -760,7 +805,12 @@ export default function Whitelabel(props) {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={4} item>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <FormControl className={classes.selectContainer}>
             <TextField
               id="color-boxLeft-field"
@@ -802,7 +852,12 @@ export default function Whitelabel(props) {
             }}
           />
         </Grid>
-        <Grid xs={12} sm={6} md={4} item></Grid>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}></Grid>
 
       </Grid>
     </>

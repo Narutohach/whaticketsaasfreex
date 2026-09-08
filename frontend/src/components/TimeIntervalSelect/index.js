@@ -1,9 +1,9 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+import { makeStyles } from "../../styles/makeStyles";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import { i18n } from "../../translate/i18n";
 
 
@@ -23,10 +23,11 @@ const TimeIntervalSelect = ({ selectedInterval, onChange }) => {
 	return (
 		<div style={{ marginTop: 6 }}>
 			<FormControl className={classes.formControl} margin="dense" variant="outlined">
-				<InputLabel>{i18n.t("queueSelect.timeToMove")}</InputLabel>
+				<InputLabel id="time-interval-select-label">{i18n.t("queueSelect.timeToMove")}</InputLabel>
 				<Select
-					labelWidth={60}
-					value={selectedInterval}
+					label={i18n.t("queueSelect.timeToMove")}
+					labelId="time-interval-select-label"
+					value={selectedInterval ?? ""}
 					onChange={handleChange}
 					MenuProps={{
 						anchorOrigin: {

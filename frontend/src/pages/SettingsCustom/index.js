@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import Title from "../../components/Title";
-import { makeStyles, Paper, Tabs, Tab } from "@material-ui/core";
+import { Paper, Tabs, Tab } from "@mui/material";
+import { makeStyles } from "../../styles/makeStyles";
 
 import TabPanel from "../../components/TabPanel";
 

@@ -5,18 +5,18 @@ import { head } from "lodash";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
-import TextField from "@material-ui/core/TextField";
-import { green } from "@material-ui/core/colors";
-import { makeStyles } from "@material-ui/core/styles";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import { green } from "@mui/material/colors";
+import { makeStyles } from "../../styles/makeStyles";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 import moment from "moment";
 import { i18n } from "../../translate/i18n";
@@ -30,7 +30,7 @@ import {
   Select,
   Tab,
   Tabs,
-} from "@material-ui/core";
+} from "@mui/material";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
-    backgroundColor: "#fff"
+    backgroundColor: theme.palette.optionsBackground,
   },
 
   tabmsg: {
@@ -378,7 +378,7 @@ const CampaignModal = ({
             <Form>
               <DialogContent dividers>
                 <Grid spacing={2} container>
-                  <Grid xs={12} item>
+                  <Grid size={12}>
                     <Field
                       as={TextField}
                       label={i18n.t("campaigns.dialog.form.name")}
@@ -421,7 +421,11 @@ const CampaignModal = ({
                       </Field>
                     </FormControl>
                   </Grid> */}
-                  <Grid xs={12} md={4} item>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 4
+                    }}>
                     <FormControl
                       variant="outlined"
                       margin="dense"
@@ -458,7 +462,11 @@ const CampaignModal = ({
                       </Field>
                     </FormControl>
                   </Grid>
-                  <Grid xs={12} md={4} item>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 4
+                    }}>
                     <FormControl
                       variant="outlined"
                       margin="dense"
@@ -488,7 +496,11 @@ const CampaignModal = ({
                       </Field>
                     </FormControl>
                   </Grid>
-                  <Grid xs={12} md={4} item>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 4
+                    }}>
                     <FormControl
                       variant="outlined"
                       margin="dense"
@@ -518,7 +530,11 @@ const CampaignModal = ({
                       </Field>
                     </FormControl>
                   </Grid>
-                  <Grid xs={12} md={4} item>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 4
+                    }}>
                     <Field
                       as={TextField}
                       label={i18n.t("campaigns.dialog.form.scheduledAt")}
@@ -536,7 +552,11 @@ const CampaignModal = ({
                       disabled={!campaignEditable}
                     />
                   </Grid>
-                  <Grid xs={12} md={4} item>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 4
+                    }}>
                   <FormControl
                       variant="outlined"
                       margin="dense"
@@ -562,7 +582,7 @@ const CampaignModal = ({
                       </Field>
                     </FormControl>
                   </Grid>
-                  <Grid xs={12} item>
+                  <Grid size={12}>
                     <Tabs
                       value={messageTab}
                       indicatorColor="primary"
@@ -586,10 +606,18 @@ const CampaignModal = ({
                         <>
                           {values.confirmation ? (
                             <Grid spacing={2} container>
-                              <Grid xs={12} md={8} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 8
+                                }}>
                                 <>{renderMessageField("message1")}</>
                               </Grid>
-                              <Grid xs={12} md={4} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 4
+                                }}>
                                 <>
                                   {renderConfirmationMessageField(
                                     "confirmationMessage1"
@@ -606,10 +634,18 @@ const CampaignModal = ({
                         <>
                           {values.confirmation ? (
                             <Grid spacing={2} container>
-                              <Grid xs={12} md={8} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 8
+                                }}>
                                 <>{renderMessageField("message2")}</>
                               </Grid>
-                              <Grid xs={12} md={4} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 4
+                                }}>
                                 <>
                                   {renderConfirmationMessageField(
                                     "confirmationMessage2"
@@ -626,10 +662,18 @@ const CampaignModal = ({
                         <>
                           {values.confirmation ? (
                             <Grid spacing={2} container>
-                              <Grid xs={12} md={8} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 8
+                                }}>
                                 <>{renderMessageField("message3")}</>
                               </Grid>
-                              <Grid xs={12} md={4} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 4
+                                }}>
                                 <>
                                   {renderConfirmationMessageField(
                                     "confirmationMessage3"
@@ -646,10 +690,18 @@ const CampaignModal = ({
                         <>
                           {values.confirmation ? (
                             <Grid spacing={2} container>
-                              <Grid xs={12} md={8} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 8
+                                }}>
                                 <>{renderMessageField("message4")}</>
                               </Grid>
-                              <Grid xs={12} md={4} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 4
+                                }}>
                                 <>
                                   {renderConfirmationMessageField(
                                     "confirmationMessage4"
@@ -666,10 +718,18 @@ const CampaignModal = ({
                         <>
                           {values.confirmation ? (
                             <Grid spacing={2} container>
-                              <Grid xs={12} md={8} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 8
+                                }}>
                                 <>{renderMessageField("message5")}</>
                               </Grid>
-                              <Grid xs={12} md={4} item>
+                              <Grid
+                                size={{
+                                  xs: 12,
+                                  md: 4
+                                }}>
                                 <>
                                   {renderConfirmationMessageField(
                                     "confirmationMessage5"
@@ -685,7 +745,7 @@ const CampaignModal = ({
                     </Box>
                   </Grid>
                   {(campaign.mediaPath || attachment) && (
-                    <Grid xs={12} item>
+                    <Grid size={12}>
                       <Button startIcon={<AttachFileIcon />}>
                         {attachment != null
                           ? attachment.name

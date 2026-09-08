@@ -1,7 +1,7 @@
 import React from 'react';
-import { IconButton, Tooltip } from "@material-ui/core";
+import { IconButton, Tooltip } from "@mui/material";
 import { Can } from "../../Can";
-import { Trash } from "react-feather";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { i18n } from "../../../translate/i18n";
 import ConfirmationModal from "../../ConfirmationModal";
 import { useState } from "react";
@@ -36,7 +36,7 @@ export default function DeleteButton({userProfile, ticket, setTickets}) {
             yes={() => (
 				<Tooltip title="Excluir atendimento">
 					<IconButton disableRipple edge="end" size="small" onClick={handleOpenConfirmationModal}>
-						<Trash size={16} color="#4d4d4d" />
+						<DeleteOutlineIcon style={{ color: "#4d4d4d" }} fontSize="small" />
 					</IconButton>
 				</Tooltip>
             )}

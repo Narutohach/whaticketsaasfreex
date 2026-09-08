@@ -11,3 +11,11 @@ whats.hacto.com.br {
 api.whats.hacto.com.br {
     reverse_proxy whaticket_backend:3000
 }
+
+typebot.srv636927.hstgr.cloud {
+    reverse_proxy typebot-builder:3000
+}
+
+bot.srv636927.hstgr.cloud {
+    reverse_proxy typebot-viewer:3000
+}

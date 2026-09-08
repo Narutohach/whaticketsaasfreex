@@ -41,6 +41,7 @@ import Prompts from "../pages/Prompts";
 import QueueIntegration from "../pages/QueueIntegration";
 
 import ForgetPassword from "../pages/ForgetPassWord/"; // Reset PassWd
+import Portal from "../pages/Portal";
 
 const Routes = () => {
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -58,13 +59,14 @@ const Routes = () => {
 	  <ForwardMessageProvider>
         <TicketsContextProvider>
           <Switch>
+            <Route exact path="/" component={Portal} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
 			<Route exact path="/forgetpsw" component={ForgetPassword} /> 
             {/* <Route exact path="/create-company" component={Companies} /> */}
             <WhatsAppsProvider>
               <LoggedInLayout>
-                <Route exact path="/" component={Dashboard} isPrivate />
+                <Route exact path="/dashboard" component={Dashboard} isPrivate />
                 <Route
                   exact
                   path="/tickets/:ticketId?"

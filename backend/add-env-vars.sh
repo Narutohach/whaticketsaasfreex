@@ -10,7 +10,7 @@ _replaceBackendEnvVars() {
 
     if [ -z "$FILES" ]; then
         echo "Nenhum arquivo contendo as ocorrencias especificas encontrado."
-        exit 0
+        return 0
     fi
 
     # Escapar caracteres especiais nas variaveis de ambiente

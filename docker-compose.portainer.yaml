@@ -1,0 +1,92 @@
+services:
+  whaticket_db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-whaticket}
+      POSTGRES_USER: ${DB_USER:-whaticket}
+      POSTGRES_PASSWORD: ${DB_PASS:?DB_PASS must be set}
+    volumes:
+      - whaticket_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${DB_USER:-whaticket} -d $${DB_NAME:-whaticket}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [whaticket_internal]
+
+  whaticket_redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - whaticket_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [whaticket_internal]
+
+  whaticket_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DB_DIALECT: postgres
+      DB_HOST: whaticket_db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-whaticket}
+      DB_PASS: ${DB_PASS:?DB_PASS must be set}
+      DB_NAME: ${DB_NAME:-whaticket}
+      TZ: ${TZ:-America/Sao_Paulo}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET must be set}
+      PORT: 3000
+      BACKEND_URL: https://api.whats.hacto.com.br
+      FRONTEND_URL: https://whats.hacto.com.br
+      REDIS_URI: redis://whaticket_redis:6379
+      REDIS_OPT_LIMITER_MAX: ${REDIS_OPT_LIMITER_MAX:-1}
+      REDIS_OPT_LIMITER_DURATION: ${REDIS_OPT_LIMITER_DURATION:-3000}
+      USER_LIMIT: ${USER_LIMIT:-999}
+      CONNECTIONS_LIMIT: ${CONNECTIONS_LIMIT:-999}
+      CLOSED_SEND_BY_ME: ${CLOSED_SEND_BY_ME:-true}
+      CHROME_ARGS: ${CHROME_ARGS:---no-sandbox,--disable-setuid-sandbox}
+      GERENCIANET_SANDBOX: ${GERENCIANET_SANDBOX:-true}
+      GERENCIANET_CLIENT_ID: ${GERENCIANET_CLIENT_ID:-}
+      GERENCIANET_CLIENT_SECRET: ${GERENCIANET_CLIENT_SECRET:-}
+      GERENCIANET_PIX_CERT: ${GERENCIANET_PIX_CERT:-}
+      GERENCIANET_PIX_KEY: ${GERENCIANET_PIX_KEY:-}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+    depends_on:
+      whaticket_db:
+        condition: service_healthy
+      whaticket_redis:
+        condition: service_healthy
+    networks: [whaticket_internal, app_network]
+
+  whaticket_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: https://api.whats.hacto.com.br
+      REACT_APP_BACKEND_URL: https://api.whats.hacto.com.br
+      REACT_APP_HOURS_CLOSE_TICKETS_AUTO: ${REACT_APP_HOURS_CLOSE_TICKETS_AUTO:-0}
+    depends_on: [whaticket_backend]
+    networks: [app_network]
+
+volumes:
+  whaticket_db_data:
+  whaticket_redis_data:
+
+networks:
+  whaticket_internal:
+  app_network:
+    external: true

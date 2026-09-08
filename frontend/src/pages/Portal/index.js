@@ -109,31 +109,36 @@ const useStyles = makeStyles(() => ({
     transition: "all 0.3s ease",
   },
   headerInner: {
-    maxWidth: 1280,
+    maxWidth: 1440,
     margin: "0 auto",
-    padding: "16px 24px",
+    padding: "14px 32px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 16,
+    gap: 24,
+    "@media (max-width: 1100px)": { padding: "14px 22px", gap: 16 },
+    "@media (max-width: 680px)": { padding: "12px 16px" },
   },
   headerLeft: {
     display: "flex",
     alignItems: "center",
-    gap: 20,
+    gap: 22,
+    flexShrink: 0,
   },
   statusPill: {
     display: "inline-flex",
     alignItems: "center",
     gap: 7,
-    padding: "5px 12px",
+    padding: "7px 13px",
     borderRadius: 999,
     background: "rgba(16, 185, 129, 0.1)",
     border: "1px solid rgba(52, 211, 153, 0.25)",
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 700,
     color: "#6ee7b7",
     letterSpacing: "0.02em",
+    whiteSpace: "nowrap",
+    lineHeight: 1.15,
     "@media (max-width: 960px)": {
       display: "none",
     },
@@ -145,17 +150,27 @@ const useStyles = makeStyles(() => ({
     background: "#34d399",
     boxShadow: "0 0 10px #34d399",
   },
+  statusSub: {
+    color: "#a7f3d0",
+    fontWeight: 600,
+    opacity: .78,
+    paddingLeft: 4,
+    borderLeft: "1px solid rgba(110,231,183,.28)",
+  },
   navLinks: {
     display: "flex",
     alignItems: "center",
-    gap: 28,
-    "@media (max-width: 860px)": {
+    justifyContent: "center",
+    gap: 22,
+    flex: 1,
+    "@media (max-width: 1180px)": { gap: 14 },
+    "@media (max-width: 900px)": {
       display: "none",
     },
   },
   navLink: {
     color: "#94a3b8",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 600,
     textDecoration: "none",
     transition: "color 0.2s ease, transform 0.2s ease",
@@ -168,6 +183,8 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     alignItems: "center",
     gap: 12,
+    flexShrink: 0,
+    "@media (max-width: 680px)": { gap: 4 },
   },
   btnGhost: {
     color: "#cbd5e1 !important",
@@ -175,7 +192,8 @@ const useStyles = makeStyles(() => ({
     fontWeight: "700 !important",
     fontSize: "14px !important",
     borderRadius: "10px !important",
-    padding: "8px 18px !important",
+    padding: "9px 14px !important",
+    whiteSpace: "nowrap",
     transition: "all 0.2s ease !important",
     "&:hover": {
       background: "rgba(255, 255, 255, 0.06) !important",
@@ -189,7 +207,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: "800 !important",
     fontSize: "14px !important",
     borderRadius: "10px !important",
-    padding: "10px 22px !important",
+    padding: "10px 18px !important",
+    whiteSpace: "nowrap",
+    "@media (max-width: 680px)": { padding: "9px 12px !important", fontSize: "12px !important" },
     boxShadow: "0 8px 24px rgba(16, 185, 129, 0.3) !important",
     transition: "all 0.25s ease !important",
     border: "1px solid rgba(52, 211, 153, 0.4) !important",
@@ -1180,7 +1200,7 @@ await fetch('https://whats.hacto.com.br/api/messages/send', {
             </Link>
             <div className={classes.statusPill}>
               <span className={classes.statusPulse} />
-              SLA 99.9% Operacional
+              <span>SLA 99.9%</span><span className={classes.statusSub}>Operacional</span>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import isAuth from "../middleware/isAuth";
+import isActiveCompany from "../middleware/isActiveCompany";
 import uploadConfig from "../config/upload";
 import tokenAuth from "../middleware/tokenAuth";
 
@@ -31,12 +32,47 @@ const agentMessageLimiter = createRateLimiter({
 });
 
 messageRoutes.get("/messages/:ticketId", isAuth, MessageController.index);
-messageRoutes.post("/messages/:ticketId", isAuth, agentMessageLimiter, upload.array("medias"), MessageController.store);
-messageRoutes.delete("/messages/:messageId", isAuth, MessageController.remove);
-messageRoutes.post("/api/messages/send", tokenAuth, apiSendLimiter, upload.array("medias"), MessageController.send);
-messageRoutes.post("/messages/edit/:messageId", isAuth, agentMessageLimiter, MessageController.edit);
-messageRoutes.post('/message/forward', isAuth, agentMessageLimiter, MessageController.forwardMessage)
-messageRoutes.post('/messages/:messageId/reactions', isAuth, agentMessageLimiter, MessageController.addReaction);
-
+messageRoutes.post(
+  "/messages/:ticketId",
+  isAuth,
+  isActiveCompany,
+  agentMessageLimiter,
+  upload.array("medias"),
+  MessageController.store
+);
+messageRoutes.delete(
+  "/messages/:messageId",
+  isAuth,
+  isActiveCompany,
+  MessageController.remove
+);
+messageRoutes.post(
+  "/api/messages/send",
+  tokenAuth,
+  apiSendLimiter,
+  upload.array("medias"),
+  MessageController.send
+);
+messageRoutes.post(
+  "/messages/edit/:messageId",
+  isAuth,
+  isActiveCompany,
+  agentMessageLimiter,
+  MessageController.edit
+);
+messageRoutes.post(
+  "/message/forward",
+  isAuth,
+  isActiveCompany,
+  agentMessageLimiter,
+  MessageController.forwardMessage
+);
+messageRoutes.post(
+  "/messages/:messageId/reactions",
+  isAuth,
+  isActiveCompany,
+  agentMessageLimiter,
+  MessageController.addReaction
+);
 
 export default messageRoutes;

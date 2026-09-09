@@ -387,6 +387,8 @@ const messages = {
 				ERR_OTHER_OPEN_TICKET:
 					"There's already an open ticket for this contact.",
 				ERR_SESSION_EXPIRED: "Session expired. Please login.",
+				ERR_COMPANY_SUSPENDED:
+					"Subscription suspended for non-payment. Settle it under Financeiro to resume operating.",
 				ERR_USER_CREATION_DISABLED:
 					"User creation was disabled by administrator.",
 				ERR_NO_PERMISSION: "You don't have permission to access this resource.",

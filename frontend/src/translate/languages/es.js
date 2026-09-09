@@ -946,6 +946,8 @@ transferTicketModal: {
     ERR_DELETE_WAPP_MSG: "No se pudo eliminar el mensaje de WhatsApp.",
     ERR_OTHER_OPEN_TICKET: "Ya hay un ticket abierto para este contacto.",
     ERR_SESSION_EXPIRED: "Sesión expirada. Por favor, inicia sesión.",
+    ERR_COMPANY_SUSPENDED:
+      "Suscripción suspendida por falta de pago. Regularice en Financiero para volver a operar.",
     ERR_USER_CREATION_DISABLED:
       "La creación de usuarios ha sido deshabilitada por el administrador.",
     ERR_NO_PERMISSION: "No tienes permiso para acceder a este recurso.",

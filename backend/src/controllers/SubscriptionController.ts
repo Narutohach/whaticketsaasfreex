@@ -174,8 +174,13 @@ export const webhook = async (
         const date = expiresAt.toISOString().split("T")[0];
 
         if (company) {
+          // `status: true` reativa a empresa: o cron de faturamento
+          // (queues.ts) desliga essa flag 3 dias após o vencimento, e sem
+          // religá-la aqui quem pagasse depois de ser suspenso continuaria
+          // suspenso para sempre, mesmo com a fatura quitada.
           await company.update({
-            dueDate: date
+            dueDate: date,
+            status: true
           });
          const invoi = await invoices.update({
             id: invoiceID,

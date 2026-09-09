@@ -48,7 +48,9 @@ export const initIO = (httpServer: Server): SocketIO => {
     const { token } = socket.handshake.query;
     let tokenData = null;
     try {
-      tokenData = verify(token as string, authConfig.secret);
+      tokenData = verify(token as string, authConfig.secret, {
+        algorithms: ["HS256"]
+      });
       // Nao logar o payload do JWT inteiro; apenas os identificadores nao sensiveis
       logger.debug(
         `io-onConnection: userId=${tokenData?.id} companyId=${tokenData?.companyId}`

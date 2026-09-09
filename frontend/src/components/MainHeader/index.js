@@ -7,6 +7,8 @@ const useStyles = makeStyles(theme => ({
 		display: "flex",
 		alignItems: "center",
 		padding: "0px 6px 6px 6px",
+		flexWrap: "wrap",
+		rowGap: theme.spacing(1),
 	},
 }));
 

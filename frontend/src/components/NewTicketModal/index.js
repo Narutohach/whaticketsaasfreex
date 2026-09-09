@@ -208,17 +208,23 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
     return filtered;
   };
 
-  const renderOption = option => {
+  const renderOption = (props, option) => {
+    const { key, ...optionProps } = props;
     if (option.number) {
-      return <>
-        {/* {IconChannel(option.channel)} */}
-        <Typography component="span" style={{ fontSize: 14, marginLeft: "10px", display: "inline-flex", alignItems: "center", lineHeight: "2" }}>
-          {option.name} - {option.number}
-        </Typography>
-      </>
-    } else {
-      return `${i18n.t("newTicketModal.add")} ${option.name}`;
+      return (
+        <li key={key} {...optionProps}>
+          {/* {IconChannel(option.channel)} */}
+          <Typography component="span" style={{ fontSize: 14, marginLeft: "10px", display: "inline-flex", alignItems: "center", lineHeight: "2" }}>
+            {option.name} - {option.number}
+          </Typography>
+        </li>
+      );
     }
+    return (
+      <li key={key} {...optionProps}>
+        {i18n.t("newTicketModal.add")} {option.name}
+      </li>
+    );
   };
 
   const renderOptionLabel = option => {
@@ -258,16 +264,19 @@ const NewTicketModal = ({ modalOpen, onClose, initialContact }) => {
                     handleSaveTicket(selectedContact.id);
                   }
                 }}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </React.Fragment>
-                  ),
+                slotProps={{
+                  ...params.slotProps,
+                  input: {
+                    ...params.slotProps?.input,
+                    endAdornment: (
+                      <React.Fragment>
+                        {loading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.slotProps?.input?.endAdornment}
+                      </React.Fragment>
+                    ),
+                  },
                 }}
               />
             )}

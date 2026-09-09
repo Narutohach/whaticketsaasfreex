@@ -189,16 +189,19 @@ const TransferTicketModalCustom = ({ modalOpen, onClose, ticketid }) => {
                 variant="outlined"
                 autoFocus
                 onChange={(e) => setSearchParam(e.target.value)}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </React.Fragment>
-                  ),
+                slotProps={{
+                  ...params.slotProps,
+                  input: {
+                    ...params.slotProps?.input,
+                    endAdornment: (
+                      <React.Fragment>
+                        {loading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.slotProps?.input?.endAdornment}
+                      </React.Fragment>
+                    ),
+                  },
                 }}
               />
             )}

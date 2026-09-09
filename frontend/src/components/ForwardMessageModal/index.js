@@ -101,12 +101,15 @@ const ForwardMessageModal = ({ messages, onClose, modalOpen }) => {
 		setContactModalOpen(false);
 	};
 
-	const renderOption = optionL => {
-		if (optionL.number) {
-			return `${optionL.name} - ${optionL.number}`;
-		} else {
-			return `Nenhum contato encontrado com o nome ${optionL.name}`;
-		}
+	const renderOption = (props, optionL) => {
+		const { key, ...optionProps } = props;
+		return (
+			<li key={key} {...optionProps}>
+				{optionL.number
+					? `${optionL.name} - ${optionL.number}`
+					: `Nenhum contato encontrado com o nome ${optionL.name}`}
+			</li>
+		);
 	};
 
 	const renderOptionLabel = optionL => {
@@ -170,16 +173,19 @@ const ForwardMessageModal = ({ messages, onClose, modalOpen }) => {
 										// handleSaveTicket(selectedContact.id);
 									}
 								}}
-								InputProps={{
-									...params.InputProps,
-									endAdornment: (
-										<React.Fragment>
-											{loading ? (
-												<CircularProgress color="inherit" size={20} />
-											) : null}
-											{params.InputProps.endAdornment}
-										</React.Fragment>
-									),
+								slotProps={{
+									...params.slotProps,
+									input: {
+										...params.slotProps?.input,
+										endAdornment: (
+											<React.Fragment>
+												{loading ? (
+													<CircularProgress color="inherit" size={20} />
+												) : null}
+												{params.slotProps?.input?.endAdornment}
+											</React.Fragment>
+										),
+									},
 								}}
 							/>
 						)}

@@ -506,7 +506,7 @@ useEffect(() => {
         id="grouped-demo"
         value={inputMessage}
         options={options}
-        closeIcon={null}
+        clearIcon={null}
         getOptionLabel={(option) => {
           if (isObject(option)) {
             return option.label;
@@ -538,10 +538,10 @@ useEffect(() => {
         onKeyPress={onKeyPress}
         style={{ width: "100%" }}
         renderInput={(params) => {
-          const { InputLabelProps, InputProps, ...rest } = params;
+          const { slotProps, ...rest } = params;
           return (
             <InputBase
-              {...params.InputProps}
+              {...slotProps?.input}
               {...rest}
               disabled={disableOption()}
               inputRef={setInputRef}

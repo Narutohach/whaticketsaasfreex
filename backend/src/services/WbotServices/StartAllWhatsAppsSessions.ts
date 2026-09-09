@@ -6,7 +6,7 @@ export const StartAllWhatsAppsSessions = async (
   companyId: number
 ): Promise<void> => {
   try {
-    const whatsapps = await ListWhatsAppsService({ companyId });
+    const whatsapps = await ListWhatsAppsService({ companyId, includeCredentials: true });
     if (whatsapps.length > 0) {
       whatsapps.forEach(whatsapp => {
         StartWhatsAppSession(whatsapp, companyId);

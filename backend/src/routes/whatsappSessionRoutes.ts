@@ -1,5 +1,6 @@
 import { Router } from "express";
 import isAuth from "../middleware/isAuth";
+import isAdmin from "../middleware/isAdmin";
 import isActiveCompany from "../middleware/isActiveCompany";
 
 import WhatsAppSessionController from "../controllers/WhatsAppSessionController";
@@ -13,6 +14,7 @@ const whatsappSessionRoutes = Router();
 whatsappSessionRoutes.post(
   "/whatsappsession/:whatsappId",
   isAuth,
+  isAdmin,
   isActiveCompany,
   WhatsAppSessionController.store
 );
@@ -20,6 +22,7 @@ whatsappSessionRoutes.post(
 whatsappSessionRoutes.put(
   "/whatsappsession/:whatsappId",
   isAuth,
+  isAdmin,
   isActiveCompany,
   WhatsAppSessionController.update
 );
@@ -27,6 +30,7 @@ whatsappSessionRoutes.put(
 whatsappSessionRoutes.delete(
   "/whatsappsession/:whatsappId",
   isAuth,
+  isAdmin,
   WhatsAppSessionController.remove
 );
 

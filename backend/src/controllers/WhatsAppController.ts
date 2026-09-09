@@ -45,7 +45,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
   const { session } = req.query as QueryParams;
   const whatsapps = await ListWhatsAppsService({ companyId, session });
 
-  return res.status(200).json(whatsapps);
+  return res.status(200).json(whatsapps.map(serializeWhatsappForSocket));
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
@@ -126,7 +126,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     }
   });
 
-  return res.status(200).json(whatsapp);
+  return res.status(200).json(serializeWhatsappForSocket(whatsapp));
 };
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
@@ -136,7 +136,7 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
 
   const whatsapp = await ShowWhatsAppService(whatsappId, companyId, session);
 
-  return res.status(200).json(whatsapp);
+  return res.status(200).json(serializeWhatsappForSocket(whatsapp));
 };
 
 export const update = async (
@@ -178,7 +178,7 @@ export const update = async (
     }
   });
 
-  return res.status(200).json(whatsapp);
+  return res.status(200).json(serializeWhatsappForSocket(whatsapp));
 };
 
 export const remove = async (

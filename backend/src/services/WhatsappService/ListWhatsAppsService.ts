@@ -5,11 +5,13 @@ import Whatsapp from "../../models/Whatsapp";
 interface Request {
   companyId: number;
   session?: number | string;
+  includeCredentials?: boolean;
 }
 
 const ListWhatsAppsService = async ({
   session,
-  companyId
+  companyId,
+  includeCredentials = false
 }: Request): Promise<Whatsapp[]> => {
   const options: FindOptions = {
     where: {
@@ -24,8 +26,8 @@ const ListWhatsAppsService = async ({
     ]
   };
 
-  if (session !== undefined && session == 0) {
-    options.attributes = { exclude: ["session"] };
+  if (!includeCredentials) {
+    options.attributes = { exclude: ["session", "token"] };
   }
 
   const whatsapps = await Whatsapp.findAll(options);

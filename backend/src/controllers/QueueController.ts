@@ -6,7 +6,6 @@ import ListQueuesService from "../services/QueueService/ListQueuesService";
 import ShowQueueService from "../services/QueueService/ShowQueueService";
 import UpdateQueueService from "../services/QueueService/UpdateQueueService";
 import { isNil } from "lodash";
-import Queue from "../models/Queue";
 import { head } from "lodash";
 import fs from "fs";
 import path from "path";
@@ -22,7 +21,14 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
   let companyId = userCompanyId;
 
   if (!isNil(queryCompanyId)) {
-    companyId = +queryCompanyId;
+    const requestedCompanyId = +queryCompanyId;
+    if (!Number.isSafeInteger(requestedCompanyId) || requestedCompanyId <= 0) {
+      throw new AppError("Empresa inválida", 400);
+    }
+    if (requestedCompanyId !== userCompanyId && !req.user.super) {
+      throw new AppError("ERR_NO_PERMISSION", 403);
+    }
+    companyId = requestedCompanyId;
   }
 
   const queues = await ListQueuesService({ companyId });
@@ -39,7 +45,7 @@ export const mediaUpload = async (
   const file = head(files);
 
   try {
-    const queue = await Queue.findByPk(queueId);
+    const queue = await ShowQueueService(queueId, req.user.companyId);
 
     queue.update({
       mediaPath: file.filename,
@@ -59,7 +65,7 @@ export const deleteMedia = async (
   const {queueId} = req.params;
 
   try {
-    const queue = await Queue.findByPk(queueId);
+    const queue = await ShowQueueService(queueId, req.user.companyId);
     const filePath = path.resolve("public", `company${queue.companyId}`, queue.mediaPath);
     const fileExists = fs.existsSync(filePath);
     if (fileExists) {

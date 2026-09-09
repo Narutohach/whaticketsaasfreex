@@ -127,6 +127,10 @@ export const update = async (
   const { userId } = req.params;
   const userData = req.body;
 
+  if (req.user.profile !== "admin" && !req.user.super) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
+
   const user = await UpdateUserService({
     userData,
     userId,

@@ -247,8 +247,15 @@ const MainListItems = (props) => {
   }, [searchParam]);
 
   useEffect(() => {
+    const companyId = user.companyId;
+    if (!companyId) {
+      // AuthContext ainda não carregou o usuário (ex.: montagem inicial ou
+      // logo após expirar o token) — tentar de novo assim que companyId
+      // existir, em vez de mandar "undefined" pra URL.
+      return;
+    }
+
     async function fetchData() {
-      const companyId = user.companyId;
       const planConfigs = await getPlanCompany(undefined, companyId);
 
       setShowCampaigns(planConfigs.plan.useCampaigns);
@@ -261,7 +268,7 @@ const MainListItems = (props) => {
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user.companyId]);
 
 
 

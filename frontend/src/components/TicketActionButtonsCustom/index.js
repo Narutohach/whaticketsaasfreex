@@ -25,9 +25,18 @@ const useStyles = makeStyles(theme => ({
 		flex: "none",
 		alignSelf: "center",
 		marginLeft: "auto",
+		display: "flex",
+		alignItems: "center",
 		"& > *": {
 			margin: theme.spacing(0.5),
 		},
+		[theme.breakpoints.down("sm")]: {
+			marginRight: 2,
+			"& > *": {
+				margin: 2,
+				padding: 6,
+			},
+		}
 	},
 }));
 

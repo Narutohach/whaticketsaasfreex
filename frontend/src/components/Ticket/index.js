@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 
-import { Paper, IconButton, Tooltip } from "@mui/material";
+import { Paper, IconButton, Tooltip, useTheme, useMediaQuery } from "@mui/material";
 import { makeStyles } from "../../styles/makeStyles";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -79,10 +79,12 @@ const Ticket = () => {
   const { ticketId } = useParams();
   const history = useHistory();
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { user } = useContext(AuthContext);
 
-  const [crmOpen, setCrmOpen] = useState(true);
+  const [crmOpen, setCrmOpen] = useState(!isMobile);
   const [loading, setLoading] = useState(true);
   const [contact, setContact] = useState({});
   const [ticket, setTicket] = useState({});

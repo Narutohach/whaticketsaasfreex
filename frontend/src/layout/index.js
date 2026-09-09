@@ -13,6 +13,7 @@ import {
   Menu,
   useTheme,
   useMediaQuery,
+  Box,
 } from "@mui/material";
 import { makeStyles } from "../styles/makeStyles";
 
@@ -20,6 +21,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import CachedIcon from "@mui/icons-material/Cached";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -50,13 +53,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     height: "100vh",
-    [theme.breakpoints.down("sm")]: {
-      height: "calc(100vh - 56px)",
-    },
+    width: "100%",
+    overflow: "hidden",
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
       color: '#FFFFFF',
-	  backgroundColor: theme.mode === 'light' ? '#059669' : '#1e293b',
+      backgroundColor: theme.mode === 'light' ? '#059669' : '#1e293b',
     },
     '& .MuiTab-textColorPrimary.Mui-selected': {
       color: theme.mode === 'light' ? '#059669' : '#34d399',
@@ -66,13 +68,20 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
+    paddingRight: 16,
+    paddingLeft: 16,
+    minHeight: 56,
     color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
     background: theme.palette.barraSuperior,
     backdropFilter: "blur(16px)",
     WebkitBackdropFilter: "blur(16px)",
     borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
     boxShadow: "none",
+    [theme.breakpoints.down("sm")]: {
+      paddingRight: 8,
+      paddingLeft: 8,
+      minHeight: 52,
+    }
   },
   toolbarIcon: {
     display: "flex",
@@ -82,7 +91,8 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "56px",
     borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
     [theme.breakpoints.down("sm")]: {
-      height: "56px"
+      height: "52px",
+      minHeight: "52px"
     }
   },
   appBar: {
@@ -93,6 +103,9 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    [theme.breakpoints.down("md")]: {
+      zIndex: theme.zIndex.appBar,
+    }
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -101,13 +114,18 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    [theme.breakpoints.down("sm")]: {
-      display: "none"
+    [theme.breakpoints.down("md")]: {
+      marginLeft: 0,
+      width: "100%",
     }
   },
   menuButton: {
-    marginRight: 20,
+    marginRight: 12,
     color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
+    [theme.breakpoints.down("sm")]: {
+      marginRight: 6,
+      padding: 6,
+    }
   },
   menuButtonHidden: {
     display: "none",
@@ -118,6 +136,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
     color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
     letterSpacing: "-0.3px",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 14,
+    }
   },
   drawerPaper: {
     position: "relative",
@@ -129,8 +150,10 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    [theme.breakpoints.down("sm")]: {
-      width: "100%"
+    [theme.breakpoints.down("md")]: {
+      position: "fixed",
+      height: "100%",
+      zIndex: theme.zIndex.drawer + 10,
     },
     ...theme.scrollbarStylesSoft
   },
@@ -144,17 +167,24 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       width: theme.spacing(9),
     },
-    [theme.breakpoints.down("sm")]: {
-      width: "100%"
+    [theme.breakpoints.down("md")]: {
+      width: 0,
+      display: "none",
     }
   },
   appBarSpacer: {
-    minHeight: "48px",
+    minHeight: "56px",
+    flex: "none",
+    [theme.breakpoints.down("sm")]: {
+      minHeight: "52px",
+    }
   },
   content: {
     flex: 1,
-    overflow: "auto",
-
+    height: "100%",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -201,7 +231,11 @@ const LoggedInLayout = ({ children, themeToggle }) => {
 
   const theme = useTheme();
   const { colorMode } = useContext(ColorModeContext);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const greaterThenSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const [moreMenuAnchor, setMoreMenuAnchor] = useState(null);
+  const moreMenuOpen = Boolean(moreMenuAnchor);
   const iconColor = theme.palette.mode === "light" ? "#0f172a" : "#f8fafc";
 
   // Definindo os logos para modo claro e escuro
@@ -268,18 +302,14 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   const socketManager = useContext(SocketContext);
 
   useEffect(() => {
-    if (document.body.offsetWidth > 1200) {
+    if (!isTablet) {
       setDrawerOpen(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (document.body.offsetWidth < 1000) {
-      setDrawerVariant("temporary");
-    } else {
       setDrawerVariant("permanent");
+    } else {
+      setDrawerOpen(false);
+      setDrawerVariant("temporary");
     }
-  }, [drawerOpen]);
+  }, [isTablet]);
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
@@ -329,7 +359,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   };
 
   const drawerClose = () => {
-    if (document.body.offsetWidth < 600) {
+    if (isTablet) {
       setDrawerOpen(false);
     }
   };
@@ -372,6 +402,8 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           ),
         }}
         open={drawerOpen}
+        onClose={drawerClose}
+        ModalProps={{ keepMounted: true }}
       >
         <div className={classes.toolbarIcon} style={{ justifyContent: "space-between", padding: "0 12px" }}>
           {drawerOpen ? <HactoLogo size="small" light={theme.palette.mode === "light"} showTagline={false} /> : null}
@@ -392,18 +424,17 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       />
       <AppBar
         position="absolute"
-        className={clsx(classes.appBar, drawerOpen && classes.appBarShift)}
+        className={clsx(classes.appBar, drawerOpen && !isTablet && classes.appBarShift)}
         color="primary"
       >
         <Toolbar variant="dense" className={classes.toolbar}>
           <IconButton
             edge="start"
-            variant="contained"
             aria-label="open drawer"
             onClick={() => setDrawerOpen(!drawerOpen)}
             className={clsx(
               classes.menuButton,
-              drawerOpen && classes.menuButtonHidden
+              drawerOpen && !isTablet && classes.menuButtonHidden
             )}
           >
             <MenuIcon />
@@ -416,72 +447,125 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             noWrap
             className={classes.title}
           >
-            {/* {greaterThenSm && user?.profile === "admin" && getDateAndDifDays(user?.company?.dueDate).difData < 7 ? ( */}
-            {greaterThenSm && user?.profile === "admin" && user?.company?.dueDate ? (
+            {isMobile ? (
+              <b>{user?.company?.name || "HACTO Desk"}</b>
+            ) : greaterThenSm && user?.profile === "admin" && user?.company?.dueDate ? (
               <>
                 Olá <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>! (Ativo até {dateToClient(user?.company?.dueDate)})
               </>
             ) : (
               <>
-                Olá  <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>!
+                Olá <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>!
               </>
             )}
           </Typography>
 
-          <IconButton edge="start" onClick={toggleColorMode}>
-            {theme.mode === 'dark' ? <Brightness7Icon style={{ color: iconColor }} /> : <Brightness4Icon style={{ color: iconColor }} />}
-          </IconButton>
+          {!isMobile ? (
+            <>
+              <IconButton edge="start" onClick={toggleColorMode}>
+                {theme.mode === 'dark' ? <Brightness7Icon style={{ color: iconColor }} /> : <Brightness4Icon style={{ color: iconColor }} />}
+              </IconButton>
 
-          <NotificationsVolume
-            setVolume={setVolume}
-            volume={volume}
-          />
+              <NotificationsVolume
+                setVolume={setVolume}
+                volume={volume}
+              />
 
-          <IconButton
-            onClick={handleRefreshPage}
-            aria-label={i18n.t("mainDrawer.appBar.refresh")}
-            color="inherit"
-          >
-            <CachedIcon style={{ color: iconColor }} />
-          </IconButton>
+              <IconButton
+                onClick={handleRefreshPage}
+                aria-label={i18n.t("mainDrawer.appBar.refresh")}
+                color="inherit"
+              >
+                <CachedIcon style={{ color: iconColor }} />
+              </IconButton>
 
-          {user.id && <NotificationsPopOver volume={volume} />}
+              {user.id && <NotificationsPopOver volume={volume} />}
 
-          <AnnouncementsPopover />
+              <AnnouncementsPopover />
 
-          <ChatPopover />
+              <ChatPopover />
 
-          <div>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              variant="contained"
-              style={{ color: iconColor }}
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              getContentAnchorEl={null}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={menuOpen}
-              onClose={handleCloseMenu}
-            >
-              <MenuItem onClick={handleOpenUserModal}>
-                {i18n.t("mainDrawer.appBar.user.profile")}
-              </MenuItem>
-            </Menu>
-          </div>
+              <div>
+                <IconButton
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  style={{ color: iconColor }}
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  getContentAnchorEl={null}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={menuOpen}
+                  onClose={handleCloseMenu}
+                >
+                  <MenuItem onClick={handleOpenUserModal}>
+                    {i18n.t("mainDrawer.appBar.user.profile")}
+                  </MenuItem>
+                  <MenuItem onClick={handleClickLogout}>
+                    Sair
+                  </MenuItem>
+                </Menu>
+              </div>
+            </>
+          ) : (
+            <>
+              {user.id && <NotificationsPopOver volume={volume} />}
+              <div>
+                <IconButton
+                  aria-label="mais opções"
+                  onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
+                  style={{ color: iconColor, padding: 6 }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="mobile-more-menu"
+                  anchorEl={moreMenuAnchor}
+                  getContentAnchorEl={null}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={moreMenuOpen}
+                  onClose={() => setMoreMenuAnchor(null)}
+                >
+                  <MenuItem onClick={() => { toggleColorMode(); setMoreMenuAnchor(null); }}>
+                    {theme.mode === 'dark' ? <Brightness7Icon style={{ marginRight: 8 }} /> : <Brightness4Icon style={{ marginRight: 8 }} />}
+                    {theme.mode === 'dark' ? "Modo Claro" : "Modo Escuro"}
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleRefreshPage(); setMoreMenuAnchor(null); }}>
+                    <CachedIcon style={{ marginRight: 8 }} />
+                    {i18n.t("mainDrawer.appBar.refresh")}
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleOpenUserModal(); setMoreMenuAnchor(null); }}>
+                    <AccountCircle style={{ marginRight: 8 }} />
+                    {i18n.t("mainDrawer.appBar.user.profile")}
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={() => { handleClickLogout(); setMoreMenuAnchor(null); }}>
+                    <ExitToAppIcon style={{ marginRight: 8 }} />
+                    Sair
+                  </MenuItem>
+                </Menu>
+              </div>
+            </>
+          )}
         </Toolbar>
       </AppBar>
       <main className={classes.content}>

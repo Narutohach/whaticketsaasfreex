@@ -1,23 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "../../styles/makeStyles";
-import { useTheme } from "@mui/material/styles";
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import ChatIcon from '@mui/icons-material/Chat';
 
 import TicketsManagerTabs from "../../components/TicketsManagerTabs/";
 import Ticket from "../../components/Ticket/";
 import TicketAdvancedLayout from "../../components/TicketAdvancedLayout";
 import { TicketsContext } from "../../context/Tickets/TicketsContext";
 
-import { i18n } from "../../translate/i18n";
-import HactoLogo from "../../components/Logo";
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     header: {
     },
     content: {
@@ -35,19 +26,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const TicketAdvanced = (props) => {
+const TicketAdvanced = () => {
     const classes = useStyles();
     const theme = useTheme();
     const { ticketId } = useParams();
-    const [option, setOption] = useState(0);
     const { currentTicket, setCurrentTicket } = useContext(TicketsContext);
 
     useEffect(() => {
-        if(currentTicket.id !== null) {
+        if (currentTicket.id !== null) {
             setCurrentTicket({ id: currentTicket.id, code: '#open' });
-        }
-        if (!ticketId) {
-            setOption(1);
         }
         return () => {
             setCurrentTicket({ id: null, code: null });
@@ -55,53 +42,10 @@ const TicketAdvanced = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        if (currentTicket.id !== null) {
-            setOption(0);
-        }
-    }, [currentTicket]);
-
-    const renderPlaceholder = () => {
-        return <Box className={classes.placeholderContainer}>
-            {/*<div className={classes.placeholderItem}>{i18n.t("chat.noTicketMessage")}</div>*/}
-            <div>
-                <center><HactoLogo size="large" light={theme.palette.mode === "light"} /></center>
-            </div>
-            <br />
-            <Button onClick={() => setOption(1)} variant="contained" color="primary">
-                Selecionar Ticket
-            </Button>
-        </Box>
-    };
-
-    const renderMessageContext = () => {
-        if (ticketId) {
-            return <Ticket />;
-        }
-        return renderPlaceholder();
-    };
-
-    const renderTicketsManagerTabs = () => {
-        return <TicketsManagerTabs />;
-    };
-
     return (
         <TicketAdvancedLayout>
-            <Box className={classes.header}>
-                <BottomNavigation
-                    value={option}
-                    onChange={(event, newValue) => {
-                        setOption(newValue);
-                    }}
-                    showLabels
-                    className={classes.root}
-                >
-                    <BottomNavigationAction label="Ticket" icon={<ChatIcon />} />
-                    <BottomNavigationAction label="Atendimentos" icon={<QuestionAnswerIcon />} />
-                </BottomNavigation>
-            </Box>
-            <Box className={classes.content}>
-                { option === 0 ? renderMessageContext() : renderTicketsManagerTabs() }
+            <Box className={classes.content} style={{ flex: 1, height: "100%", overflow: "hidden" }}>
+                {ticketId ? <Ticket /> : <TicketsManagerTabs />}
             </Box>
         </TicketAdvancedLayout>
     );

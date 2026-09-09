@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     padding: "7px",
     alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      padding: "4px 6px",
+    },
   },
 
   messageInputWrapper: {
@@ -110,6 +113,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     borderRadius: 20,
     flex: 1,
+    [theme.breakpoints.down("sm")]: {
+      padding: "3px 6px",
+      marginRight: 4,
+    },
   },
  
 
@@ -117,6 +124,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 10,
     flex: 1,
     border: "none",
+    [theme.breakpoints.down("sm")]: {
+      paddingLeft: 6,
+      fontSize: "0.9rem",
+    },
   },
 
   sendMessageIcons: {
@@ -140,6 +151,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     backgroundColor: theme.palette.inputdigita,
     borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+    [theme.breakpoints.down("sm")]: {
+      padding: "6px 8px",
+    },
   },
 
   emojiBox: {
@@ -147,6 +161,11 @@ const useStyles = makeStyles((theme) => ({
     bottom: 63,
     width: 40,
     borderTop: "1px solid #e8e8e8",
+    [theme.breakpoints.down("sm")]: {
+      bottom: 54,
+      left: 0,
+      maxWidth: "100vw",
+    },
   },
 
   circleLoading: {

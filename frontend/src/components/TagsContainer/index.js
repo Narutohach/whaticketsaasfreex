@@ -87,7 +87,7 @@ export function TagsContainer({ ticket }) {
                 freeSolo
                 onChange={(e, v, r) => onChange(v, r)}
                 getOptionLabel={(option) => option.name}
-                renderTags={(value, getTagProps) =>
+                renderValue={(value, getTagProps) =>
                     value.map((option, index) => (
                         <Chip
                             variant="outlined"
@@ -109,11 +109,13 @@ export function TagsContainer({ ticket }) {
                 renderInput={(params) => (
                     <TextField {...params} variant="outlined" placeholder="Tags" />
                 )}
-                PaperComponent={({ children }) => (
-                    <Paper style={{ width: 400, marginLeft: 12 }}>
-                        {children}
-                    </Paper>
-                )}
+                slots={{
+                    paper: ({ children }) => (
+                        <Paper style={{ width: 400, marginLeft: 12 }}>
+                            {children}
+                        </Paper>
+                    ),
+                }}
             />
         </Paper>
     )

@@ -391,7 +391,7 @@ const Relatorios = () => {
 												setCurrentContact(contact ? contact : initialContact);
 											}}
 											getOptionLabel={(option) => option.name}
-											getOptionSelected={(option, value) => {
+											isOptionEqualToValue={(option, value) => {
 												return value.id === option.id
 											}}
 											renderInput={(params) => <TextField {...params} variant="outlined" placeholder="Contato" />}
@@ -470,8 +470,8 @@ const Relatorios = () => {
                 fullWidth
                 size="small"
                 onChange={(e) => setDateFrom(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
+                slotProps={{
+                  inputLabel: { shrink: true },
                 }}
               />
             </Grid>
@@ -489,8 +489,8 @@ const Relatorios = () => {
                 fullWidth
                 size="small"
                 onChange={(e) => setDateTo(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
+                slotProps={{
+                  inputLabel: { shrink: true },
                 }}
               />
             </Grid>

@@ -544,8 +544,8 @@ const CampaignModal = ({
                       variant="outlined"
                       margin="dense"
                       type="datetime-local"
-                      InputLabelProps={{
-                        shrink: true,
+                      slotProps={{
+                        inputLabel: { shrink: true },
                       }}
                       fullWidth
                       className={classes.textField}

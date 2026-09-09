@@ -270,14 +270,16 @@ const PromptModal = ({ open, onClose, promptId }) => {
                                         variant="outlined"
                                         margin="dense"
                                         fullWidth
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton onClick={handleToggleApiKey}>
-                                                        {showApiKey ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton onClick={handleToggleApiKey}>
+                                                            {showApiKey ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                ),
+                                            },
                                         }}
                                     />
                                 </FormControl>

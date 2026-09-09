@@ -105,7 +105,7 @@ export function PlanManagerForm(props) {
         >
             {(values) => (
                 <Form className={classes.fullWidth}>
-                    <Grid spacing={1} justifyContent="flex-start" container>
+                    <Grid spacing={1} sx={{ justifyContent: "flex-start" }} container>
                         {/* NOME */}
                         <Grid
                             size={{
@@ -379,7 +379,7 @@ export function PlanManagerForm(props) {
                         </Grid>
 
                     </Grid>
-                    <Grid spacing={2} justifyContent="flex-end" container>
+                    <Grid spacing={2} sx={{ justifyContent: "flex-end" }} container>
 
                         <Grid
                             size={{

@@ -52,13 +52,13 @@ export function WhatsappsFilter({ onFiltered, initialWhatsapps }) {
         value={selecteds}
         onChange={(e, v, r) => onChange(v)}
         getOptionLabel={(option) => option.name}
-        getOptionSelected={(option, value) => {
+        isOptionEqualToValue={(option, value) => {
           return (
             option?.id === value?.id ||
             option?.name.toLowerCase() === value?.name.toLowerCase()
           );
         }}
-        renderTags={(value, getWhatsappProps) =>
+        renderValue={(value, getWhatsappProps) =>
           value.map((option, index) => (
             <Chip
               variant="outlined"

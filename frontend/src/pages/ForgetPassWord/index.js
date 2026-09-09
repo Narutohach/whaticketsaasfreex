@@ -374,20 +374,22 @@ const ForgetPassword = () => {
                     autoComplete="new-password"
                     required
                     className={classes.input}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="alternar visibilidade da senha"
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                            size="small"
-                            style={{ color: "#64748b" }}
-                          >
-                            {showPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="alternar visibilidade da senha"
+                              onClick={togglePasswordVisibility}
+                              edge="end"
+                              size="small"
+                              style={{ color: "#64748b" }}
+                            >
+                              {showPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
                     }}
                   />
                   <Field
@@ -403,20 +405,22 @@ const ForgetPassword = () => {
                     autoComplete="new-password"
                     required
                     className={classes.input}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="alternar visibilidade da confirmação de senha"
-                            onClick={toggleConfirmPasswordVisibility}
-                            edge="end"
-                            size="small"
-                            style={{ color: "#64748b" }}
-                          >
-                            {showConfirmPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="alternar visibilidade da confirmação de senha"
+                              onClick={toggleConfirmPasswordVisibility}
+                              edge="end"
+                              size="small"
+                              style={{ color: "#64748b" }}
+                            >
+                              {showConfirmPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
                     }}
                   />
                 </>
@@ -431,7 +435,7 @@ const ForgetPassword = () => {
                 {showResetPasswordButton ? "Redefinir Senha" : "Enviar Email"}
               </Button>
 
-              <Grid container justifyContent="space-between">
+              <Grid container sx={{ justifyContent: "space-between" }}>
                 <Grid>
                   <Link component={RouterLink} to="/login" className={classes.backLink}>
                     Voltar ao login

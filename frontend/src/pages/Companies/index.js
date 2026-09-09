@@ -175,7 +175,7 @@ const SignUp = () => {
 											variant="outlined"
 											fullWidth
 											label="DDD988888888"
-											inputProps={{ maxLength: 11 }} // Definindo o limite de caracteres
+											slotProps={{ htmlInput: { maxLength: 11 } }} // Definindo o limite de caracteres
 										/>
 									)}
 								</Field>

@@ -183,7 +183,8 @@ const UserModal = ({ open, onClose, userId }) => {
 										error={touched.password && Boolean(errors.password)}
 										helperText={touched.password && errors.password}
 										type={showPassword ? 'text' : 'password'}
-										InputProps={{
+										slotProps={{
+										input: {
 										endAdornment: (
 											<InputAdornment position="end">
 											<IconButton
@@ -194,6 +195,7 @@ const UserModal = ({ open, onClose, userId }) => {
 											</IconButton>
 											</InputAdornment>
 										)
+										}
 										}}
 									/>
 								</div>

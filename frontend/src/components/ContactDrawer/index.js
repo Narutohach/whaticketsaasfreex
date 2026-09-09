@@ -131,8 +131,10 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, ticket, loading }) =>
 							<CardHeader
 								onClick={() => {}}
 								style={{ cursor: "pointer", width: '100%' }}
-								titleTypographyProps={{ noWrap: true }}
-								subheaderTypographyProps={{ noWrap: true }}
+								slotProps={{
+									title: { noWrap: true },
+									subheader: { noWrap: true },
+								}}
 								avatar={<Avatar
                       src={contact.profilePicUrl}
                       alt="contact_image"

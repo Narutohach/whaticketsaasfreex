@@ -174,24 +174,26 @@ const TagModal = ({ open, onClose, tagId, reload }) => {
 										id="color"
 										error={touched.color && Boolean(errors.color)}
 										helperText={touched.color && errors.color}
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">
-													<div
-														style={{ backgroundColor: values.color }}
-														className={classes.colorAdorment}
-													></div>
-												</InputAdornment>
-											),
-											endAdornment: (
-												<IconButton
-													size="small"
-													color="default"
-													onClick={() => setColorPickerModalOpen(!colorPickerModalOpen)}
-												>
-													<Colorize />
-												</IconButton>
-											),
+										slotProps={{
+											input: {
+												startAdornment: (
+													<InputAdornment position="start">
+														<div
+															style={{ backgroundColor: values.color }}
+															className={classes.colorAdorment}
+														></div>
+													</InputAdornment>
+												),
+												endAdornment: (
+													<IconButton
+														size="small"
+														color="default"
+														onClick={() => setColorPickerModalOpen(!colorPickerModalOpen)}
+													>
+														<Colorize />
+													</IconButton>
+												),
+											},
 										}}
 										variant="outlined"
 										margin="dense"

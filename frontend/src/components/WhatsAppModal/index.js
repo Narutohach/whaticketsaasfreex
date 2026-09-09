@@ -515,7 +515,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                       variant="outlined"
                       margin="dense"
                       className={classes.textField}
-                      InputLabelProps={{ shrink: true }}
+                      slotProps={{ inputLabel: { shrink: true } }}
                     />
 
                   </Grid>

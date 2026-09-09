@@ -556,12 +556,14 @@ const Login = () => {
               autoComplete="email"
               autoFocus
               className={classes.input}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <MailOutline style={{ color: "#64748b" }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MailOutline style={{ color: "#64748b" }} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
@@ -577,29 +579,31 @@ const Login = () => {
               onChange={handleChangeInput}
               autoComplete="current-password"
               className={classes.input}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlined style={{ color: "#64748b" }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="alternar visibilidade da senha"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                      size="small"
-                      style={{ color: "#64748b" }}
-                    >
-                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlined style={{ color: "#64748b" }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="alternar visibilidade da senha"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        size="small"
+                        style={{ color: "#64748b" }}
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
-            <Grid container justify="flex-end">
+            <Grid container sx={{ justifyContent: "flex-end" }}>
               <Grid>
                 <Link
                   component={RouterLink}

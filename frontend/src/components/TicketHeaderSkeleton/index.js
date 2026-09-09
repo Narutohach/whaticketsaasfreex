@@ -19,8 +19,10 @@ const TicketHeaderSkeleton = () => {
 	return (
 		<Card square className={classes.ticketHeader}>
 			<CardHeader
-				titleTypographyProps={{ noWrap: true }}
-				subheaderTypographyProps={{ noWrap: true }}
+				slotProps={{
+					title: { noWrap: true },
+					subheader: { noWrap: true },
+				}}
 				avatar={
 					<Skeleton animation="wave" variant="circle">
 						<Avatar alt="contact_image" />

@@ -205,7 +205,7 @@ const SignUp = () => {
 												variant="outlined"
 												fullWidth
 												label="DDD988888888"
-												inputProps={{ maxLength: 11 }} // Definindo o limite de caracteres
+												slotProps={{ htmlInput: { maxLength: 11 } }} // Definindo o limite de caracteres
 											/>
 										)}
 									</Field>
@@ -259,7 +259,7 @@ const SignUp = () => {
 							>
 								{i18n.t("signup.buttons.submit")}
 							</Button>
-							<Grid container justifyContent="flex-end">
+							<Grid container sx={{ justifyContent: "flex-end" }}>
 								<Grid>
 									<Link component={RouterLink} to="/login" variant="body2">
 										{i18n.t("signup.buttons.login")}

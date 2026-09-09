@@ -185,8 +185,10 @@ export default function Pricing(props) {
               <CardHeader
                 title={tier.title}
                 subheader={tier.subheader}
-                titleTypographyProps={{ align: 'center' }}
-                subheaderTypographyProps={{ align: 'center' }}
+                slotProps={{
+                  title: { align: 'center' },
+                  subheader: { align: 'center' },
+                }}
                 action={tier.title === 'Pro' ? <StarIcon /> : null}
                 className={classes.cardHeader}
               />

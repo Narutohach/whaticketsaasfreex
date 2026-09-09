@@ -36,7 +36,7 @@ export function StatusFilter({ onFiltered }) {
        value={selecteds}
        onChange={(e, v, r) => onChange(v)}
        getOptionLabel={(option) => option.name}
-       renderTags={(value, getTagProps) =>
+       renderValue={(value, getTagProps) =>
          value.map((option, index) => (
            <Chip
              variant="outlined"

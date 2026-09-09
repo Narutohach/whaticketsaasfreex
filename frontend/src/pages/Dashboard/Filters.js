@@ -71,8 +71,8 @@ const Filters = ({
                             fullWidth
                             name="dateStart"
                             label="De"
-                            InputLabelProps={{
-                                shrink: true,
+                            slotProps={{
+                                inputLabel: { shrink: true },
                             }}
                             type="date"
                             defaultValue={dateStart}
@@ -89,8 +89,8 @@ const Filters = ({
                             fullWidth
                             name="dateEnd"
                             label="Até"
-                            InputLabelProps={{
-                                shrink: true,
+                            slotProps={{
+                                inputLabel: { shrink: true },
                             }}
                             type="date"
                             defaultValue={dateEnd}

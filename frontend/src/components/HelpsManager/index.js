@@ -86,7 +86,7 @@ export function HelpManagerForm (props) {
         >
             {(values) => (
                 <Form className={classes.fullWidth}>
-                    <Grid spacing={2} justifyContent="flex-end" container>
+                    <Grid spacing={2} sx={{ justifyContent: "flex-end" }} container>
                         <Grid
                             size={{
                                 xs: 12,

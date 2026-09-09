@@ -26,19 +26,21 @@ const TicketInfo = ({ contact, ticket, onClick }) => {
 				minWidth: 0,
 				flex: "1 1 auto",
 			}}
-			titleTypographyProps={{
-				noWrap: true,
-				style: {
-					fontSize: isMobile ? "0.85rem" : "0.95rem",
-					fontWeight: 600,
-					lineHeight: 1.2,
+			slotProps={{
+				title: {
+					noWrap: true,
+					style: {
+						fontSize: isMobile ? "0.85rem" : "0.95rem",
+						fontWeight: 600,
+						lineHeight: 1.2,
+					},
 				},
-			}}
-			subheaderTypographyProps={{
-				noWrap: true,
-				style: {
-					fontSize: isMobile ? "0.72rem" : "0.78rem",
-					lineHeight: 1.2,
+				subheader: {
+					noWrap: true,
+					style: {
+						fontSize: isMobile ? "0.72rem" : "0.78rem",
+						lineHeight: 1.2,
+					},
 				},
 			}}
 			avatar={

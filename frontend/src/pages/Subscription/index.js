@@ -94,11 +94,13 @@ const Contacts = () => {
               defaultValue={`Seu período de teste termina em ${_formatDate(user?.company?.trialExpiration)} dias!`}
               fullWidth
               margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                readOnly: true,
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+                inputLabel: {
+                  shrink: true,
+                },
               }}
               variant="outlined"
             />
@@ -112,11 +114,13 @@ const Contacts = () => {
               defaultValue={user?.company?.email}
               fullWidth
               margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                readOnly: true,
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+                inputLabel: {
+                  shrink: true,
+                },
               }}
               variant="outlined"
             />

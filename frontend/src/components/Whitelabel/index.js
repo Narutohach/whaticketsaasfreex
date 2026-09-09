@@ -272,24 +272,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.primaryColorLight || ""}
               onClick={() => setPrimaryColorLightModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.primaryColorLight }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setPrimaryColorLightModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.primaryColorLight }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setPrimaryColorLightModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -322,24 +324,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.primaryColorDark || ""}
               onClick={() => setPrimaryColorDarkModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.primaryColorDark }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setPrimaryColorDarkModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.primaryColorDark }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setPrimaryColorDarkModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -381,7 +385,8 @@ export default function Whitelabel(props) {
               label="Logotipo claro"
               variant="standard"
               value={settingsLoaded.appLogoLight || ""}
-              InputProps={{
+              slotProps={{
+                input: {
                 endAdornment: (
                   <>
                     {settingsLoaded.appLogoLight &&
@@ -419,6 +424,7 @@ export default function Whitelabel(props) {
                     </label>
                   </>
                 ),
+                },
               }}
             />
           </FormControl>
@@ -431,7 +437,8 @@ export default function Whitelabel(props) {
               label="Logotipo escuro"
               variant="standard"
               value={settingsLoaded.appLogoDark || ""}
-              InputProps={{
+              slotProps={{
+                input: {
                 endAdornment: (
                   <>
                     {settingsLoaded.appLogoDark &&
@@ -469,6 +476,7 @@ export default function Whitelabel(props) {
                     </label>
                   </>
                 ),
+                },
               }}
             />
           </FormControl>
@@ -481,7 +489,8 @@ export default function Whitelabel(props) {
               label="Favicon"
               variant="standard"
               value={settingsLoaded.appLogoFavicon || ""}
-              InputProps={{
+              slotProps={{
+                input: {
                 endAdornment: (
                   <>
                     {settingsLoaded.appLogoFavicon &&
@@ -519,6 +528,7 @@ export default function Whitelabel(props) {
                     </label>
                   </>
                 ),
+                },
               }}
             />
           </FormControl>
@@ -564,24 +574,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.chatlistLight || ""}
               onClick={() => setChatlistLightModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.chatlistLight }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setChatlistLightModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.chatlistLight }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setChatlistLightModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -612,24 +624,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.chatlistDark || ""}
               onClick={() => setChatlistDarkModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.chatlistDark }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setChatlistDarkModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.chatlistDark }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setChatlistDarkModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -667,24 +681,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.boxRightLight || ""}
               onClick={() => setBoxRightLightModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.boxRightLight }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setBoxRightLightModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.boxRightLight }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setBoxRightLightModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -715,24 +731,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.boxRightDark || ""}
               onClick={() => setBoxRightDarkModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.boxRightDark }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setBoxRightDarkModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.boxRightDark }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setBoxRightDarkModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -770,24 +788,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.boxLeftLight || ""}
               onClick={() => setBoxLeftLightModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.boxLeftLight }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setBoxLeftLightModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.boxLeftLight }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setBoxLeftLightModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -818,24 +838,26 @@ export default function Whitelabel(props) {
               variant="standard"
               value={settingsLoaded.boxLeftDark || ""}
               onClick={() => setBoxLeftDarkModalOpen(true)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <div
-                      style={{ backgroundColor: settingsLoaded.boxLeftDark }}
-                      className={classes.colorAdorment}
-                    ></div>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton
-                    size="small"
-                    color="default"
-                    onClick={() => setBoxLeftDarkModalOpen(true)}
-                  >
-                    <Colorize />
-                  </IconButton>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <div
+                        style={{ backgroundColor: settingsLoaded.boxLeftDark }}
+                        className={classes.colorAdorment}
+                      ></div>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      color="default"
+                      onClick={() => setBoxLeftDarkModalOpen(true)}
+                    >
+                      <Colorize />
+                    </IconButton>
+                  ),
+                },
               }}
             />
           </FormControl>

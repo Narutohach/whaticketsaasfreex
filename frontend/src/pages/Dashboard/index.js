@@ -358,8 +358,8 @@ const Dashboard = () => {
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
               className={classes.fullWidth}
-              InputLabelProps={{
-                shrink: true,
+              slotProps={{
+                inputLabel: { shrink: true },
               }}
             />
           </Grid>
@@ -375,8 +375,8 @@ const Dashboard = () => {
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
               className={classes.fullWidth}
-              InputLabelProps={{
-                shrink: true,
+              slotProps={{
+                inputLabel: { shrink: true },
               }}
             />
           </Grid>
@@ -416,7 +416,7 @@ const Dashboard = () => {
   return (
     <div>
       <Container ref={pageToPrint} maxWidth="lg" className={classes.container}>
-        <Grid container spacing={3} justifyContent="flex-end">
+        <Grid container spacing={3} sx={{ justifyContent: "flex-end" }}>
 		
 {/* CONEXÕES */}
 {user.super && (
@@ -427,7 +427,7 @@ const Dashboard = () => {
       md: 3
     }}>
     <Paper className={classes.card} elevation={1}>
-      <Grid container spacing={1} alignItems="center">
+      <Grid container spacing={1} sx={{ alignItems: "center" }}>
         <Grid size={8}>
           <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
             Conexões Ativas
@@ -455,7 +455,7 @@ const Dashboard = () => {
       md: 3
     }}>
     <Paper className={classes.card} elevation={1}>
-      <Grid container spacing={1} alignItems="center">
+      <Grid container spacing={1} sx={{ alignItems: "center" }}>
         <Grid size={8}>
           <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
             Empresas
@@ -482,7 +482,7 @@ const Dashboard = () => {
     md: 3
   }}>
   <Paper className={classes.card} elevation={1}>
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Em Conversa
@@ -508,7 +508,7 @@ const Dashboard = () => {
     md: 3
   }}>
   <Paper className={classes.card} elevation={1}>
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Aguardando
@@ -534,7 +534,7 @@ const Dashboard = () => {
     md: 3
   }}>
   <Paper className={classes.card} elevation={1}>
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Novos Contatos
@@ -560,7 +560,7 @@ const Dashboard = () => {
     md: 3
   }}>
   <Paper className={classes.card} elevation={1}>
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           T.M. de Conversa
@@ -586,7 +586,7 @@ const Dashboard = () => {
     md: 3
   }}>
   <Paper className={classes.card} elevation={1}>
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography component="h3" variant="subtitle1" className={classes.cardTitle}>
           Finalizados
@@ -617,7 +617,7 @@ const Dashboard = () => {
     style={{ overflow: "hidden" }}
     elevation={1}
   >
-    <Grid container spacing={1} alignItems="center">
+    <Grid container spacing={1} sx={{ alignItems: "center" }}>
       <Grid size={8}>
         <Typography 
           component="h3" 

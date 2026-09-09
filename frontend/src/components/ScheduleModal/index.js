@@ -273,7 +273,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 												setCurrentContact(contact ? contact : initialContact);
 											}}
 											getOptionLabel={(option) => option.name}
-											getOptionSelected={(option, value) => {
+											isOptionEqualToValue={(option, value) => {
 												return value.id === option.id
 											}}
 											renderInput={(params) => <TextField {...params} variant="outlined" placeholder="Contato" />}
@@ -309,8 +309,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 										label={i18n.t("scheduleModal.form.sendAt")}
 										type="datetime-local"
 										name="sendAt"
-										InputLabelProps={{
-											shrink: true,
+										slotProps={{
+											inputLabel: { shrink: true },
 										}}
 										error={touched.sendAt && Boolean(errors.sendAt)}
 										helperText={touched.sendAt && errors.sendAt}

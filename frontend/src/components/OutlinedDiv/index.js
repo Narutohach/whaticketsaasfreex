@@ -17,12 +17,14 @@ const OutlinedDiv = ({
       variant="outlined"
       label={label}
       multiline
-      InputLabelProps={{ shrink: true, ...InputLabelProps }}
-      InputProps={{
-        inputComponent: InputComponent,
-        ...InputProps
+      slotProps={{
+        input: {
+          inputComponent: InputComponent,
+          ...InputProps
+        },
+        htmlInput: { children: children },
+        inputLabel: { shrink: true, ...InputLabelProps }
       }}
-      inputProps={{ children: children }}
     />
   );
 };

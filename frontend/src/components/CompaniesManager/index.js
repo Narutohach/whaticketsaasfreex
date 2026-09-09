@@ -200,7 +200,7 @@ export function CompanyForm(props) {
       >
         {(values, setValues) => (
           <Form className={classes.fullWidth}>
-            <Grid spacing={2} justifyContent="flex-end" container>
+            <Grid spacing={2} sx={{ justifyContent: "flex-end" }} container>
               <Grid
                 size={{
                   xs: 12,
@@ -321,8 +321,8 @@ export function CompanyForm(props) {
                     label="Data de Vencimento"
                     type="date"
                     name="dueDate"
-                    InputLabelProps={{
-                      shrink: true,
+                    slotProps={{
+                      inputLabel: { shrink: true },
                     }}
                     variant="outlined"
                     fullWidth
@@ -357,7 +357,7 @@ export function CompanyForm(props) {
                 </FormControl>
               </Grid>
               <Grid size={12}>
-                <Grid justifyContent="flex-end" spacing={1} container>
+                <Grid sx={{ justifyContent: "flex-end" }} spacing={1} container>
                   <Grid
                     size={{
                       xs: 4,

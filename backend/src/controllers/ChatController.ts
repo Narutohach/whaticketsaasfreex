@@ -13,6 +13,7 @@ import Chat from "../models/Chat";
 import CreateMessageService from "../services/ChatService/CreateMessageService";
 import User from "../models/User";
 import ChatUser from "../models/ChatUser";
+import AppError from "../errors/AppError";
 
 type IndexQuery = {
   pageNumber: string;
@@ -28,6 +29,24 @@ type StoreData = {
 type FindParams = {
   companyId: number;
   ownerId?: number;
+};
+
+const ensureChatParticipant = async (
+  chatId: number,
+  userId: number,
+  companyId: number
+): Promise<ChatUser> => {
+  const chat = await Chat.findOne({ where: { id: chatId, companyId } });
+  if (!chat) {
+    throw new AppError("ERR_NO_CHAT_FOUND", 404);
+  }
+
+  const chatUser = await ChatUser.findOne({ where: { chatId, userId } });
+  if (!chatUser) {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
+
+  return chatUser;
 };
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -129,6 +148,8 @@ export const saveMessage = async (
   const senderId = +req.user.id;
   const chatId = +id;
 
+  await ensureChatParticipant(chatId, senderId, companyId);
+
   const newMessage = await CreateMessageService({
     chatId,
     senderId,
@@ -163,13 +184,14 @@ export const checkAsRead = async (
   res: Response
 ): Promise<Response> => {
   const { companyId } = req.user;
-  const { userId } = req.body;
   const { id } = req.params;
+  const chatId = +id;
+  const userId = +req.user.id;
 
-  const chatUser = await ChatUser.findOne({ where: { chatId: id, userId } });
+  const chatUser = await ensureChatParticipant(chatId, userId, companyId);
   await chatUser.update({ unreads: 0 });
 
-  const chat = await Chat.findByPk(id, {
+  const chat = await Chat.findOne({ where: { id: chatId, companyId },
     include: [
       { model: User, as: "owner" },
       { model: ChatUser, as: "users" }

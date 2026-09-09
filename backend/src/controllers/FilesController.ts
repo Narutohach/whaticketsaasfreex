@@ -14,6 +14,7 @@ import DeleteAllService from "../services/FileServices/DeleteAllService";
 import ShowTicketService from "../services/TicketServices/ShowTicketService";
 import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
 import FilesOptions from "../models/FilesOptions";
+import Files from "../models/Files";
 
 type IndexQuery = {
   searchParam?: string;
@@ -63,7 +64,9 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
 };
 
 export const uploadMedias = async (req: Request, res: Response): Promise<Response> => {
-  const { fileId, id, mediaType } = req.body;
+  const { id, mediaType } = req.body;
+  const { fileListId: fileId } = req.params;
+  const { companyId } = req.user;
   const files = req.files as Express.Multer.File[];
   const file = head(files);
 
@@ -77,10 +80,15 @@ export const uploadMedias = async (req: Request, res: Response): Promise<Respons
           where: {
             fileId,
             id: Array.isArray(id)? id[index] : id
-          }
+          },
+          include: [{ model: Files, where: { companyId } }]
         });
 
-        fileOpt.update({
+        if (!fileOpt) {
+          throw new AppError("ERR_NO_FILE_OPTION_FOUND", 404);
+        }
+
+        await fileOpt.update({
           path: file.filename.replace('/','-'),
           mediaType: Array.isArray(mediaType)? mediaType[index] : mediaType
         }) ;

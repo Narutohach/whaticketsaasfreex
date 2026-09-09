@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ptBR } from "@mui/material/locale";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import ColorModeContext from "./layout/themeContext";
 import { emotionCache } from "./styles/emotionCache";
@@ -180,6 +181,7 @@ const App = () => {
         <CacheProvider value={emotionCache}>
             <ColorModeContext.Provider value={{ colorMode }}>
                 <ThemeProvider theme={theme}>
+                    <CssBaseline />
                     <QueryClientProvider client={queryClient}>
                       <SocketContext.Provider value={SocketManager}>
                           <Routes />

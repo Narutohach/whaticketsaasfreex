@@ -24,7 +24,7 @@ const UpdateService = async (data: Data): Promise<QuickMessage> => {
   await record.update({
     shortcode,
     message,
-    userId,
+    userId: Number(userId),
 	geral
   });
 

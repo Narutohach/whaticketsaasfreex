@@ -56,6 +56,7 @@ const CreatePromptService = async (promptData: PromptData): Promise<Prompt> => {
 
     let promptTable = await Prompt.create({
         ...promptData,
+        companyId: Number(companyId),
         apiKey: encryptedApiKey,
         provider: promptData.provider || "openai",
         model: promptData.model || "gpt-4o-mini"

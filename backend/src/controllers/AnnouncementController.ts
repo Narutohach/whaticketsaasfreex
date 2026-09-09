@@ -23,10 +23,10 @@ type IndexQuery = {
 };
 
 type StoreData = {
-  priority: string;
+  priority: number;
   title: string;
   text: string;
-  status: string;
+  status: boolean;
   companyId: number;
   mediaPath?: string;
   mediaName?: string;

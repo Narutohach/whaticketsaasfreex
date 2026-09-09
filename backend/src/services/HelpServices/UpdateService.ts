@@ -10,7 +10,7 @@ interface Data {
 }
 
 const UpdateService = async (data: Data): Promise<Help> => {
-  const { id } = data;
+  const { id, ...updateData } = data;
 
   const record = await Help.findByPk(id);
 
@@ -18,7 +18,7 @@ const UpdateService = async (data: Data): Promise<Help> => {
     throw new AppError("ERR_NO_HELP_FOUND", 404);
   }
 
-  await record.update(data);
+  await record.update(updateData);
 
   return record;
 };

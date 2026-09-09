@@ -96,7 +96,6 @@ export const ClosedAllOpenTickets = async (companyId: number): Promise<void> => 
 
             await ticketTraking.update({
               finishedAt: moment().toDate(),
-              closedAt: moment().toDate(),
               whatsappId: ticket.whatsappId,
               userId: ticket.userId,
             })

@@ -91,8 +91,7 @@ const typebotListener = async ({
 
         if (typebotExpires > 0 && ticket.updatedAt < dataLimite) {
             await ticket.update({
-                typebotSessionId: null,
-                isBot: true
+                typebotSessionId: null
             });
 
             await ticket.reload();
@@ -244,8 +243,7 @@ const typebotListener = async ({
 
                                 if (jsonGatilho.stopBot  && isNil(jsonGatilho.userId)  && isNil(jsonGatilho.queueId)) {
                                     await ticket.update({
-                                        useIntegration: false,
-                                        isBot: false
+                                        useIntegration: false
                                     })
 
                                     return;
@@ -379,9 +377,7 @@ const typebotListener = async ({
         }
         if (body === typebotKeywordRestart) {
             await ticket.update({
-                isBot: true,
                 typebotSessionId: null
-
             })
 
             await ticket.reload();

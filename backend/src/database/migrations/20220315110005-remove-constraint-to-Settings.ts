@@ -35,7 +35,8 @@ module.exports = {
     await queryInterface.sequelize.query('DELETE FROM "Settings"');
     await queryInterface.removeColumn("Settings", "id");
 
-    return queryInterface.addConstraint("Settings", ["key"], {
+    return queryInterface.addConstraint("Settings", {
+      fields: ["key"],
       type: "primary key",
       name: "Settings_pkey"
     });

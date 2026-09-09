@@ -42,7 +42,7 @@ const ListService = async ({
   const limit = 20;
   const offset = limit * (+pageNumber - 1);
 
-  const { count, rows: records } = await ContactList.findAndCountAll({
+  const { count: countResult, rows: records } = await ContactList.findAndCountAll({
     where: whereCondition,
     limit,
     offset,
@@ -64,6 +64,7 @@ const ListService = async ({
     group: ["ContactList.id"]
   });
 
+  const count = Array.isArray(countResult) ? countResult.length : countResult;
   const hasMore = count > offset + records.length;
 
   return {

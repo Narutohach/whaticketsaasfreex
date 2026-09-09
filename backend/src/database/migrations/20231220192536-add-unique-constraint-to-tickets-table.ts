@@ -15,14 +15,11 @@ module.exports = {
       // Instalação nova: a constraint com esse nome nunca existiu.
     }
 
-    return queryInterface.addConstraint(
-      "Tickets",
-      ["contactId", "companyId", "whatsappId"],
-      {
-        type: "unique",
-        name: "contactid_companyid_unique"
-      }
-    );
+    return queryInterface.addConstraint("Tickets", {
+      fields: ["contactId", "companyId", "whatsappId"],
+      type: "unique",
+      name: "contactid_companyid_unique"
+    });
   },
 
   down: (queryInterface: QueryInterface) => {

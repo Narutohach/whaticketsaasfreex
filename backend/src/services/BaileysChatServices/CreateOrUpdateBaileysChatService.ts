@@ -1,11 +1,17 @@
 import { Chat } from "@whiskeysockets/baileys";
 import BaileysChats from "../../models/BaileysChats";
 
+const toNumber = (value: number | { toNumber(): number } | null | undefined): number | undefined => {
+  if (value == null) return undefined;
+  return typeof value === "number" ? value : value.toNumber();
+};
+
 export const CreateOrUpdateBaileysChatService = async (
   whatsappId: number,
   chat: Partial<Chat>,
 ): Promise<BaileysChats> => {
   const { id, conversationTimestamp, unreadCount } = chat;
+  const conversationTimestampNumber = toNumber(conversationTimestamp);
   const baileysChat = await BaileysChats.findOne({
     where: {
       whatsappId,
@@ -15,7 +21,7 @@ export const CreateOrUpdateBaileysChatService = async (
 
   if (baileysChat) {
     const baileysChats = await baileysChat.update({
-      conversationTimestamp,
+      conversationTimestamp: conversationTimestampNumber,
       unreadCount: unreadCount ? baileysChat.unreadCount + unreadCount : 0
     });
 
@@ -25,13 +31,10 @@ export const CreateOrUpdateBaileysChatService = async (
 
   const timestamp = new Date().getTime();
 
-  // convert timestamp to number
-  const conversationTimestampNumber = Number(timestamp);
-
   const baileysChats = await BaileysChats.create({
     whatsappId,
     jid: id,
-    conversationTimestamp: conversationTimestamp || conversationTimestampNumber,
+    conversationTimestamp: conversationTimestampNumber || timestamp,
     unreadCount: unreadCount || 1,
   });
 

@@ -53,8 +53,8 @@ const UpdateUserService = async ({
 
   await schedule.update({
     body,
-    sendAt,
-    sentAt,
+    sendAt: sendAt != null ? new Date(sendAt) : undefined,
+    sentAt: sentAt != null ? new Date(sentAt) : undefined,
     contactId,
     ticketId,
     userId,

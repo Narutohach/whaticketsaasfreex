@@ -1372,7 +1372,7 @@ if (choosenQueue.options.length === 0) {
     if (ticketTraking.chatbotAt !== null) {
       dataLimite.setMinutes(ticketTraking.chatbotAt.getMinutes() + (Number(timeUseBotQueues)));
 
-      if (ticketTraking.chatbotAt !== null && Agora < dataLimite && timeUseBotQueues !== "0" && ticket.amountUsedBotQueues !== 0) {
+      if (ticketTraking.chatbotAt !== null && Agora < dataLimite && Number(timeUseBotQueues) !== 0 && ticket.amountUsedBotQueues !== 0) {
         return
       }
     }

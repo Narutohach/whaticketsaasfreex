@@ -26,7 +26,9 @@ const UpdatePlanService = async (planData: PlanData): Promise<Plan> => {
     throw new AppError("ERR_NO_PLAN_FOUND", 404);
   }
 
-  await plan.update(planData);
+  const { id: _id, ...updateData } = planData;
+
+  await plan.update(updateData);
 
   return plan;
 };

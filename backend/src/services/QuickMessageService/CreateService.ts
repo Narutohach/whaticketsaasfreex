@@ -11,7 +11,7 @@ interface Data {
 }
 
 const CreateService = async (data: Data): Promise<QuickMessage> => {
-  const { shortcode, message, geral } = data;
+  const { shortcode, message, geral, companyId, userId } = data;
 
   const ticketnoteSchema = Yup.object().shape({
     shortcode: Yup.string()
@@ -28,7 +28,11 @@ const CreateService = async (data: Data): Promise<QuickMessage> => {
     throw new AppError(err.message);
   }
 
-  const record = await QuickMessage.create(data);
+  const record = await QuickMessage.create({
+    ...data,
+    companyId: Number(companyId),
+    userId: Number(userId)
+  });
 
   return record;
 };

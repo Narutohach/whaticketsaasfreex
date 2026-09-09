@@ -291,7 +291,7 @@ async function handleSendScheduledMessage(job) {
     });
 
     await scheduleRecord?.update({
-      sentAt: moment().format("YYYY-MM-DD HH:mm"),
+      sentAt: moment().toDate(),
       status: "ENVIADA"
     });
 
@@ -785,7 +785,7 @@ async function handlePrepareContact(job) {
         }
       );
 
-      await record.update({ jobId: nextJob.id });
+      await record.update({ jobId: String(nextJob.id) });
     }
 
     await verifyAndFinalizeCampaign(campaign);

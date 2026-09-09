@@ -28,10 +28,10 @@ const FindOrCreateATicketTrakingService = async ({
   }
 
   const newRecord = await TicketTraking.create({
-    ticketId,
-    companyId,
-    whatsappId,
-    userId
+    ticketId: Number(ticketId),
+    companyId: Number(companyId),
+    whatsappId: whatsappId != null ? Number(whatsappId) : undefined,
+    userId: userId != null ? Number(userId) : undefined
   });
 
   return newRecord;

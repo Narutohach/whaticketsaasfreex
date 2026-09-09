@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkfrontend||=[]).push([[808],{808(e,p,n){const t=(0,n(9344).F3)("App",{web:()=>n.e(970).then(()=>n(6970)).then(e=>new e.AppWeb)});n.d(p,["App",0,t])}}]);

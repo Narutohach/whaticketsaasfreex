@@ -125,7 +125,7 @@ export const ChatsUser = () => {
         Total de Conversas por Usuários
       </Typography>
 
-      <Stack direction={"row"} spacing={2} alignItems={"center"} sx={{ my: 2 }}>
+      <Stack direction={"row"} spacing={2} sx={{ my: 2, alignItems: "center" }}>
         <LocalizationProvider
           dateAdapter={AdapterDateFns}
           adapterLocale={brLocale}

@@ -339,8 +339,7 @@ const ChartsAppointmentsAtendent = () => {
           <Stack
             direction={"row"}
             spacing={2}
-            alignItems={"center"}
-            sx={{ my: 2 }}
+            sx={{ my: 2, alignItems: "center" }}
           >
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
@@ -400,8 +399,7 @@ const ChartsAppointmentsAtendent = () => {
           <Stack
             direction={"row"}
             spacing={2}
-            alignItems={"center"}
-            sx={{ my: 2 }}
+            sx={{ my: 2, alignItems: "center" }}
           >
             <div style={{ height: 60 }} />
           </Stack>

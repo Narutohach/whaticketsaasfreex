@@ -329,8 +329,7 @@ const ChartsRushHour = () => {
         <Stack
           direction={"row"}
           spacing={2}
-          alignItems={"center"}
-          sx={{ my: 2 }}
+          sx={{ my: 2, alignItems: "center" }}
         >
           <LocalizationProvider
             dateAdapter={AdapterDateFns}

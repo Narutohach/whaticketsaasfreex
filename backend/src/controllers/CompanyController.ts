@@ -297,6 +297,10 @@ export const listPlan = async (req: Request, res: Response): Promise<Response> =
   const { id } = req.params;
   const { companyId, super: isSuper } = req.user;
 
+  if (!/^\d+$/.test(id)) {
+    throw new AppError("ERR_INVALID_COMPANY_ID", 400);
+  }
+
   if (isSuper || companyId.toString() === id.toString()) {
     const company = await ShowPlanCompanyService(id);
     return res.status(200).json(company);

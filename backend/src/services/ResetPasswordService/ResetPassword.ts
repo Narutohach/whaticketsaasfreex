@@ -10,8 +10,12 @@ const ResetPassword = async (
   const passwordHash = await hash(password, 8);
   const updatedUsers = await database.query<{ id: number }>(
     `UPDATE "Users"
-       SET "passwordHash" = :passwordHash, "resetPassword" = ''
-     WHERE email = :email AND "resetPassword" = :token
+       SET "passwordHash" = :passwordHash, "resetPassword" = '', "resetPasswordExpires" = NULL
+     WHERE email = :email
+       AND "resetPassword" = :token
+       AND "resetPassword" != ''
+       AND "resetPasswordExpires" IS NOT NULL
+       AND "resetPasswordExpires" > NOW()
      RETURNING id`,
     {
       replacements: { email, token, passwordHash },

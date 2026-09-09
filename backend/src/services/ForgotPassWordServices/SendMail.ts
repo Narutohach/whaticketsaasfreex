@@ -254,11 +254,22 @@ const filterEmail = async (email: string) => {
   });
   return { hasResult: result.length > 0, data: [result] };
 };
+// 1 hora: prazo curto o bastante para não valer a pena atacar por força
+// bruta o UUID (122 bits de entropia já bastam sozinhos, isso é defesa em
+// profundidade), longo o bastante para o usuário checar o e-mail com calma.
+const RESET_TOKEN_TTL_HOURS = 1;
+
 const insertToken = async (email: string, tokenSenha: string) => {
-  const results = await database.query(`UPDATE "Users" SET "resetPassword" = :tokenSenha WHERE email = :email`, {
-    replacements: { email, tokenSenha },
-    type: sequelize.QueryTypes.UPDATE
-  });
+  const results = await database.query(
+    `UPDATE "Users"
+        SET "resetPassword" = :tokenSenha,
+            "resetPasswordExpires" = NOW() + INTERVAL '${RESET_TOKEN_TTL_HOURS} hours'
+      WHERE email = :email`,
+    {
+      replacements: { email, tokenSenha },
+      type: sequelize.QueryTypes.UPDATE
+    }
+  );
   return { hasResults: results.length > 0, datas: results };
 };
 export default SendMail;

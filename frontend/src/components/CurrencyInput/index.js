@@ -16,18 +16,13 @@ const defaultMaskOptions = {
   allowLeadingZeroes: false,
 }
 
-const CurrencyInput = ({ maskOptions, ...inputProps }) => {
+const CurrencyInput = ({ maskOptions = {}, inputMode = 'numeric', ...inputProps }) => {
   const currencyMask = createNumberMask({
     ...defaultMaskOptions,
     ...maskOptions,
   })
 
-  return <MaskedInput mask={currencyMask} {...inputProps} />
-}
-
-CurrencyInput.defaultProps = {
-  inputMode: 'numeric',
-  maskOptions: {},
+  return <MaskedInput mask={currencyMask} inputMode={inputMode} {...inputProps} />
 }
 
 CurrencyInput.propTypes = {

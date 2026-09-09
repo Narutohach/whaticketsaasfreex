@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 function SelectField(props) {
-  const { label, data, ...rest } = props;
+  const { label, data = [], ...rest } = props;
   const [field, meta] = useField(props);
   const { value: selectedValue } = field;
   const [touched, error] = at(meta, 'touched', 'error');
@@ -37,12 +37,8 @@ function SelectField(props) {
   );
 }
 
-SelectField.defaultProps = {
-  data: []
-};
-
 SelectField.propTypes = {
-  data: PropTypes.array.isRequired
+  data: PropTypes.array
 };
 
 export default SelectField;

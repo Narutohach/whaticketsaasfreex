@@ -1,5 +1,6 @@
 import express from "express";
 import isAuth from "../middleware/isAuth";
+import isSuper from "../middleware/isSuper";
 
 import * as SubscriptionController from "../controllers/SubscriptionController";
 import { createRateLimiter } from "../middleware/rateLimiter";
@@ -17,7 +18,7 @@ const webhookLimiter = createRateLimiter({
 });
 
 subscriptionRoutes.post("/subscription", isAuth, SubscriptionController.createSubscription);
-subscriptionRoutes.post("/subscription/create/webhook", webhookLimiter, SubscriptionController.createWebhook);
+subscriptionRoutes.post("/subscription/create/webhook", isAuth, isSuper, webhookLimiter, SubscriptionController.createWebhook);
 subscriptionRoutes.post("/subscription/webhook/:type?", webhookLimiter, SubscriptionController.webhook);
 
 export default subscriptionRoutes;

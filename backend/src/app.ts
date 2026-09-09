@@ -15,6 +15,7 @@ import AppError from "./errors/AppError";
 import { UploadError } from "./helpers/UploadSecurity";
 import { messageQueue, sendScheduledMessages } from "./queues";
 import routes from "./routes";
+import companyMediaRoutes from "./routes/companyMediaRoutes";
 import { logger } from "./utils/logger";
 
 Sentry.init({ dsn: process.env.SENTRY_DSN });
@@ -58,6 +59,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(Sentry.Handlers.requestHandler());
+app.use(companyMediaRoutes);
 app.use("/public", express.static(uploadConfig.directory));
 app.use(routes);
 

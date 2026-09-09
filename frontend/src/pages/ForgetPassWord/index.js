@@ -234,7 +234,7 @@ const ForgetPassword = () => {
   const handleSendEmail = async (values) => {
     const email = values.email;
     try {
-      const response = await api.post(`/forgetpassword/${email}`);
+      const response = await api.post("/forgetpassword", { email });
 
       if (response.data.status === 404) {
         toast.error("Email não encontrado");
@@ -254,7 +254,11 @@ const ForgetPassword = () => {
 
     if (newPassword === confirmPassword) {
       try {
-        await api.post(`/resetpasswords/${email}/${token}/${newPassword}`);
+        await api.post("/resetpasswords", {
+          email,
+          token,
+          password: newPassword,
+        });
         toast.success(i18n.t("Senha redefinida com sucesso."));
         history.push("/login");
       } catch (err) {

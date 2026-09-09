@@ -22,12 +22,12 @@ const resetPasswordLimiter = createRateLimiter({
 });
 
 forgotsRoutes.post(
-  "/forgetpassword/:email",
+  "/forgetpassword",
   forgotPasswordLimiter,
   ForgotController.store
 );
 forgotsRoutes.post(
-  "/resetpasswords/:email/:token/:password",
+  "/resetpasswords",
   resetPasswordLimiter,
   ForgotController.resetPasswords
 );

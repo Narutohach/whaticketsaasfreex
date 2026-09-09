@@ -12,6 +12,7 @@ import {
 
 import Company from "./Company";
 import User from "./User";
+import { createSignedCompanyMediaUrl } from "../helpers/SignedCompanyMedia";
 
 @Table
 class QuickMessage extends Model<QuickMessage> {
@@ -53,7 +54,10 @@ class QuickMessage extends Model<QuickMessage> {
   get mediaPath(): string | null {
     if (this.getDataValue("mediaPath") && this.getDataValue("companyId")) {
 
-      return `${process.env.BACKEND_URL}${process.env.PROXY_PORT ?`:${process.env.PROXY_PORT}`:""}/public/company${this.getDataValue("companyId")}/quick/${this.getDataValue("mediaPath")}`;
+      return createSignedCompanyMediaUrl(
+        this.getDataValue("companyId"),
+        `quick/${this.getDataValue("mediaPath")}`
+      );
 
     }
     return null;

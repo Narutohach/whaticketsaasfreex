@@ -123,6 +123,7 @@ export const getMessageOptions = async (
 
 import Whatsapp from "../../models/Whatsapp";
 import { ChannelProviderFactory } from "../Channels/ChannelProviderFactory";
+import { createSignedCompanyMediaUrl } from "../../helpers/SignedCompanyMedia";
 
 const SendWhatsAppMedia = async ({
   media,
@@ -140,7 +141,13 @@ const SendWhatsAppMedia = async ({
 
     if (whatsapp && (whatsapp.provider === "meta_cloud" || whatsapp.provider === "meta")) {
       const channel = ChannelProviderFactory.getProvider(whatsapp);
-      const mediaUrl = `${process.env.BACKEND_URL || "http://localhost:8080"}/public/company${ticket.companyId}/${media.filename || path.basename(media.path)}`;
+      const mediaUrl = createSignedCompanyMediaUrl(
+        ticket.companyId,
+        media.filename || path.basename(media.path)
+      );
+      if (!mediaUrl) {
+        throw new Error("Não foi possível gerar URL segura para a mídia");
+      }
       const sent = await channel.sendMedia({
         to: ticket.contact.number,
         mediaPath: mediaUrl,

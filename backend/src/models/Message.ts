@@ -14,6 +14,7 @@ import Contact from "./Contact";
 import Ticket from "./Ticket";
 import Company from "./Company";
 import Queue from "./Queue";
+import { createSignedCompanyMediaUrl } from "../helpers/SignedCompanyMedia";
 
 @Table
 class Message extends Model<Message> {
@@ -51,9 +52,7 @@ class Message extends Model<Message> {
   @Column(DataType.STRING)
   get mediaUrl(): string | null {
     if (this.getDataValue("mediaUrl")) {
-      // return `${process.env.BACKEND_URL}/public/${this.getDataValue("mediaUrl")}`;
-
-      return `${process.env.BACKEND_URL}/public/company${this.companyId}/${this.getDataValue("mediaUrl")}`;
+      return createSignedCompanyMediaUrl(this.companyId, this.getDataValue("mediaUrl"));
 
     }
     return null;

@@ -61,3 +61,15 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+###############################################################################
+# Scripts que rodam dentro de containers Linux precisam sempre de LF.
+#
+# `* text=auto` sozinho deixa o Git normalizar pra CRLF no checkout em
+# Windows (comportamento padrão do core.autocrlf) — um add-env-vars.sh com
+# CRLF quebra a sintaxe do /bin/sh no container (Alpine/Debian), e como o
+# Dockerfile encadeia com `&&`, isso derruba o container inteiro. Forçando
+# LF aqui, o checkout em Windows não corrompe mais o arquivo antes do
+# `docker build` copiar pra imagem.
+###############################################################################
+*.sh text eol=lf

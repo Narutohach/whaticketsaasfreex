@@ -1,4 +1,4 @@
-FROM node:20.20.2 AS build-deps
+FROM node:24.20.0 AS build-deps
 
 RUN apt-get update && apt-get install -y wget -y wget postgresql-client
 

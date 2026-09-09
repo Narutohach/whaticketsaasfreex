@@ -1,4 +1,4 @@
-FROM node:20.20.2-alpine
+FROM node:24.20.0-alpine
 WORKDIR /usr/src/app
 RUN apk add --no-cache jq
 COPY build ./build

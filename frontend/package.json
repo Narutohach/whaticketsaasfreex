@@ -5,7 +5,7 @@
   "nomeEmpresa": "HACTO Desk",
   "private": true,
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",

@@ -1,14 +1,14 @@
 import React, { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "../../styles/makeStyles";
-import Box from '@mui/material/Box';
+import { Box, useTheme } from '@mui/material';
 
 import TicketsManagerTabs from "../../components/TicketsManagerTabs/";
 import Ticket from "../../components/Ticket/";
 import TicketAdvancedLayout from "../../components/TicketAdvancedLayout";
 import { TicketsContext } from "../../context/Tickets/TicketsContext";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     header: {
     },
     content: {

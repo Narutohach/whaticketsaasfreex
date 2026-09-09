@@ -1,20 +1,54 @@
 {
-	"short_name": "HACTO Desk",
-	"name": "HACTO Desk | Atendimento Omnichannel",
-	"icons": [
-		{
-			"src": "favicon.svg?v=hacto-desk-2",
-			"sizes": "64x64 32x32 24x24 16x16",
-			"type": "image/svg+xml"
-		},
-		{
-			"src": "android-chrome-192x192.png",
-			"sizes": "192x192",
-			"type": "image/png"
-		}
-	],
-	"start_url": ".",
-	"display": "standalone",
-	"theme_color": "#1677FF",
-	"background_color": "#F4F7FB"
+  "short_name": "HACTO Desk",
+  "name": "HACTO Desk | Atendimento Omnichannel & IA",
+  "description": "Plataforma profissional de atendimento omnichannel WhatsApp e Inteligência Artificial",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#090d16",
+  "background_color": "#080c14",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg?v=hacto-desk-2",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atendimentos",
+      "short_name": "Tickets",
+      "description": "Acessar fila de atendimentos e conversas",
+      "url": "/tickets",
+      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Métricas",
+      "description": "Ver indicadores e métricas em tempo real",
+      "url": "/dashboard",
+      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+    }
+  ]
 }

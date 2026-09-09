@@ -11,6 +11,7 @@ import { emotionCache } from "./styles/emotionCache";
 import { SocketContext, SocketManager } from './context/Socket/SocketContext';
 
 import Routes from "./routes";
+import PwaInstallPrompt from "./components/PwaInstallPrompt";
 
 const queryClient = new QueryClient();
 
@@ -176,6 +177,7 @@ const App = () => {
                     <QueryClientProvider client={queryClient}>
                       <SocketContext.Provider value={SocketManager}>
                           <Routes />
+                          <PwaInstallPrompt />
                       </SocketContext.Provider>
                     </QueryClientProvider>
                 </ThemeProvider>

@@ -339,7 +339,7 @@ const TicketsListGroup = (props) => {
           ) : (
             <>
               {ticketsList
-                .filter((ticket) => ticket.isGroup.toString() === 'true')
+                .filter((ticket) => !!ticket.isGroup)
                 .map((ticket) => (
                   <TicketListItem ticket={ticket} key={ticket.id} />
                 ))}

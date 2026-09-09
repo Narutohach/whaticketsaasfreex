@@ -20,6 +20,15 @@ module.exports = {
       }
     : {}),
   dialect,
+  // Sem esta configuração vale o default do sequelize 5: max 5 conexões para
+  // TODA a aplicação (requests HTTP + crons + Bull + sessões Baileys), o que
+  // gera SequelizeConnectionAcquireTimeoutError sob carga moderada.
+  pool: {
+    max: Number(process.env.DB_POOL_MAX) || 25,
+    min: Number(process.env.DB_POOL_MIN) || 2,
+    acquire: 20000,
+    idle: 10000
+  },
   timezone: "-03:00",
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT) || defaultPort,

@@ -33,13 +33,25 @@ process.on("uncaughtException", err => {
   process.exit(1);
 });
 
+/**
+ * Registra e segue, em vez de derrubar o processo.
+ *
+ * Este é um servidor multiempresa: matar o processo por uma promise rejeitada
+ * em UM fluxo tira do ar TODAS as empresas e descarta a fila de mensagens
+ * recebidas, que hoje vive em memória (wbotMessageListener). Vários caminhos
+ * chegam aqui sem tratamento — inclusive o webhook público de pagamento —, o
+ * que tornava a queda provocável de fora.
+ *
+ * `uncaughtException` continua encerrando: ali o estado do processo é
+ * realmente desconhecido e seguir é pior.
+ */
 process.on("unhandledRejection", (reason, p) => {
-  console.error(
-    `${new Date().toUTCString()} unhandledRejection:`,
-    reason,
-    p
+  logger.error(
+    `unhandledRejection (processo mantido no ar): ${
+      (reason as Error)?.message || reason
+    }`
   );
-  process.exit(1);
+  logger.debug(`unhandledRejection promise: ${p}`);
 });
 
 

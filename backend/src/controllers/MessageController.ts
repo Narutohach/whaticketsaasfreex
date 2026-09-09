@@ -362,7 +362,7 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
   const { ticket , message } = await EditWhatsAppMessage({messageId, body, companyId});
 
   const io = getIO();
- io.emit(`company-${companyId}-appMessage`, {
+ io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-appMessage`, {
     action:"update",
     message,
     ticket: ticket,

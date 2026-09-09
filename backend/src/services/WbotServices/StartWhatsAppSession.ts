@@ -5,6 +5,7 @@ import { getIO } from "../../libs/socket";
 import wbotMonitor from "./wbotMonitor";
 import { logger } from "../../utils/logger";
 import * as Sentry from "@sentry/node";
+import serializeWhatsappForSocket from "../../helpers/SerializeWhatsappForSocket";
 
 export const StartWhatsAppSession = async (
   whatsapp: Whatsapp,
@@ -13,9 +14,9 @@ export const StartWhatsAppSession = async (
   await whatsapp.update({ status: "OPENING" });
 
   const io = getIO();
-  io.emit(`company-${companyId}-whatsappSession`, {
+  io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsappSession`, {
     action: "update",
-    session: whatsapp
+    session: serializeWhatsappForSocket(whatsapp)
   });
 
 

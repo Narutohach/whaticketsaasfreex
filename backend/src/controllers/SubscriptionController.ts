@@ -10,6 +10,7 @@ import Invoices from "../models/Invoices";
 import Subscriptions from "../models/Subscriptions";
 import { getIO } from "../libs/socket";
 import { logger } from "../utils/logger";
+import sequelize from "../database";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
 
 const app = express();
@@ -157,53 +158,83 @@ export const webhook = async (
   }
   if (req.body.pix) {
     const gerencianet = Gerencianet(options);
-    req.body.pix.forEach(async (pix: any) => {
-      const detahe = await gerencianet.pixDetailCharge({
-        txid: pix.txid
-      });
 
-      if (detahe.status === "CONCLUIDA") {
-        const { solicitacaoPagador } = detahe;
-        const invoiceID = solicitacaoPagador.replace("#Fatura:", "");
-        const invoices = await Invoices.findByPk(invoiceID);
-        const companyId =invoices.companyId;
-        const company = await Company.findByPk(companyId);
-
-        const expiresAt = new Date(company.dueDate);
-        expiresAt.setDate(expiresAt.getDate() + 30);
-        const date = expiresAt.toISOString().split("T")[0];
-
-        if (company) {
-          // `status: true` reativa a empresa: o cron de faturamento
-          // (queues.ts) desliga essa flag 3 dias após o vencimento, e sem
-          // religá-la aqui quem pagasse depois de ser suspenso continuaria
-          // suspenso para sempre, mesmo com a fatura quitada.
-          await company.update({
-            dueDate: date,
-            status: true
-          });
-         const invoi = await invoices.update({
-            id: invoiceID,
-            status: 'paid'
-          });
-          await company.reload();
-          const io = getIO();
-          const companyUpdate = await Company.findOne({
-            where: {
-              id: companyId
-            }
-          });
-
-          io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-payment`, {
-            action: detahe.status,
-            company: companyUpdate
-          });
+    // `forEach(async)` não era aguardado: respondíamos 200 antes de processar,
+    // então uma falha aqui não fazia o provedor reenviar a notificação — o
+    // pagamento se perdia. E qualquer erro (ex.: txid desconhecido, fatura
+    // inexistente) virava unhandledRejection, que derrubava o processo inteiro.
+    // Este é um endpoint público, ou seja, era queda provocável de fora.
+    await Promise.all(
+      req.body.pix.map(async (pix: any) => {
+        try {
+          await processPixPayment(gerencianet, pix);
+        } catch (err) {
+          logger.error(
+            `Falha ao processar pix ${pix?.txid}: ${(err as Error)?.message}`
+          );
         }
-
-      }
-    });
-
+      })
+    );
   }
 
   return res.json({ ok: true });
+};
+
+const processPixPayment = async (
+  gerencianet: any,
+  pix: any
+): Promise<void> => {
+  const detahe = await gerencianet.pixDetailCharge({ txid: pix.txid });
+
+  if (detahe.status !== "CONCLUIDA") {
+    return;
+  }
+
+  const { solicitacaoPagador } = detahe;
+  const invoiceID = solicitacaoPagador?.replace("#Fatura:", "");
+  const invoice = invoiceID ? await Invoices.findByPk(invoiceID) : null;
+
+  if (!invoice) {
+    logger.warn(`Pix ${pix?.txid}: fatura ${invoiceID} não encontrada.`);
+    return;
+  }
+
+  // Idempotência: o provedor reenvia a notificação até receber 200, e sem esta
+  // checagem cada reenvio estendia o vencimento em outros 30 dias.
+  if (invoice.status === "paid") {
+    logger.info(`Pix ${pix?.txid}: fatura ${invoice.id} já estava paga.`);
+    return;
+  }
+
+  const company = await Company.findByPk(invoice.companyId);
+
+  if (!company) {
+    logger.warn(`Pix ${pix?.txid}: empresa ${invoice.companyId} não existe.`);
+    return;
+  }
+
+  const expiresAt = new Date(company.dueDate);
+  expiresAt.setDate(expiresAt.getDate() + 30);
+  const date = expiresAt.toISOString().split("T")[0];
+
+  // Transação: sem ela, uma falha entre os dois updates deixava a empresa com
+  // vencimento estendido e a fatura ainda aberta (ou o inverso).
+  await sequelize.transaction(async transaction => {
+    // `status: true` reativa a empresa: o cron de faturamento (queues.ts)
+    // desliga essa flag 3 dias após o vencimento, e sem religá-la aqui quem
+    // pagasse depois de ser suspenso continuaria suspenso para sempre.
+    await company.update({ dueDate: date, status: true }, { transaction });
+    await invoice.update({ status: "paid" }, { transaction });
+  });
+
+  await company.reload();
+
+  const io = getIO();
+  io.to(`company-${company.id}-mainchannel`).emit(
+    `company-${company.id}-payment`,
+    {
+      action: detahe.status,
+      company
+    }
+  );
 };

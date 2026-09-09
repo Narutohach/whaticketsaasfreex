@@ -16,6 +16,7 @@ import { Op } from "sequelize";
 import { FindOptions } from "sequelize/types";
 import Whatsapp from "../models/Whatsapp";
 import { logger } from "../utils/logger";
+import serializeWhatsappForSocket from "../helpers/SerializeWhatsappForSocket";
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger";
 import authState from "../helpers/authState";
 import {
@@ -242,9 +243,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
 
                 await DeleteBaileysService(whatsapp.id);
 
-                io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",
-                  session: whatsapp
+                  session: serializeWhatsappForSocket(whatsapp)
                 });
               }
 
@@ -258,9 +259,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                   );
                   reconnectAttemptsMap.delete(id);
                   await whatsapp.update({ status: "DISCONNECTED" });
-                  io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                  io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                     action: "update",
-                    session: whatsapp
+                    session: serializeWhatsappForSocket(whatsapp)
                   });
                 } else {
                   reconnectAttemptsMap.set(id, attempt + 1);
@@ -274,9 +275,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                 await whatsapp.update({ status: "PENDING", session: "", number: "" });
                 await DeleteBaileysService(whatsapp.id);
 
-                io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",
-                  session: whatsapp
+                  session: serializeWhatsappForSocket(whatsapp)
                 });
                 removeWbot(id, false);
                 setTimeout(() => StartWhatsAppSession(whatsapp, whatsapp.companyId), 2000);
@@ -311,9 +312,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                     `Número ${whatsapp.number} já está conectado na sessão "${duplicateSession.name}" (id ${duplicateSession.id}); a sessão "${name}" (id ${id}) será desconectada para evitar duas conexões simultâneas com o mesmo número.`
                   );
                   await whatsapp.update({ status: "DISCONNECTED", qrcode: "" });
-                  io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                  io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                     action: "update",
-                    session: whatsapp
+                    session: serializeWhatsappForSocket(whatsapp)
                   });
                   removeWbot(id, false);
                   reject(new AppError("ERR_WAPP_DUPLICATE_NUMBER"));
@@ -321,9 +322,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                 }
               }
 
-                io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",
-                  session: whatsapp
+                  session: serializeWhatsappForSocket(whatsapp)
                 });
 
               const sessionIndex = sessions.findIndex(
@@ -345,9 +346,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                 });
                 await DeleteBaileysService(whatsapp.id);
 
-                io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",
-                  session: whatsapp
+                  session: serializeWhatsappForSocket(whatsapp)
                 });
                 wsocket.ev.removeAllListeners("connection.update");
                 wsocket.ws.close();
@@ -372,9 +373,9 @@ export const initWASocket = async (whatsapp: Whatsapp): Promise<Session> => {
                   sessions.push(wsocket);
                 }
 
-                io.emit(`company-${whatsapp.companyId}-whatsappSession`, {
+                io.to(`company-${whatsapp.companyId}-mainchannel`).emit(`company-${whatsapp.companyId}-whatsappSession`, {
                   action: "update",
-                  session: whatsapp
+                  session: serializeWhatsappForSocket(whatsapp)
                 });
               }
             }

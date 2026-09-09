@@ -335,8 +335,11 @@ const TicketsListCustom = (props) => {
             </div>
           ) : (
             <>
+              {/* `isGroup.toString()` quebrava a render inteira (tela branca no
+                  meio do atendimento) quando o socket entregava um ticket com
+                  isGroup null/undefined — o reducer faz unshift sem validar. */}
               {ticketsList
-                .filter((ticket) => ticket.isGroup.toString() === 'false')
+                .filter((ticket) => !ticket.isGroup)
                 .map((ticket) => (
                   <TicketListItem ticket={ticket} key={ticket.id} />
                 ))}

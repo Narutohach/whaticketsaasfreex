@@ -10,6 +10,7 @@ import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import AppError from "../errors/AppError";
 import { registerAudit } from "../helpers/RegisterAudit";
+import serializeWhatsappForSocket from "../helpers/SerializeWhatsappForSocket";
 
 interface WhatsappData {
   name: string;
@@ -103,13 +104,13 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "update",
-    whatsapp
+    whatsapp: serializeWhatsappForSocket(whatsapp)
   });
 
   if (oldDefaultWhatsapp) {
     io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
       action: "update",
-      whatsapp: oldDefaultWhatsapp
+      whatsapp: serializeWhatsappForSocket(oldDefaultWhatsapp)
     });
   }
 
@@ -155,13 +156,13 @@ export const update = async (
   const io = getIO();
   io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
     action: "update",
-    whatsapp
+    whatsapp: serializeWhatsappForSocket(whatsapp)
   });
 
   if (oldDefaultWhatsapp) {
     io.to(`company-${companyId}-mainchannel`).emit(`company-${companyId}-whatsapp`, {
       action: "update",
-      whatsapp: oldDefaultWhatsapp
+      whatsapp: serializeWhatsappForSocket(oldDefaultWhatsapp)
     });
   }
 

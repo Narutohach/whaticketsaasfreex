@@ -6,7 +6,7 @@ import {
   DialogContent,
   InputBase,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
@@ -222,9 +222,8 @@ const CommandPalette = () => {
             </Typography>
           ) : (
             filteredCommands.map((item) => (
-              <ListItem
+              <ListItemButton
                 key={item.id}
-                button
                 className={classes.item}
                 onClick={() => handleSelect(item)}
               >
@@ -233,11 +232,13 @@ const CommandPalette = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={item.title}
-                  primaryTypographyProps={{
-                    style: { fontSize: "0.9rem", fontWeight: 600 },
-                  }}
                   secondary={item.category}
-                  secondaryTypographyProps={{ style: { fontSize: "0.75rem" } }}
+                  slotProps={{
+                    primary: {
+                      style: { fontSize: "0.9rem", fontWeight: 600 },
+                    },
+                    secondary: { style: { fontSize: "0.75rem" } },
+                  }}
                 />
                 {item.shortcut && (
                   <Chip
@@ -246,7 +247,7 @@ const CommandPalette = () => {
                     className={classes.shortcutBadge}
                   />
                 )}
-              </ListItem>
+              </ListItemButton>
             ))
           )}
         </List>

@@ -3,7 +3,7 @@ import {
   Chip,
   IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
 } from "@mui/material";
@@ -130,12 +130,11 @@ export default function ChatList({
             {Array.isArray(chats) &&
               chats.length > 0 &&
               chats.map((chat, key) => (
-                <ListItem
+                <ListItemButton
                   onClick={() => goToMessages(chat)}
                   key={key}
                   className={classes.listItem}
                   style={getItemStyle(chat)}
-                  button
                 >
                   <ListItemText
                     primary={getPrimaryText(chat)}
@@ -169,7 +168,7 @@ export default function ChatList({
                       </IconButton>
                     </ListItemSecondaryAction>
                   )}
-                </ListItem>
+                </ListItemButton>
               ))}
           </List>
         </div>

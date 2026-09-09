@@ -14,7 +14,7 @@ import {
   Badge,
   IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   Paper,
   Typography,
@@ -263,7 +263,7 @@ export default function ChatPopover() {
           >
             {isArray(chats) &&
               chats.map((item, key) => (
-                <ListItem
+                <ListItemButton
                   key={key}
                   style={{
                     background: key % 2 === 0 ? "#ededed" : "white",
@@ -271,7 +271,6 @@ export default function ChatPopover() {
                     cursor: "pointer",
                   }}
                   onClick={() => goToMessages(item)}
-                  button
                 >
                   <ListItemText
                     primary={item.lastMessage}
@@ -284,7 +283,7 @@ export default function ChatPopover() {
                       </>
                     }
                   />
-                </ListItem>
+                </ListItemButton>
               ))}
             {isArray(chats) && chats.length === 0 && (
               <ListItemText primary={i18n.t("mainDrawer.appBar.notRegister")} />

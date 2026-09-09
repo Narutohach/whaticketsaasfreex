@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import clsx from "clsx";
 
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
@@ -128,8 +128,7 @@ function ListItemLink(props) {
 
   return (
     <li>
-      <ListItem
-        button
+      <ListItemButton
         dense
         component={renderLink}
         className={clsx(classes.menuItem, isActive && classes.menuItemActive, className)}
@@ -141,7 +140,7 @@ function ListItemLink(props) {
             primary: clsx(classes.menuText, isActive && classes.menuTextActive)
           }}
         />
-      </ListItem>
+      </ListItemButton>
     </li>
   );
 }
@@ -674,19 +673,17 @@ const MainListItems = (props) => {
         )}
       />
 	  <Divider />
-	  <li>
-		<ListItem
-          button
-          dense
-          onClick={handleClickLogout}
-          className={classes.logoutButton}
-        >
-          <ListItemIcon>
-            <RotateRight />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t("Sair")} />
-        </ListItem>
-      </li>
+	  <ListItemButton
+        component="li"
+        dense
+        onClick={handleClickLogout}
+        className={classes.logoutButton}
+      >
+        <ListItemIcon>
+          <RotateRight />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t("Sair")} />
+      </ListItemButton>
     </div>
   );
 };

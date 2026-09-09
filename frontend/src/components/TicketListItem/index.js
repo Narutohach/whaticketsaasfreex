@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 import { makeStyles } from "../../styles/makeStyles";
 import { green } from "@mui/material/colors";
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
@@ -147,9 +147,8 @@ const TicketListItem = ({ ticket }) => {
 
   return (
     <React.Fragment key={ticket.id}>
-      <ListItem
+      <ListItemButton
         dense
-        button
         onClick={(e) => {
           if (ticket.status === "pending") return;
           handleSelectTicket(ticket);
@@ -252,7 +251,7 @@ const TicketListItem = ({ ticket }) => {
             {i18n.t("ticketsList.buttons.accept")}
           </ButtonWithSpinner>
         )}
-      </ListItem>
+      </ListItemButton>
       <Divider variant="inset" component="li" />
     </React.Fragment>
   );

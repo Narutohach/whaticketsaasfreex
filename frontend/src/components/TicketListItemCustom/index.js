@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ListItemText from "@mui/material/ListItemText";
@@ -518,7 +518,7 @@ const useStyles = makeStyles((theme) => ({
         handleClose={() => setOpenTicketMessageDialog(false)}
         ticketId={ticket.id}
       ></TicketMessagesDialog>
-      <ListItem dense button
+      <ListItemButton dense
         onClick={(e) => {
           if (ticket.status === "pending") return;
           handleSelectTicket(ticket);
@@ -754,7 +754,7 @@ const useStyles = makeStyles((theme) => ({
           )}
 
         </ListItemSecondaryAction>
-      </ListItem>
+      </ListItemButton>
 
       <Divider variant="inset" component="li" />
     </React.Fragment>

@@ -12,6 +12,7 @@ import GetAppIcon from "@mui/icons-material/GetApp";
 import CloseIcon from "@mui/icons-material/Close";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
+import { isNativeApp } from "../../native/nativeApp";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -24,6 +25,11 @@ const PwaInstallPrompt = () => {
   const [showIosTip, setShowIosTip] = useState(false);
 
   useEffect(() => {
+    // If running in native Android app, never show PWA install prompt
+    if (isNativeApp) {
+      return;
+    }
+
     // Check if already in standalone mode
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||

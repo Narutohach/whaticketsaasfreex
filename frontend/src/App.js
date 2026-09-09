@@ -12,6 +12,7 @@ import { SocketContext, SocketManager } from './context/Socket/SocketContext';
 
 import Routes from "./routes";
 import PwaInstallPrompt from "./components/PwaInstallPrompt";
+import { initNativeApp, applyStatusBarTheme } from "./native/nativeApp";
 
 const queryClient = new QueryClient();
 
@@ -165,7 +166,12 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        initNativeApp();
+    }, []);
+
+    useEffect(() => {
         window.localStorage.setItem("preferredTheme", mode);
+        applyStatusBarTheme(mode === "dark");
     }, [mode]);
 
 

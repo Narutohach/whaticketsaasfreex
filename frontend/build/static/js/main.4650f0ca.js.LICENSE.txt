@@ -29,6 +29,8 @@
  * Released under the MIT license
  */
 
+/*! Capacitor: https://capacitorjs.com/ - MIT License */
+
 /*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
 
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */

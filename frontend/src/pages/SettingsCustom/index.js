@@ -162,7 +162,7 @@ const SettingsCustom = () => {
           value={tab}
           indicatorColor="primary"
           textColor="primary"
-          scrollButtons="on"
+          scrollButtons={true}
           variant="scrollable"
           onChange={handleTabChange}
           className={classes.tab}

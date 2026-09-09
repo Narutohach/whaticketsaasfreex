@@ -195,9 +195,10 @@ return (
   <>
     <Grid spacing={3} container>
       <Tabs
+        value={0}
         indicatorColor="primary"
         textColor="primary"
-        scrollButtons="on"
+        scrollButtons={true}
         variant="scrollable"
         className={classes.tab}
         style={{

@@ -11,7 +11,7 @@ module.exports = {
   },
 
   down: (queryInterface: QueryInterface) => {
-    Promise.all([
+    return Promise.all([
         queryInterface.removeColumn("Contacts", "disableBot"),
     ]);
   }

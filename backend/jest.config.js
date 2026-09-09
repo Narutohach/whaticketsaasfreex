@@ -76,7 +76,12 @@ module.exports = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  // @whiskeysockets/baileys é ESM puro; boa parte dos controllers/services
+  // importa direta ou transitivamente essa lib, e o Jest não consegue
+  // parsear o `import` do arquivo compilado dela. Ver o mock para detalhes.
+  moduleNameMapper: {
+    "^@whiskeysockets/baileys$": "<rootDir>/src/__tests__/mocks/baileysMock.ts"
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],

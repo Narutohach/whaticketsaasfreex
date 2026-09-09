@@ -18,6 +18,7 @@
     "pretest": "cross-env NODE_ENV=test sequelize db:migrate && cross-env NODE_ENV=test sequelize db:seed:all",
     "test": "cross-env NODE_ENV=test jest",
     "test:unit": "cross-env NODE_ENV=test jest src/__tests__/unit",
+    "test:integration": "cross-env NODE_ENV=test jest src/__tests__/integration",
     "posttest": "cross-env NODE_ENV=test sequelize db:migrate:undo:all",
     "lint": "eslint src/**/*.ts"
   },

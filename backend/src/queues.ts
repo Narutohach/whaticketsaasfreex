@@ -923,11 +923,20 @@ async function handleLoginStatus(job) {
 }
 
 
+let invoiceJobRunning = false;
+
 async function handleInvoiceCreate() {
   logger.info("GERENDO RECEITA...");
-  const job = new CronJob('*/5 * * * * *', async () => {
+  const job = new CronJob('0 5 0 * * *', async () => {
+    if (invoiceJobRunning) {
+      logger.warn("Geração de faturas já está em execução; ignorando disparo sobreposto.");
+      return;
+    }
+
+    invoiceJobRunning = true;
+    try {
     const companies = await Company.findAll();
-    companies.map(async c => {
+    for (const c of companies) {
     
       const status = c.status;
       const dueDate = c.dueDate; 
@@ -980,9 +989,16 @@ async function handleInvoiceCreate() {
         }else{ // ELSE if(dias <= -3){
         
           const plan = await Plan.findByPk(c.planId);
+          if (!plan) {
+            logger.warn(`Empresa ${c.id} não possui plano válido para faturamento.`);
+            continue;
+          }
         
-          const sql = `SELECT * FROM "Invoices" WHERE "companyId" = ${c.id} AND "status" = 'open';`
-          const openInvoices = await sequelize.query(sql, { type: QueryTypes.SELECT }) as { id: number, dueDate: Date }[];
+          const sql = `SELECT * FROM "Invoices" WHERE "companyId" = :companyId AND "status" = 'open';`
+          const openInvoices = await sequelize.query(sql, {
+            replacements: { companyId: c.id },
+            type: QueryTypes.SELECT
+          }) as { id: number, dueDate: Date }[];
 
           const existingInvoice = openInvoices.find(invoice => moment(invoice.dueDate).format("DD/MM/yyyy") === vencimento);
         
@@ -991,18 +1007,31 @@ async function handleInvoiceCreate() {
             //logger.info(`Fatura Existente`);
         
           } else if (openInvoices.length > 0) {
-            const updateSql = `UPDATE "Invoices" SET "dueDate" = '${date}', "updatedAt" = '${timestamp}' WHERE "id" = ${openInvoices[0].id};`;
+            const updateSql = `UPDATE "Invoices" SET "dueDate" = :dueDate, "updatedAt" = :updatedAt WHERE "id" = :id;`;
 
-            await sequelize.query(updateSql, { type: QueryTypes.UPDATE });
+            await sequelize.query(updateSql, {
+              replacements: { dueDate: date, updatedAt: timestamp, id: openInvoices[0].id },
+              type: QueryTypes.UPDATE
+            });
         
             logger.info(`Fatura Atualizada ID: ${openInvoices[0].id}`);
         
           } else {
           
             const sql = `INSERT INTO "Invoices" (detail, status, value, "updatedAt", "createdAt", "dueDate", "companyId")
-            VALUES ('${plan.name}', 'open', '${plan.value}', '${timestamp}', '${timestamp}', '${date}', ${c.id});`
+            VALUES (:detail, 'open', :value, :updatedAt, :createdAt, :dueDate, :companyId);`
 
-            const invoiceInsert = await sequelize.query(sql, { type: QueryTypes.INSERT });
+            await sequelize.query(sql, {
+              replacements: {
+                detail: plan.name,
+                value: plan.value,
+                updatedAt: timestamp,
+                createdAt: timestamp,
+                dueDate: date,
+                companyId: c.id
+              },
+              type: QueryTypes.INSERT
+            });
         
             logger.info(`Fatura Gerada para o cliente: ${c.id}`);
 
@@ -1023,7 +1052,12 @@ async function handleInvoiceCreate() {
     
     
 
-    });
+    }
+    } catch (error) {
+      logger.error(error, "Erro na geração diária de faturas");
+    } finally {
+      invoiceJobRunning = false;
+    }
   });
 
   job.start();

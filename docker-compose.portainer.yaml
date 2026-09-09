@@ -43,6 +43,7 @@ services:
       TZ: ${TZ:-America/Sao_Paulo}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET must be set}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY must be set}
       PORT: 3000
       BACKEND_URL: https://api.whats.hacto.com.br
       FRONTEND_URL: https://whats.hacto.com.br

@@ -4,6 +4,7 @@ import { has } from "lodash";
 import ContactListItem from "../../models/ContactListItem";
 import CheckContactNumber from "../WbotServices/CheckNumber";
 import { logger } from "../../utils/logger";
+import fs from "fs";
 // import CheckContactNumber from "../WbotServices/CheckNumber";
 
 export async function ImportContacts(
@@ -11,7 +12,13 @@ export async function ImportContacts(
   companyId: number,
   file: Express.Multer.File | undefined
 ) {
-  const workbook = XLSX.readFile(file?.path as string);
+  const filePath = file?.path;
+  if (!filePath) {
+    throw new Error("Arquivo de importação não encontrado");
+  }
+
+  try {
+  const workbook = XLSX.readFile(filePath);
   const worksheet = head(Object.values(workbook.Sheets)) as any;
   const rows: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 0 });
   const contacts = rows.map(row => {
@@ -76,4 +83,9 @@ export async function ImportContacts(
   }
 
   return contactList;
+  } finally {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { has, isArray } from "lodash";
 
@@ -14,46 +14,7 @@ const useAuth = () => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
-
-  api.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${JSON.parse(token)}`;
-        setIsAuth(true);
-      }
-      return config;
-    },
-    (error) => {
-      Promise.reject(error);
-    }
-  );
-
-  api.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    async (error) => {
-      const originalRequest = error.config;
-      if (error?.response?.status === 403 && !originalRequest._retry) {
-        originalRequest._retry = true;
-
-        const { data } = await api.post("/auth/refresh_token");
-        if (data) {
-          localStorage.setItem("token", JSON.stringify(data.token));
-          api.defaults.headers.Authorization = `Bearer ${data.token}`;
-        }
-        return api(originalRequest);
-      }
-      if (error?.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("companyId");
-        api.defaults.headers.Authorization = undefined;
-        setIsAuth(false);
-      }
-      return Promise.reject(error);
-    }
-  );
+  const userIdRef = useRef();
 
   const socketManager = useContext(SocketContext);
 
@@ -75,23 +36,28 @@ const useAuth = () => {
   }, []);
 
   useEffect(() => {
+    userIdRef.current = user.id;
+  }, [user.id]);
+
+  useEffect(() => {
     const companyId = localStorage.getItem("companyId");
     if (companyId) {
    
       const socket = socketManager.getSocket(companyId);
 
-      socket.on(`company-${companyId}-user`, (data) => {
-        if (data.action === "update" && data.user.id === user.id) {
+      const handleUserUpdate = (data) => {
+        if (data.action === "update" && data.user.id === userIdRef.current) {
           setUser(data.user);
         }
-      });
-    
-    
-    return () => {
-      socket.disconnect();
-    };
-  }
-  }, [socketManager, user]);
+      };
+
+      socket.on(`company-${companyId}-user`, handleUserUpdate);
+
+      return () => {
+        socket.off(`company-${companyId}-user`, handleUserUpdate);
+      };
+    }
+  }, [socketManager]);
 
   const handleLogin = async (userData) => {
     setLoading(true);

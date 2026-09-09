@@ -5,10 +5,13 @@ const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
 
 /**
- * Derives a 32-byte key from encryption secret (or JWT_SECRET fallback)
+ * Derives a 32-byte key from the dedicated encryption secret.
  */
 function getEncryptionKey(): Buffer {
-  const secret = process.env.ENCRYPTION_KEY || process.env.JWT_SECRET || "default_local_encryption_secret_key_32_bytes!!";
+  const secret = process.env.ENCRYPTION_KEY;
+  if (!secret) {
+    throw new Error("ENCRYPTION_KEY must be configured");
+  }
   return crypto.createHash("sha256").update(String(secret)).digest();
 }
 

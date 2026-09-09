@@ -201,26 +201,17 @@ export const deleteMedia = async (
       throw new AppError("Arquivo não encontrado", 404);
     }
 
-    // Aplique a mesma lógica de renomeação para gerar o nome correto do arquivo
-    let filename = quickmessage.mediaName;
+    if (quickmessage.mediaPath) {
+      const filePath = path.resolve(
+        "public",
+        `company${companyId}`,
+        "quick",
+        quickmessage.mediaPath
+      );
 
-    // Se o filename já tiver sido alterado (adicionando timestamp), remova esse prefixo
-    const timestampRegex = /^\d+_/;
-    if (timestampRegex.test(filename)) {
-      // Remover o timestamp do começo do nome do arquivo
-      filename = filename.replace(timestampRegex, '');
-    }
-
-    const filePath = path.resolve(
-      "public",
-      `company${companyId}`,
-      "quick",
-      filename
-    );
-
-    const fileExists = fs.existsSync(filePath);
-    if (fileExists) {
-      fs.unlinkSync(filePath); // Exclui o arquivo
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
 
     // Atualiza os dados da mensagem no banco

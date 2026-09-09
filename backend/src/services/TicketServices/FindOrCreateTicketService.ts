@@ -1,5 +1,5 @@
 import { subHours } from "date-fns";
-import { Op } from "sequelize";
+import { Op, UniqueConstraintError } from "sequelize";
 import Contact from "../../models/Contact";
 import Ticket from "../../models/Ticket";
 import ShowTicketService from "./ShowTicketService";
@@ -103,21 +103,48 @@ const FindOrCreateTicketService = async (
   });
 
   if (!ticket) {
-    ticket = await Ticket.create({
-      contactId: groupContact ? groupContact.id : contact.id,
-      status: "pending",
-      isGroup: !!groupContact,
-      unreadMessages,
-      whatsappId,
-      whatsapp,
-      companyId
-    });
-    await FindOrCreateATicketTrakingService({
-      ticketId: ticket.id,
-      companyId,
-      whatsappId,
-      userId: ticket.userId
-    });
+    const contactId = groupContact ? groupContact.id : contact.id;
+
+    try {
+      ticket = await Ticket.create({
+        contactId,
+        status: "pending",
+        isGroup: !!groupContact,
+        unreadMessages,
+        whatsappId,
+        whatsapp,
+        companyId
+      });
+      await FindOrCreateATicketTrakingService({
+        ticketId: ticket.id,
+        companyId,
+        whatsappId,
+        userId: ticket.userId
+      });
+    } catch (err) {
+      // O processamento de mensagens roda em paralelo (várias mensagens do
+      // mesmo tick chegam ao mesmo tempo): duas chamadas concorrentes para o
+      // mesmo contato podiam ambas passar pelo findOne acima vendo "nenhum
+      // ticket" e as duas tentarem criar. A constraint
+      // contactid_companyid_unique (Tickets) impede a duplicata no banco,
+      // lançando este erro na segunda tentativa — em vez de propagar e
+      // descartar a mensagem, buscamos o ticket que a outra chamada acabou
+      // de criar e seguimos com ele.
+      if (!(err instanceof UniqueConstraintError)) {
+        throw err;
+      }
+
+      ticket = await Ticket.findOne({
+        where: { contactId, companyId, whatsappId },
+        order: [["id", "DESC"]]
+      });
+
+      if (!ticket) {
+        throw err;
+      }
+
+      await ticket.update({ unreadMessages, whatsappId });
+    }
   }
 
   ticket = await ShowTicketService(ticket.id, companyId);

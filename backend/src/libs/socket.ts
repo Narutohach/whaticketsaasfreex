@@ -1,5 +1,7 @@
 import { Server as SocketIO } from "socket.io";
 import { Server } from "http";
+import Redis from "ioredis";
+import { createAdapter } from "@socket.io/redis-adapter";
 import AppError from "../errors/AppError";
 import { logger } from "../utils/logger";
 import User from "../models/User";
@@ -7,16 +9,39 @@ import Queue from "../models/Queue";
 import Ticket from "../models/Ticket";
 import { verify } from "jsonwebtoken";
 import authConfig from "../config/auth";
+import { REDIS_URI_CONNECTION } from "../config/redis";
 import { CounterManager } from "./counter";
 
 let io: SocketIO;
 
+/**
+ * Sem isso, `io.to(sala).emit(...)` só alcança os sockets conectados NESTA
+ * instância do processo. Com 2+ réplicas atrás de um load balancer, um
+ * atendente preso na réplica B nunca recebe eventos emitidos por um
+ * webhook/mensagem processado na réplica A — hoje isso torna impossível rodar
+ * mais de uma réplica. O adapter usa pub/sub do Redis (que a aplicação já usa
+ * para Bull) para propagar os emits entre todas as instâncias.
+ */
 export const initIO = (httpServer: Server): SocketIO => {
   io = new SocketIO(httpServer, {
     cors: {
       origin: process.env.FRONTEND_URL
     }
   });
+
+  // Clientes dedicados: uma conexão em modo subscribe não pode rodar outros
+  // comandos, por isso pub e sub precisam ser instâncias separadas.
+  const pubClient = new Redis(REDIS_URI_CONNECTION);
+  const subClient = pubClient.duplicate();
+
+  pubClient.on("error", err =>
+    logger.error(`Socket.IO Redis adapter (pub): ${err.message}`)
+  );
+  subClient.on("error", err =>
+    logger.error(`Socket.IO Redis adapter (sub): ${err.message}`)
+  );
+
+  io.adapter(createAdapter(pubClient, subClient));
 
   io.on("connection", async socket => {
     logger.info("Client Connected");

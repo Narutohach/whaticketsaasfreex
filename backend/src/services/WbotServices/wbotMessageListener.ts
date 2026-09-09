@@ -32,6 +32,11 @@ import {
 import moment from "moment";
 import { ExecuteAIService } from "../AI/ExecuteAIService";
 import ResolveAIPrompt from "../../helpers/ResolveAIPrompt";
+import {
+  recordInboundMessageReceived,
+  markInboundMessageProcessed,
+  markInboundMessageFailed
+} from "../../helpers/InboundMessageDurability";
 import { Op } from "sequelize";
 import { debounce } from "../../helpers/Debounce";
 import formatBody from "../../helpers/Mustache";
@@ -2482,73 +2487,60 @@ const filterMessages = (msg: WAMessage): boolean => {
 
 const wbotMessageListener = async (wbot: Session, companyId: number): Promise<void> => {
   try {
-    // Cache para evitar consultas repetidas ao banco
-    const messageCache = new Set<string>();
-    const CACHE_TIMEOUT = 1000 * 60 * 5; // 5 minutos
-
-    // Limpa o cache periodicamente
-    setInterval(() => {
-      messageCache.clear();
-    }, CACHE_TIMEOUT);
-
-    // Processa mensagens em lote
-    const messageQueue: proto.IWebMessageInfo[] = [];
-    let processingQueue = false;
-
-    const processMessageQueue = async () => {
-      if (processingQueue || messageQueue.length === 0) return;
-
-      processingQueue = true;
-      try {
-        const messagesToProcess = [...messageQueue];
-        messageQueue.length = 0;
-
-        // Processa mensagens em paralelo com limite de concorrência
-        await Promise.all(
-          messagesToProcess.map(async (message) => {
-            try {
-              const messageId = message.key.id!;
-
-              // Verifica cache primeiro
-              if (messageCache.has(messageId)) return;
-              messageCache.add(messageId);
-
-              // Verifica existência da mensagem usando findOne em vez de count
-              const messageExists = await Message.findOne({
-                where: { id: messageId, companyId },
-                attributes: ['id']
-              });
-
-              if (!messageExists) {
-                await Promise.all([
-                  handleMessage(message, wbot, companyId),
-                  verifyRecentCampaign(message, companyId),
-                  verifyCampaignMessageAndCloseTicket(message, companyId)
-                ]);
-              }
-            } catch (err) {
-              logger.error(`Error processing message ${message.key.id}: ${err}`);
-              Sentry.captureException(err);
-            }
-          })
-        );
-      } finally {
-        processingQueue = false;
-      }
-    };
-
-    // Processa a fila a cada 100ms
-    setInterval(processMessageQueue, 100);
-
+    /**
+     * Antes, as mensagens recebidas eram só empurradas para um array em
+     * memória e drenadas a cada 100ms por um setInterval recriado a cada
+     * chamada desta função (ou seja, a cada reconexão) — sem nunca limpar os
+     * anteriores. Duas falhas reais: (1) uma queda do processo entre o
+     * recebimento e a drenagem perdia a mensagem, já que o WhatsApp considera
+     * entregue assim que o Baileys recebe; (2) reconexões acumulavam
+     * intervals e caches indefinidamente.
+     *
+     * Agora cada mensagem é registrada de forma durável (Postgres, ver
+     * helpers/InboundMessageDurability.ts) e processada imediatamente, sem
+     * fila artificial nem interval. A checagem de existência em `Message`
+     * continua sendo a fonte de verdade contra duplicata — o registro durável
+     * é sobre não perder, não sobre deduplicar.
+     */
     wbot.ev.on("messages.upsert", async (messageUpsert: ImessageUpsert) => {
-      const messages = messageUpsert.messages
-        .filter(filterMessages)
-        .map(msg => msg);
+      const messages = messageUpsert.messages.filter(filterMessages);
 
       if (!messages?.length) return;
 
-      // Adiciona mensagens à fila
-      messageQueue.push(...messages);
+      await Promise.all(
+        messages.map(async message => {
+          const messageId = message.key.id!;
+          const messageType = getTypeMessage(message);
+
+          try {
+            await recordInboundMessageReceived(
+              message,
+              wbot.id!,
+              companyId,
+              messageType
+            );
+
+            const messageExists = await Message.findOne({
+              where: { id: messageId, companyId },
+              attributes: ["id"]
+            });
+
+            if (!messageExists) {
+              await Promise.all([
+                handleMessage(message, wbot, companyId),
+                verifyRecentCampaign(message, companyId),
+                verifyCampaignMessageAndCloseTicket(message, companyId)
+              ]);
+            }
+
+            await markInboundMessageProcessed(messageId);
+          } catch (err) {
+            logger.error(`Error processing message ${messageId}: ${err}`);
+            Sentry.captureException(err);
+            await markInboundMessageFailed(messageId, err);
+          }
+        })
+      );
     });
 
     wbot.ev.on("messages.update", async (messageUpdate: WAMessageUpdate[]) => {

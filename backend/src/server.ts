@@ -6,6 +6,7 @@ import { StartAllWhatsAppsSessions } from "./services/WbotServices/StartAllWhats
 import Company from "./models/Company";
 import { startQueueProcess } from "./queues";
 import { TransferTicketQueue } from "./wbotTransferTicketQueue";
+import { recoverStalledInboundMessages } from "./services/WbotServices/RecoverStalledInboundMessages";
 import cron from "node-cron";
 
 const server = app.listen(process.env.PORT, async () => {
@@ -61,6 +62,16 @@ cron.schedule("* * * * *", async () => {
     await TransferTicketQueue();
   } catch (error) {
     logger.error("Error in cron job:", error);
+  }
+});
+
+// Recupera mensagens de texto que ficaram presas por uma queda do processo
+// no meio do processamento (ver InboundMessageDurability.ts).
+cron.schedule("*/2 * * * *", async () => {
+  try {
+    await recoverStalledInboundMessages();
+  } catch (error) {
+    logger.error(`Error recovering stalled inbound messages: ${error}`);
   }
 });
 

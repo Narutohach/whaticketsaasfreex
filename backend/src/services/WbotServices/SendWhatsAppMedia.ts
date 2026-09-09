@@ -5,7 +5,7 @@ import { exec } from "child_process";
 import path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import AppError from "../../errors/AppError";
-import GetTicketWbot from "../../helpers/GetTicketWbot";
+import GetTicketWbotWithRetry from "../../helpers/GetTicketWbotWithRetry";
 import Ticket from "../../models/Ticket";
 import mime from "mime-types";
 
@@ -159,7 +159,7 @@ const SendWhatsAppMedia = async ({
       };
     }
 
-    const wbot = await GetTicketWbot(ticket);
+    const wbot = await GetTicketWbotWithRetry(ticket);
     const companyId = ticket.companyId.toString();
 
     const pathMedia = media.path;

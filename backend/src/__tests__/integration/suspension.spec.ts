@@ -105,13 +105,17 @@ describe("empresa suspensa (status = false)", () => {
     const { ticket } = await createTicketForCompany(company.id);
     await company.update({ status: false });
 
+    // Não há sessão real do WhatsApp no teste: GetTicketWbotWithRetry tenta
+    // de novo por alguns segundos antes de desistir (ver
+    // helpers/GetTicketWbotWithRetry.ts) — daí o timeout maior. O que este
+    // teste verifica é isActiveCompany, não o resultado do envio.
     const response = await request(server)
       .post(`/messages/${ticket.id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ body: "oi" });
 
     expect(response.status).not.toBe(402);
-  });
+  }, 15000);
 });
 
 describe("empresa ativa", () => {

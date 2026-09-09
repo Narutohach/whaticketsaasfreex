@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { WAMessage } from "@whiskeysockets/baileys";
 import AppError from "../../errors/AppError";
-import GetTicketWbot from "../../helpers/GetTicketWbot";
+import GetTicketWbotWithRetry from "../../helpers/GetTicketWbotWithRetry";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import Whatsapp from "../../models/Whatsapp";
@@ -58,7 +58,7 @@ const SendWhatsAppMessage = async ({
 
   // Otherwise, use Baileys
   let options = {};
-  const wbot = await GetTicketWbot(ticket);
+  const wbot = await GetTicketWbotWithRetry(ticket);
   const jidServer = ticket.isGroup
     ? "g.us"
     : ticket.contact.isLid

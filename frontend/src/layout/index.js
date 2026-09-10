@@ -19,6 +19,7 @@ import { makeStyles } from "../styles/makeStyles";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import CachedIcon from "@mui/icons-material/Cached";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -177,7 +178,20 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("md")]: {
       width: 0,
       display: "none",
-    }
+    },
+    "& .MuiListItemText-root": {
+      display: "none !important",
+      opacity: "0 !important",
+      width: "0 !important",
+      visibility: "hidden !important",
+    },
+    "& .MuiListSubheader-root": {
+      display: "none !important",
+    },
+    "& .MuiList-root": {
+      paddingLeft: "0 !important",
+      paddingRight: "0 !important",
+    },
   },
   appBarSpacer: {
     minHeight: "56px",
@@ -426,7 +440,14 @@ const LoggedInLayout = ({ children, themeToggle }) => {
         onClose={drawerClose}
         ModalProps={{ keepMounted: true }}
       >
-        <div className={classes.toolbarIcon} style={{ justifyContent: "space-between", padding: "0 14px", minHeight: 60 }}>
+        <div 
+          className={classes.toolbarIcon} 
+          style={{ 
+            justifyContent: drawerOpen ? "space-between" : "center", 
+            padding: drawerOpen ? "0 14px" : "0", 
+            minHeight: 60 
+          }}
+        >
           {drawerOpen ? <HactoLogo size="small" light={theme.palette.mode === "light"} showTagline={false} /> : null}
           <IconButton 
             onClick={() => setDrawerOpen(!drawerOpen)}
@@ -444,7 +465,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               },
             }}
           >
-            <ChevronLeftIcon fontSize="small" />
+            {drawerOpen ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
           </IconButton>
         </div>
         <List className={classes.containerWithScroll}>

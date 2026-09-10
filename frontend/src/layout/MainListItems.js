@@ -7,7 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import Divider from "@mui/material/Divider";
-import { Badge, Collapse, List } from "@mui/material";
+import { Badge, Collapse, List, Tooltip } from "@mui/material";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.mode === "light" ? "#475569" : "#94a3b8",
     transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
     position: "relative",
+    overflow: "hidden",
     "&:hover": {
       backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(255, 255, 255, 0.05)",
       color: theme.palette.mode === "light" ? "#0f172a" : "#ffffff",
@@ -77,6 +78,18 @@ const useStyles = makeStyles((theme) => ({
       "& .MuiListItemIcon-root": {
         color: theme.palette.mode === "light" ? "#10b981" : "#ffffff",
       },
+    },
+  },
+  menuItemCollapsed: {
+    justifyContent: "center !important",
+    padding: "9px 0 !important",
+    margin: "4px auto !important",
+    width: "44px !important",
+    minWidth: "44px !important",
+    height: "44px !important",
+    minHeight: "44px !important",
+    "&:hover": {
+      transform: "none !important",
     },
   },
   menuItemActive: {
@@ -108,6 +121,13 @@ const useStyles = makeStyles((theme) => ({
     "& svg": {
       fontSize: "1.25rem",
     },
+  },
+  menuIconCollapsed: {
+    minWidth: "unset !important",
+    margin: "0 auto !important",
+    display: "flex !important",
+    justifyContent: "center !important",
+    alignItems: "center !important",
   },
   menuIconActive: {
     color: "#10b981 !important",
@@ -147,10 +167,29 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  logoutButtonCollapsed: {
+    justifyContent: "center !important",
+    padding: "9px 0 !important",
+    margin: "12px auto 4px auto !important",
+    width: "44px !important",
+    minWidth: "44px !important",
+    height: "44px !important",
+    minHeight: "44px !important",
+    "&:hover": {
+      transform: "none !important",
+    },
+    "& .MuiListItemIcon-root": {
+      minWidth: "unset !important",
+      margin: "0 auto !important",
+    },
+  },
 }));
+
+export const CollapsedContext = React.createContext(false);
 
 function ListItemLink(props) {
   const { icon, primary, to, className } = props;
+  const collapsed = useContext(CollapsedContext);
   const location = useLocation();
   const isActive = location.pathname === to;
   const classes = useStyles();
@@ -165,19 +204,38 @@ function ListItemLink(props) {
 
   return (
     <li style={{ listStyle: "none" }}>
-      <ListItemButton
-        dense
-        component={renderLink}
-        className={clsx(classes.menuItem, isActive && classes.menuItemActive, className)}
-      >
-        {icon ? <ListItemIcon className={clsx(classes.menuIcon, isActive && classes.menuIconActive)}>{icon}</ListItemIcon> : null}
-        <ListItemText
-          primary={primary}
-          classes={{
-            primary: clsx(classes.menuText, isActive && classes.menuTextActive)
-          }}
-        />
-      </ListItemButton>
+      <Tooltip title={collapsed ? primary : ""} placement="right" arrow disableHoverListener={!collapsed}>
+        <ListItemButton
+          dense
+          component={renderLink}
+          className={clsx(
+            classes.menuItem,
+            isActive && classes.menuItemActive,
+            collapsed && classes.menuItemCollapsed,
+            className
+          )}
+        >
+          {icon ? (
+            <ListItemIcon
+              className={clsx(
+                classes.menuIcon,
+                isActive && classes.menuIconActive,
+                collapsed && classes.menuIconCollapsed
+              )}
+            >
+              {icon}
+            </ListItemIcon>
+          ) : null}
+          {!collapsed && (
+            <ListItemText
+              primary={primary}
+              classes={{
+                primary: clsx(classes.menuText, isActive && classes.menuTextActive)
+              }}
+            />
+          )}
+        </ListItemButton>
+      </Tooltip>
     </li>
   );
 }
@@ -396,7 +454,8 @@ const MainListItems = (props) => {
   };
 
   return (
-    <div onClick={drawerClose}>
+    <CollapsedContext.Provider value={collapsed}>
+      <div onClick={drawerClose}>
       <Can
         role={user.profile}
         perform={"drawer-service-items:view"}
@@ -711,19 +770,22 @@ const MainListItems = (props) => {
           </>
         )}
       />
-	  <Divider />
-	  <ListItemButton
-        component="li"
-        dense
-        onClick={handleClickLogout}
-        className={classes.logoutButton}
-      >
-        <ListItemIcon>
-          <LogoutIcon sx={{ fontSize: 20 }} />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t("Sair")} />
-      </ListItemButton>
-    </div>
+	  <Divider sx={{ my: 1, borderColor: "rgba(255, 255, 255, 0.06)" }} />
+	  <Tooltip title={collapsed ? i18n.t("Sair") : ""} placement="right" arrow disableHoverListener={!collapsed}>
+	    <ListItemButton
+          component="li"
+          dense
+          onClick={handleClickLogout}
+          className={clsx(classes.logoutButton, collapsed && classes.logoutButtonCollapsed)}
+        >
+          <ListItemIcon className={clsx(collapsed && classes.menuIconCollapsed)}>
+            <LogoutIcon sx={{ fontSize: 20 }} />
+          </ListItemIcon>
+          {!collapsed && <ListItemText primary={i18n.t("Sair")} />}
+        </ListItemButton>
+      </Tooltip>
+      </div>
+    </CollapsedContext.Provider>
   );
 };
 

@@ -182,7 +182,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flex: 1,
     height: "100%",
-    overflow: "hidden",
+    overflowY: "auto",
+    overflowX: "hidden",
     display: "flex",
     flexDirection: "column",
   },

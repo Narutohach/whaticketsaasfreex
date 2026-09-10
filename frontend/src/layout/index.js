@@ -52,7 +52,12 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-    height: "100vh",
+    // 100vh não desconta a barra de endereço dinâmica dos navegadores
+    // mobile — o app abre com uma faixa de altura invisível/inacessível
+    // (e o scroll interno de páginas como o Dashboard fica preso atrás
+    // dela). 100dvh corrige isso; suporte já é universal nos navegadores
+    // que este projeto roda (Safari 15.4+, Chrome 108+, Firefox 101+).
+    height: "100dvh",
     width: "100%",
     overflow: "hidden",
     backgroundColor: theme.palette.fancyBackground,

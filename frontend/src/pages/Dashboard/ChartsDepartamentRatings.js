@@ -1,251 +1,77 @@
-import "./button.css";
-
-import React, { useEffect, useState } from "react";
-
-import Grid from "@mui/material/Grid";
+import React, { useEffect, useState, useMemo } from "react";
 import Paper from "@mui/material/Paper";
-
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-
 import Typography from "@mui/material/Typography";
-import { Button, Stack, TextField } from "@mui/material";
-
+import { Button, Stack, TextField, Box, useTheme } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import { makeStyles } from "../../styles/makeStyles";
-import { blue, grey } from "@mui/material/colors";
-
 import brLocale from "date-fns/locale/pt-BR";
-
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-
 import api from "../../services/api";
-
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-
-import { getRandomRGBA } from "../../utils/colors";
+import "./button.css";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
+import { getBaseOptions, modernPalette } from "./chartConfig";
 
-// Registrar componentes do Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 );
 
 const useStyles = makeStyles((theme) => ({
-  cardAvatar: {
-    fontSize: "55px",
-    color: grey[500],
-    backgroundColor: "#ffffff",
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
-  cardTitle: {
-    fontSize: "18px",
-    color: blue[700],
-  },
-  cardSubtitle: {
-    color: grey[600],
-    fontSize: "14px",
-  },
-  alignRight: {
-    textAlign: "right",
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  selectContainer: {
-    width: "100%",
-    textAlign: "left",
-  },
-  iframeDashboard: {
-    width: "100%",
-    height: "calc(100vh - 64px)",
-    border: "none",
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  fixedHeightPaper: {
-    padding: theme.spacing(2),
+  card: {
+    padding: theme.spacing(2.5),
     display: "flex",
-    overflow: "auto",
     flexDirection: "column",
-    height: 240,
-  },
-  customFixedHeightPaper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: 120,
-  },
-  customFixedHeightPaperLg: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
+    borderRadius: 16,
     height: "100%",
-  },
-  card1: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: "palette",
-    //backgroundColor: theme.palette.primary.main,
     backgroundColor:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card2: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: "palette",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
+        ? "rgba(15, 23, 42, 0.7)"
+        : "#ffffff",
+    border:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card3: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
+    boxShadow:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card4: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card5: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card6: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card7: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card8: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card9: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  fixedHeightPaper2: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
+        ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+        : "0 4px 20px rgba(0, 0, 0, 0.03)",
   },
 }));
 
 const ChartsDepartamentRatings = () => {
   const classes = useStyles();
-
+  const theme = useTheme();
   const companyId = localStorage.getItem("companyId");
 
   const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
-  const [initialDate, setInitialDate] = useState(
-    getFirstDayOfMonth(new Date())
-  );
+  const [initialDate, setInitialDate] = useState(getFirstDayOfMonth(new Date()));
   const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     handleChangeReportData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleChangeReportData() {
+    setLoading(true);
     try {
       const { data } = await api.get(
         `/reports/departamentRatings?initialDate=${format(
@@ -253,107 +79,118 @@ const ChartsDepartamentRatings = () => {
           "yyyy-MM-dd"
         )}&finalDate=${format(finalDate, "yyyy-MM-dd")}&companyId=${companyId}`
       );
-
       setChartData(data);
     } catch (err) {
-      console.log(err);
-      toast.error("Erro ao obter informações dos atendimentos");
+      toast.error("Erro ao obter informações das avaliações");
+    } finally {
+      setLoading(false);
     }
   }
 
-  const data = {
-    labels: chartData.length > 0 ? chartData.map((item) => item.name) : 0,
-    datasets: [
-      {
-        label: "Quantidade",
-        data:
-          chartData.length > 0
-            ? chartData.map((item) => parseFloat(item.total_rate).toFixed(2))
-            : 0,
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-        borderRadius: 8,
-        fill: true,
-      },
-    ],
-  };
+  const data = useMemo(() => {
+    const labels = (chartData || []).map((item) => item.name);
+    const values = (chartData || []).map((item) => parseFloat(item.total_rate || 0).toFixed(1));
+    const backgroundColor = values.map((_, i) => modernPalette[(i + 4) % modernPalette.length] + "cc");
+    const borderColor = values.map((_, i) => modernPalette[(i + 4) % modernPalette.length]);
 
-  const options = {
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "",
+    return {
+      labels: labels.length > 0 ? labels : ["Sem dados"],
+      datasets: [
+        {
+          label: "Média de Avaliação",
+          data: values.length > 0 ? values : [0],
+          backgroundColor: values.length > 0 ? backgroundColor : ["rgba(100, 116, 139, 0.2)"],
+          borderColor: values.length > 0 ? borderColor : ["rgba(100, 116, 139, 0.4)"],
+          borderWidth: 1.5,
+          borderRadius: 8,
+          borderSkipped: false,
+          maxBarThickness: 34,
+        },
+      ],
+    };
+  }, [chartData]);
+
+  const chartOptions = useMemo(() => {
+    const base = getBaseOptions(theme.palette.mode);
+    return {
+      ...base,
+      scales: {
+        ...base.scales,
+        y: {
+          ...base.scales.y,
+          max: 5,
+          ticks: {
+            ...base.scales.y.ticks,
+            stepSize: 1,
+          },
         },
       },
-      y: {
-        title: {
-          display: true,
-          text: "",
-        },
+      plugins: {
+        ...base.plugins,
+        title: { display: false },
       },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-      },
-      datalabels: {
-        display: true,
-        color: "#fff",
-        textStrokeColor: "#000",
-        textStrokeWidth: 2,
-        font: {
-          size: 20,
-          weight: "bold",
-        },
-      },
-    },
-  };
+    };
+  }, [theme.palette.mode]);
 
   return (
-    <Grid style={{ marginTop: 8, marginBottom: 8 }} size={12}>
-      <Paper className={classes.fixedHeightPaper2}>
-        <Typography component="h2" variant="h6" color="primary" gutterBottom>
-          Avaliações por Departamento/Fila
-        </Typography>
-        <span style={{ fontSize: 13, color: "#bcbcbc" }}>
-          Quantidade de mensagens recebidas e enviados em cada hora do dia.
-        </span>
-        <Stack
-          direction={"row"}
-          spacing={2}
-          sx={{ my: 2, alignItems: "center" }}
-        >
-          <LocalizationProvider
-            dateAdapter={AdapterDateFns}
-            adapterLocale={brLocale}
+    <Paper className={classes.card}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: { xs: "flex-start", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
+          mb: 2,
+        }}
+      >
+        <Box>
+          <Typography
+            component="h3"
+            sx={{
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "-0.01em",
+              color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+            }}
           >
+            Avaliações por Departamento / Fila
+          </Typography>
+          <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
+            Satisfação média dos clientes por setor (escala 0 a 5)
+          </Typography>
+        </Box>
+
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
             <DatePicker
               value={initialDate}
-              onChange={(newValue) => {
-                setInitialDate(newValue);
-              }}
-              label="Inicio"
+              onChange={(val) => setInitialDate(val)}
+              label="Início"
               renderInput={(params) => (
-                <TextField fullWidth {...params} sx={{ width: "20ch" }} />
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "130px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
               )}
             />
-          </LocalizationProvider>
-
-          <LocalizationProvider
-            dateAdapter={AdapterDateFns}
-            adapterLocale={brLocale}
-          >
             <DatePicker
               value={finalDate}
-              onChange={(newValue) => {
-                setFinalDate(newValue);
-              }}
+              onChange={(val) => setFinalDate(val)}
               label="Fim"
               renderInput={(params) => (
-                <TextField fullWidth {...params} sx={{ width: "20ch" }} />
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "130px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
               )}
             />
           </LocalizationProvider>
@@ -361,15 +198,19 @@ const ChartsDepartamentRatings = () => {
           <Button
             className="buttonHover"
             onClick={handleChangeReportData}
+            disabled={loading}
             variant="contained"
+            startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
           >
-            Filtrar
+            {loading ? "..." : "Filtrar"}
           </Button>
         </Stack>
+      </Box>
 
-        <Bar data={data} options={options} height={100} />
-      </Paper>
-    </Grid>
+      <Box sx={{ flex: 1, minHeight: 260, position: "relative" }}>
+        <Bar data={data} options={chartOptions} />
+      </Box>
+    </Paper>
   );
 };
 

@@ -1,248 +1,66 @@
-import "./button.css";
-
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-
-// Registrar componentes do Chart.js
-import ChartDataLabels from "chartjs-plugin-datalabels";
-
 import Typography from "@mui/material/Typography";
-import { Button, Stack, TextField } from "@mui/material";
-
+import { Button, Stack, TextField, Box, useTheme } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import { makeStyles } from "../../styles/makeStyles";
-import { blue, grey } from "@mui/material/colors";
-
 import brLocale from "date-fns/locale/pt-BR";
-
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-
 import api from "../../services/api";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
-
-import { getRandomRGBA } from "../../utils/colors";
+import "./button.css";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
+import { getDoughnutOptions, modernPalette } from "./chartConfig";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const DATA_COUNT = 5;
-const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
-
 const useStyles = makeStyles((theme) => ({
-  cardAvatar: {
-    fontSize: "55px",
-    color: grey[500],
-    backgroundColor: "#ffffff",
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
-  cardTitle: {
-    fontSize: "18px",
-    color: blue[700],
-  },
-  cardSubtitle: {
-    color: grey[600],
-    fontSize: "14px",
-  },
-  alignRight: {
-    textAlign: "right",
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  selectContainer: {
-    width: "100%",
-    textAlign: "left",
-  },
-  iframeDashboard: {
-    width: "100%",
-    height: "calc(100vh - 64px)",
-    border: "none",
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  fixedHeightPaper: {
-    padding: theme.spacing(2),
+  card: {
+    padding: theme.spacing(2.5),
     display: "flex",
-    overflow: "auto",
     flexDirection: "column",
-    height: 240,
-  },
-  customFixedHeightPaper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: 120,
-  },
-  customFixedHeightPaperLg: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
+    borderRadius: 16,
     height: "100%",
-  },
-  card1: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: "palette",
-    //backgroundColor: theme.palette.primary.main,
     backgroundColor:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card2: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: "palette",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
+        ? "rgba(15, 23, 42, 0.7)"
+        : "#ffffff",
+    border:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card3: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
+    boxShadow:
       theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card4: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card5: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card6: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card7: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card8: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  card9: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-    height: "100%",
-    //backgroundColor: theme.palette.primary.main,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? theme.palette.boxticket.main
-        : theme.palette.primary.main,
-    color: "#eee",
-  },
-  fixedHeightPaper2: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "row",
-  },
-  fixedGridPaper3: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
+        ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+        : "0 4px 20px rgba(0, 0, 0, 0.03)",
   },
 }));
 
 const ChartsAppointmentsAtendent = () => {
   const classes = useStyles();
-
+  const theme = useTheme();
   const companyId = localStorage.getItem("companyId");
 
-  // const classes = useStyles();
   const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
-  const [initialDate, setInitialDate] = useState(
-    getFirstDayOfMonth(new Date())
-  );
+  const [initialDate, setInitialDate] = useState(getFirstDayOfMonth(new Date()));
   const [ticketsData, setTicketsData] = useState({
     appointmentsByAttendents: [],
     ticketsByQueues: [],
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     handleChangeReportData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleChangeReportData() {
+    setLoading(true);
     try {
       const { data } = await api.get(
         `/reports/appointmentsAtendent?initialDate=${format(
@@ -250,166 +68,169 @@ const ChartsAppointmentsAtendent = () => {
           "yyyy-MM-dd"
         )}&finalDate=${format(finalDate, "yyyy-MM-dd")}&companyId=${companyId}`
       );
-
       setTicketsData(data);
     } catch (err) {
-      console.log(err);
       toast.error("Erro ao obter informações dos atendimentos");
+    } finally {
+      setLoading(false);
     }
   }
 
-  const data = {
-    labels: ticketsData.appointmentsByAttendents
-      ? ticketsData.appointmentsByAttendents.map((item) => item.user_name)
-      : [],
-    datasets: [
-      {
-        label: "Número de Atendimentos",
-        data: ticketsData.appointmentsByAttendents
-          ? ticketsData.appointmentsByAttendents.map(
-              (item) => item.total_tickets
-            )
-          : 0,
-        backgroundColor: ticketsData.appointmentsByAttendents
-          ? ticketsData.appointmentsByAttendents.map((item) => getRandomRGBA())
-          : [],
-        // borderColor: ticketsData.appointmentsByAttendents
-        //   ? ticketsData.appointmentsByAttendents.map((item) => getRandomRGBA())
-        //   : [],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const dataAttendents = useMemo(() => {
+    const list = ticketsData.appointmentsByAttendents || [];
+    const labels = list.map((item) => item.user_name || "Sem nome");
+    const data = list.map((item) => Number(item.total_tickets) || 0);
+    const backgroundColor = data.map((_, i) => modernPalette[i % modernPalette.length]);
 
-  const dataTicketsByQueues = {
-    labels: ticketsData.ticketsByQueues
-      ? ticketsData.ticketsByQueues.map((item) => item.name)
-      : [],
-    datasets: [
-      {
-        label: "Número de Atendimentos",
-        data: ticketsData.ticketsByQueues
-          ? ticketsData.ticketsByQueues.map((item) => item.total_tickets)
-          : 0,
-        backgroundColor: ticketsData.ticketsByQueues
-          ? ticketsData.ticketsByQueues.map((item) => getRandomRGBA())
-          : [],
-        // borderColor: ticketsData.ticketsByQueues
-        //   ? ticketsData.ticketsByQueues.map((item) => getRandomRGBA())
-        //   : [],
-        borderWidth: 1,
-      },
-    ],
-  };
+    return {
+      labels: labels.length > 0 ? labels : ["Sem dados"],
+      datasets: [
+        {
+          label: "Atendimentos",
+          data: data.length > 0 ? data : [0],
+          backgroundColor: data.length > 0 ? backgroundColor : ["rgba(100, 116, 139, 0.2)"],
+          borderColor: theme.palette.mode === "dark" ? "#0f172a" : "#ffffff",
+          borderWidth: 2,
+          hoverOffset: 6,
+        },
+      ],
+    };
+  }, [ticketsData.appointmentsByAttendents, theme.palette.mode]);
 
-  const options = {
-    plugins: {
-      legend: {
-        position: "left",
-        labels: {
-          font: { size: 16 },
-          padding: 20,
-          boxWidth: 20,
-          boxHeight: 20,
+  const dataQueues = useMemo(() => {
+    const list = ticketsData.ticketsByQueues || [];
+    const labels = list.map((item) => item.name || "Sem fila");
+    const data = list.map((item) => Number(item.total_tickets) || 0);
+    const backgroundColor = data.map((_, i) => modernPalette[(i + 3) % modernPalette.length]);
+
+    return {
+      labels: labels.length > 0 ? labels : ["Sem dados"],
+      datasets: [
+        {
+          label: "Atendimentos",
+          data: data.length > 0 ? data : [0],
+          backgroundColor: data.length > 0 ? backgroundColor : ["rgba(100, 116, 139, 0.2)"],
+          borderColor: theme.palette.mode === "dark" ? "#0f172a" : "#ffffff",
+          borderWidth: 2,
+          hoverOffset: 6,
         },
-      },
-      datalabels: {
-        display: true,
-        color: "#fff",
-        textStrokeColor: "#000",
-        textStrokeWidth: 2,
-        font: {
-          size: 20,
-          weight: "bold",
-        },
-      },
-    },
-  };
+      ],
+    };
+  }, [ticketsData.ticketsByQueues, theme.palette.mode]);
+
+  const doughnutOptions = useMemo(() => {
+    return getDoughnutOptions(theme.palette.mode);
+  }, [theme.palette.mode]);
 
   return (
-    <Grid size={12}>
-      <Paper className={classes.fixedHeightPaper2}>
-        <Grid className={classes.fixedGridPaper3} size={6}>
-          <Typography component="h2" variant="h6" color="primary" gutterBottom>
-            Atendimentos por Atendentes
-          </Typography>
-          <span style={{ fontSize: 13, color: "#bcbcbc" }}>
-            Saiba quais são os atendentes mais produtivos
-          </span>
-          <Stack
-            direction={"row"}
-            spacing={2}
-            sx={{ my: 2, alignItems: "center" }}
+    <Grid container spacing={3}>
+      {/* ATENDIMENTOS POR ATENDENTE */}
+      <Grid size={{ xs: 12, md: 6 }}>
+        <Paper className={classes.card}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", sm: "center" },
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 1.5,
+              mb: 2,
+            }}
           >
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              adapterLocale={brLocale}
-            >
-              <DatePicker
-                value={initialDate}
-                onChange={(newValue) => {
-                  setInitialDate(newValue);
+            <Box>
+              <Typography
+                component="h3"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                  letterSpacing: "-0.01em",
+                  color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
                 }}
-                label="Inicio"
-                renderInput={(params) => (
-                  <TextField fullWidth {...params} sx={{ width: "20ch" }} />
-                )}
-              />
-            </LocalizationProvider>
+              >
+                Atendimentos por Atendente
+              </Typography>
+              <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
+                Produtividade da equipe no período
+              </Typography>
+            </Box>
 
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              adapterLocale={brLocale}
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
+                <DatePicker
+                  value={initialDate}
+                  onChange={(val) => setInitialDate(val)}
+                  label="Início"
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      sx={{
+                        width: "130px",
+                        "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                      }}
+                    />
+                  )}
+                />
+                <DatePicker
+                  value={finalDate}
+                  onChange={(val) => setFinalDate(val)}
+                  label="Fim"
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      sx={{
+                        width: "130px",
+                        "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                      }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+
+              <Button
+                className="buttonHover"
+                onClick={handleChangeReportData}
+                disabled={loading}
+                variant="contained"
+                startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
+              >
+                {loading ? "..." : "Filtrar"}
+              </Button>
+            </Stack>
+          </Box>
+
+          <Box sx={{ minHeight: 270, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Doughnut data={dataAttendents} options={doughnutOptions} />
+          </Box>
+        </Paper>
+      </Grid>
+
+      {/* ATENDIMENTOS POR FILA / DEPARTAMENTO */}
+      <Grid size={{ xs: 12, md: 6 }}>
+        <Paper className={classes.card}>
+          <Box sx={{ mb: 2 }}>
+            <Typography
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                fontSize: "1rem",
+                letterSpacing: "-0.01em",
+                color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+              }}
             >
-              <DatePicker
-                value={finalDate}
-                onChange={(newValue) => {
-                  setFinalDate(newValue);
-                }}
-                label="Fim"
-                renderInput={(params) => (
-                  <TextField fullWidth {...params} sx={{ width: "20ch" }} />
-                )}
-              />
-            </LocalizationProvider>
+              Atendimentos por Departamento / Fila
+            </Typography>
+            <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
+              Distribuição da demanda pelos setores de atendimento
+            </Typography>
+          </Box>
 
-            <Button
-              className="buttonHover"
-              onClick={handleChangeReportData}
-              variant="contained"
-            >
-              Filtrar
-            </Button>
-          </Stack>
-          <Doughnut
-            data={data}
-            options={options}
-            style={{ maxWidth: "100%", maxHeight: "250px" }}
-          />
-        </Grid>
-
-        <Grid className={classes.fixedGridPaper3} size={6}>
-          <Typography component="h2" variant="h6" color="primary" gutterBottom>
-            Atendimentos por Departamentos/Filas
-          </Typography>
-
-          <span style={{ fontSize: 13, color: "#bcbcbc" }}>
-            Saiba quais são os departamentos mais procurados
-          </span>
-          <Stack
-            direction={"row"}
-            spacing={2}
-            sx={{ my: 2, alignItems: "center" }}
-          >
-            <div style={{ height: 60 }} />
-          </Stack>
-          <Doughnut
-            data={dataTicketsByQueues}
-            options={options}
-            style={{ maxWidth: "100%", maxHeight: "250px" }}
-          />
-        </Grid>
-      </Paper>
+          <Box sx={{ minHeight: 270, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", mt: { xs: 0, sm: "42px" } }}>
+            <Doughnut data={dataQueues} options={doughnutOptions} />
+          </Box>
+        </Paper>
+      </Grid>
     </Grid>
   );
 };

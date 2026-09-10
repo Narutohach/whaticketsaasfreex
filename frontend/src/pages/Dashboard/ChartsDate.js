@@ -1,145 +1,197 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from "react";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import brLocale from 'date-fns/locale/pt-BR';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, Stack, TextField } from '@mui/material';
-import Typography from "@mui/material/Typography";
-import api from '../../services/api';
-import { format } from 'date-fns';
-import { toast } from 'react-toastify';
-import './button.css';
-import { getRandomRGBA } from '../../utils/colors';
-import { getFirstDayOfMonth, getLastDayOfMonth } from '../../utils/dates';
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import brLocale from "date-fns/locale/pt-BR";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Button, Stack, TextField, Box, Typography, useTheme, Chip } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import api from "../../services/api";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import "./button.css";
+import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
+import { getBaseOptions } from "./chartConfig";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
 );
 
-export const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
-            display: false,
-        },
-        title: {
-            display: true,
-            text: 'Gráfico de Conversas',
-            position: 'left',
-        },
-        datalabels: {
-            display: true,
-            anchor: 'start',
-            offset: -30,
-            align: "start",
-            color: "#fff",
-            textStrokeColor: "#000",
-            textStrokeWidth: 2,
-            font: {
-                size: 20,
-                weight: "bold"
-
-            },
-        }
-    },
-};
-
 export const ChartsDate = () => {
+  const theme = useTheme();
+  const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
+  const [initialDate, setInitialDate] = useState(getFirstDayOfMonth(new Date()));
+  const [ticketsData, setTicketsData] = useState({ data: [], count: 0 });
+  const [loading, setLoading] = useState(false);
 
-    const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
-    const [initialDate, setInitialDate] = useState(
-        getFirstDayOfMonth(new Date())
+  const companyId = localStorage.getItem("companyId");
+
+  useEffect(() => {
+    handleGetTicketsInformation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetTicketsInformation = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get(
+        `/dashboard/ticketsDay?initialDate=${format(
+          initialDate,
+          "yyyy-MM-dd"
+        )}&finalDate=${format(finalDate, "yyyy-MM-dd")}&companyId=${companyId}`
+      );
+      setTicketsData(data);
+    } catch (error) {
+      toast.error("Erro ao buscar informações dos tickets");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const dataCharts = useMemo(() => {
+    const labels = (ticketsData?.data || []).map((item) =>
+      item.hasOwnProperty("horario")
+        ? `${item.horario}h`
+        : item.data
     );
-    const [ticketsData, setTicketsData] = useState({ data: [], count: 0 });
+    const data = (ticketsData?.data || []).map((item) => item.total);
 
-    const companyId = localStorage.getItem("companyId");
-
-    useEffect(() => {
-        handleGetTicketsInformation();
-    }, []);
-
-    const dataCharts = {
-      labels:
-        ticketsData &&
-        ticketsData?.data.length > 0 &&
-        ticketsData?.data.map((item) =>
-          item.hasOwnProperty("horario")
-            ? `Das ${item.horario}:00 as ${item.horario}:59`
-            : item.data
-        ),
+    return {
+      labels,
       datasets: [
         {
-          // label: 'Dataset 1',
-          data:
-            ticketsData?.data.length > 0 &&
-            ticketsData?.data.map((item, index) => {
-              return item.total;
-            }),
-          backgroundColor:
-            ticketsData?.data.length > 0 &&
-            ticketsData?.data.map((item, index) => {
-              return getRandomRGBA();;
-            }),
+          label: "Total de Atendimentos",
+          data,
+          backgroundColor: theme.palette.mode === "dark" ? "rgba(6, 182, 212, 0.75)" : "rgba(6, 182, 212, 0.85)",
+          borderColor: "#06b6d4",
+          borderWidth: 1.5,
+          borderRadius: 8,
+          borderSkipped: false,
+          maxBarThickness: 34,
         },
       ],
     };
+  }, [ticketsData, theme.palette.mode]);
 
+  const chartOptions = useMemo(() => {
+    const base = getBaseOptions(theme.palette.mode);
+    return {
+      ...base,
+      plugins: {
+        ...base.plugins,
+        title: { display: false },
+      },
+    };
+  }, [theme.palette.mode]);
 
-    const handleGetTicketsInformation = async () => {
-        try {
-            const { data } = await api.get(`/dashboard/ticketsDay?initialDate=${format(initialDate, 'yyyy-MM-dd')}&finalDate=${format(finalDate, 'yyyy-MM-dd')}&companyId=${companyId}`);
-            setTicketsData(data);
-        } catch (error) {
-            toast.error('Erro ao buscar informações dos tickets');
-        }
-    }
-
-    return (
-        <>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                Total ({ticketsData?.count})
+  return (
+    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: { xs: "flex-start", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
+          mb: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box>
+            <Typography
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                fontSize: "1rem",
+                letterSpacing: "-0.01em",
+                color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+              }}
+            >
+              Evolução Diária de Atendimentos
             </Typography>
+            <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
+              Distribuição de tickets ao longo do período selecionado
+            </Typography>
+          </Box>
+          <Chip
+            size="small"
+            label={`${ticketsData?.count || 0} total`}
+            sx={{
+              fontWeight: 700,
+              fontSize: "0.72rem",
+              backgroundColor: "rgba(6, 182, 212, 0.12)",
+              color: "#06b6d4",
+              border: "1px solid rgba(6, 182, 212, 0.25)",
+            }}
+          />
+        </Box>
 
-            <Stack direction={'row'} spacing={2} sx={{ my: 2, alignItems: 'center' }} >
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
+            <DatePicker
+              value={initialDate}
+              onChange={(val) => setInitialDate(val)}
+              label="Início"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "140px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
+              )}
+            />
+            <DatePicker
+              value={finalDate}
+              onChange={(val) => setFinalDate(val)}
+              label="Fim"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "140px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
+              )}
+            />
+          </LocalizationProvider>
 
-                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-                    <DatePicker
-                        value={initialDate}
-                        onChange={(newValue) => { setInitialDate(newValue) }}
-                        label="Inicio"
-                        renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
+          <Button
+            className="buttonHover"
+            onClick={handleGetTicketsInformation}
+            disabled={loading}
+            variant="contained"
+            startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
+          >
+            {loading ? "..." : "Filtrar"}
+          </Button>
+        </Stack>
+      </Box>
 
-                    />
-                </LocalizationProvider>
-
-                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-                    <DatePicker
-                        value={finalDate}
-                        onChange={(newValue) => { setFinalDate(newValue) }}
-                        label="Fim"
-                        renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
-                    />
-                </LocalizationProvider>
-
-                <Button className="buttonHover" onClick={handleGetTicketsInformation} variant='contained' >Filtrar</Button>
-
-            </Stack>
-            <Bar options={options} data={dataCharts} style={{ maxWidth: '100%', maxHeight: '280px', }} />
-        </>
-    );
-}
+      <Box sx={{ flex: 1, minHeight: 260, position: "relative" }}>
+        <Bar options={chartOptions} data={dataCharts} />
+      </Box>
+    </Box>
+  );
+};

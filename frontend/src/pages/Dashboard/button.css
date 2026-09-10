@@ -1,9 +1,18 @@
-/* cor quando passa o mouse por cima */
+/* Botões de filtro modernos nos gráficos */
+.MuiButtonBase-root.buttonHover {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  text-transform: none !important;
+  padding: 6px 14px !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
 .MuiButtonBase-root.buttonHover:hover {
-    background: rgb(36, 36, 36)
-  }
-  
-  /* cor enquanto não passa o mouse */
-  .MuiButtonBase-root.buttonHover {
-    background: rgb(71, 71, 71)
-  }
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+  transform: translateY(-1px);
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,28 +9,17 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import brLocale from "date-fns/locale/pt-BR";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Button, Stack, TextField } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { Button, Stack, TextField, Box, Typography, useTheme } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import api from "../../services/api";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
-import { makeStyles } from "../../styles/makeStyles";
 import "./button.css";
-import { getRandomRGBA } from "../../utils/colors";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.padding,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-  },
-}));
+import { getBaseOptions, modernPalette } from "./chartConfig";
 
 ChartJS.register(
   CategoryScale,
@@ -38,74 +27,25 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend,
-  ChartDataLabels
+  Legend
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Gráfico de Conversas",
-      position: "left",
-    },
-    datalabels: {
-      display: true,
-      anchor: "start",
-      offset: -30,
-      align: "start",
-      color: "#fff",
-      textStrokeColor: "#000",
-      textStrokeWidth: 2,
-      font: {
-        size: 20,
-        weight: "bold",
-      },
-    },
-  },
-};
-
 export const ChatsUser = () => {
-  // const classes = useStyles();
+  const theme = useTheme();
   const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
-  const [initialDate, setInitialDate] = useState(
-    getFirstDayOfMonth(new Date())
-  );
+  const [initialDate, setInitialDate] = useState(getFirstDayOfMonth(new Date()));
   const [ticketsData, setTicketsData] = useState({ data: [] });
+  const [loading, setLoading] = useState(false);
 
   const companyId = localStorage.getItem("companyId");
 
   useEffect(() => {
     handleGetTicketsInformation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const dataCharts = {
-    labels:
-      ticketsData &&
-      ticketsData?.data.length > 0 &&
-      ticketsData?.data.map((item) => item.nome),
-    datasets: [
-      {
-        data:
-          ticketsData?.data.length > 0 &&
-          ticketsData?.data.map((item, index) => {
-            return item.quantidade;
-          }),
-        backgroundColor:
-          ticketsData?.data.length > 0 &&
-          ticketsData?.data.map((item, index) => {
-            return getRandomRGBA();
-          }),
-      },
-    ],
-  };
-
   const handleGetTicketsInformation = async () => {
+    setLoading(true);
     try {
       const { data } = await api.get(
         `/dashboard/ticketsUsers?initialDate=${format(
@@ -116,61 +56,123 @@ export const ChatsUser = () => {
       setTicketsData(data);
     } catch (error) {
       toast.error("Erro ao obter informações da conversa");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const dataCharts = useMemo(() => {
+    const labels = (ticketsData?.data || []).map((item) => item.nome);
+    const data = (ticketsData?.data || []).map((item) => item.quantidade);
+    const backgroundColor = data.map((_, i) => modernPalette[i % modernPalette.length] + "cc");
+    const borderColor = data.map((_, i) => modernPalette[i % modernPalette.length]);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Conversas",
+          data,
+          backgroundColor,
+          borderColor,
+          borderWidth: 1.5,
+          borderRadius: 8,
+          borderSkipped: false,
+          maxBarThickness: 38,
+        },
+      ],
+    };
+  }, [ticketsData]);
+
+  const chartOptions = useMemo(() => {
+    const base = getBaseOptions(theme.palette.mode);
+    return {
+      ...base,
+      plugins: {
+        ...base.plugins,
+        title: { display: false },
+      },
+    };
+  }, [theme.palette.mode]);
+
   return (
-    <>
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        Total de Conversas por Usuários
-      </Typography>
-
-      <Stack direction={"row"} spacing={2} sx={{ my: 2, alignItems: "center" }}>
-        <LocalizationProvider
-          dateAdapter={AdapterDateFns}
-          adapterLocale={brLocale}
-        >
-          <DatePicker
-            value={initialDate}
-            onChange={(newValue) => {
-              setInitialDate(newValue);
+    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: { xs: "flex-start", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
+          mb: 2,
+        }}
+      >
+        <Box>
+          <Typography
+            component="h3"
+            sx={{
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "-0.01em",
+              color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
             }}
-            label="Inicio"
-            renderInput={(params) => (
-              <TextField fullWidth {...params} sx={{ width: "20ch" }} />
-            )}
-          />
-        </LocalizationProvider>
+          >
+            Total de Conversas por Usuários
+          </Typography>
+          <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
+            Volume de interações atribuídas a cada atendente
+          </Typography>
+        </Box>
 
-        <LocalizationProvider
-          dateAdapter={AdapterDateFns}
-          adapterLocale={brLocale}
-        >
-          <DatePicker
-            value={finalDate}
-            onChange={(newValue) => {
-              setFinalDate(newValue);
-            }}
-            label="Fim"
-            renderInput={(params) => (
-              <TextField fullWidth {...params} sx={{ width: "20ch" }} />
-            )}
-          />
-        </LocalizationProvider>
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
+            <DatePicker
+              value={initialDate}
+              onChange={(val) => setInitialDate(val)}
+              label="Início"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "140px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
+              )}
+            />
+            <DatePicker
+              value={finalDate}
+              onChange={(val) => setFinalDate(val)}
+              label="Fim"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  sx={{
+                    width: "140px",
+                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
+                  }}
+                />
+              )}
+            />
+          </LocalizationProvider>
 
-        <Button
-          className="buttonHover"
-          onClick={handleGetTicketsInformation}
-          variant="contained"
-        >
-          Filtrar
-        </Button>
-      </Stack>
-      <Bar
-        options={options}
-        data={dataCharts}
-        style={{ maxWidth: "100%", maxHeight: "280px" }}
-      />
-    </>
+          <Button
+            className="buttonHover"
+            onClick={handleGetTicketsInformation}
+            disabled={loading}
+            variant="contained"
+            startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
+          >
+            {loading ? "..." : "Filtrar"}
+          </Button>
+        </Stack>
+      </Box>
+
+      <Box sx={{ flex: 1, minHeight: 260, position: "relative" }}>
+        <Bar options={chartOptions} data={dataCharts} />
+      </Box>
+    </Box>
   );
 };

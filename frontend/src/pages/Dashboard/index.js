@@ -188,13 +188,37 @@ const useStyles = makeStyles((theme) => ({
   fixedHeightPaper2: {
     padding: theme.spacing(2.5),
     display: "flex",
-    overflow: "auto",
     flexDirection: "column",
     borderRadius: 16,
+    height: "100%",
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(15, 23, 42, 0.7)"
+        : "#ffffff",
     border:
       theme.palette.mode === "dark"
         ? "1px solid rgba(255, 255, 255, 0.08)"
         : "1px solid rgba(0, 0, 0, 0.06)",
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+        : "0 4px 20px rgba(0, 0, 0, 0.03)",
+  },
+  filterPaper: {
+    padding: theme.spacing(2.5),
+    borderRadius: 16,
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(15, 23, 42, 0.7)"
+        : "#ffffff",
+    border:
+      theme.palette.mode === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.08)"
+        : "1px solid rgba(0, 0, 0, 0.06)",
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+        : "0 4px 20px rgba(0, 0, 0, 0.03)",
   },
 }));
 
@@ -349,10 +373,11 @@ const Dashboard = () => {
           <Grid
             size={{
               xs: 12,
-              sm: 6,
-              md: 4
+              sm: 4,
+              md: 3
             }}>
             <TextField
+              size="small"
               label="Data Inicial"
               type="date"
               value={dateFrom}
@@ -361,15 +386,17 @@ const Dashboard = () => {
               slotProps={{
                 inputLabel: { shrink: true },
               }}
+              sx={{ "& .MuiInputBase-root": { borderRadius: "10px" } }}
             />
           </Grid>
           <Grid
             size={{
               xs: 12,
-              sm: 6,
-              md: 4
+              sm: 4,
+              md: 3
             }}>
             <TextField
+              size="small"
               label="Data Final"
               type="date"
               value={dateTo}
@@ -378,6 +405,7 @@ const Dashboard = () => {
               slotProps={{
                 inputLabel: { shrink: true },
               }}
+              sx={{ "& .MuiInputBase-root": { borderRadius: "10px" } }}
             />
           </Grid>
         </>
@@ -387,16 +415,18 @@ const Dashboard = () => {
         <Grid
           size={{
             xs: 12,
-            sm: 6,
-            md: 4
+            sm: 8,
+            md: 6
           }}>
-          <FormControl className={classes.selectContainer}>
+          <FormControl fullWidth size="small">
             <InputLabel id="period-selector-label">Período</InputLabel>
             <Select
               labelId="period-selector-label"
               id="period-selector"
+              label="Período"
               value={period}
               onChange={(e) => handleChangePeriod(e.target.value)}
+              sx={{ borderRadius: "10px" }}
             >
               <MenuItem value={0}>Nenhum selecionado</MenuItem>
               <MenuItem value={3}>Últimos 3 dias</MenuItem>
@@ -406,7 +436,6 @@ const Dashboard = () => {
               <MenuItem value={60}>Últimos 60 dias</MenuItem>
               <MenuItem value={90}>Últimos 90 dias</MenuItem>
             </Select>
-            <FormHelperText>Selecione o período desejado</FormHelperText>
           </FormControl>
         </Grid>
       );
@@ -647,61 +676,77 @@ const Dashboard = () => {
 </Grid>
 
 		  
-		  		          {/* FILTROS */}
-          <Grid
-            size={{
-              xs: 12,
-              sm: 6,
-              md: 4
-            }}>
-            <FormControl className={classes.selectContainer}>
-              <InputLabel id="period-selector-label">Tipo de Filtro</InputLabel>
-              <Select
-                labelId="period-selector-label"
-                value={filterType}
-                onChange={(e) => handleChangeFilterType(e.target.value)}
-              >
-                <MenuItem value={1}>Filtro por Data</MenuItem>
-                <MenuItem value={2}>Filtro por Período</MenuItem>
-              </Select>
-              <FormHelperText>Selecione o período desejado</FormHelperText>
-            </FormControl>
+		  {/* BARRA DE FILTROS & AÇÕES */}
+          <Grid size={12}>
+            <Paper className={classes.filterPaper}>
+              <Grid container spacing={2} sx={{ alignItems: "center" }}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 4,
+                    md: 3
+                  }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="period-selector-label">Tipo de Filtro</InputLabel>
+                    <Select
+                      labelId="period-selector-label"
+                      value={filterType}
+                      label="Tipo de Filtro"
+                      onChange={(e) => handleChangeFilterType(e.target.value)}
+                      sx={{ borderRadius: "10px" }}
+                    >
+                      <MenuItem value={1}>Filtro por Data</MenuItem>
+                      <MenuItem value={2}>Filtro por Período</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                {renderFilters()}
+
+                {visibleButtonsWithPrint && (
+                  <Grid size={{ xs: 12, sm: "grow" }} sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5, flexWrap: "wrap" }}>
+                    <ButtonWithSpinner
+                      loading={loading}
+                      onClick={() => fetchData()}
+                      variant="contained"
+                      color="primary"
+                      className="buttonHover"
+                      startIcon={<FilterListIcon sx={{ fontSize: 18 }} />}
+                      sx={{ px: 2.5, py: 1, borderRadius: "10px", fontWeight: 700 }}
+                    >
+                      Filtrar
+                    </ButtonWithSpinner>
+
+                    <ButtonWithSpinner
+                      loading={loading}
+                      onClick={() => {
+                        setVisibleButtonsWithPrint(false);
+                        setTimeout(
+                          () => handlePrint(null, () => pageToPrint.current),
+                          500
+                        );
+                      }}
+                      variant="outlined"
+                      sx={{
+                        px: 2.5,
+                        py: 1,
+                        borderRadius: "10px",
+                        fontWeight: 700,
+                        borderColor: "rgba(16, 185, 129, 0.4)",
+                        color: "#10b981",
+                        "&:hover": {
+                          borderColor: "#10b981",
+                          backgroundColor: "rgba(16, 185, 129, 0.08)",
+                        },
+                      }}
+                    >
+                      Imprimir
+                    </ButtonWithSpinner>
+                  </Grid>
+                )}
+              </Grid>
+            </Paper>
           </Grid>
-
-          {renderFilters()}
-
-          {/* BOTOES DE FILTRO E IMPRESSAO */}
-          {visibleButtonsWithPrint && (
-            <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-              <Grid className={classes.alignRight} size={12}>
-                <ButtonWithSpinner
-                  loading={loading}
-                  onClick={() => fetchData()}
-                  variant="contained"
-                  color="primary"
-                >
-                  Filtrar
-                </ButtonWithSpinner>
-              </Grid>
-
-              <Grid className={classes.alignRight} size={12}>
-                <ButtonWithSpinner
-                  loading={loading}
-                  onClick={() => {
-                    setVisibleButtonsWithPrint(false);
-                    setTimeout(
-                      () => handlePrint(null, () => pageToPrint.current),
-                      500
-                    );
-                  }}
-                  variant="contained"
-                  color="primary"
-                >
-                  Imprimir
-                </ButtonWithSpinner>
-              </Grid>
-            </div>
-          )}
 
           {/* USUARIOS ONLINE */}
           <Grid size={12}>
@@ -713,29 +758,33 @@ const Dashboard = () => {
             ) : null}
           </Grid>
 
-          {/* TOTAL DE ATENDIMENTOS POR USUARIO */}
-          <Grid size={12}>
+          {/* LINHA 1 DE GRÁFICOS: TOTAL POR USUÁRIO & TOTAL DIÁRIO (LADO A LADO) */}
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper className={classes.fixedHeightPaper2}>
               <ChatsUser />
             </Paper>
           </Grid>
 
-          {/* TOTAL DE ATENDIMENTOS */}
-          <Grid size={12}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper className={classes.fixedHeightPaper2}>
               <ChartsDate />
             </Paper>
           </Grid>
+
+          {/* LINHA 2 DE GRÁFICOS: ATENDIMENTOS POR ATENDENTE & POR FILA */}
+          <Grid size={12}>
+            <ChartsAppointmentsAtendent />
+          </Grid>
+
+          {/* LINHA 3 DE GRÁFICOS: HORÁRIO DE PICO & AVALIAÇÕES */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartsRushHour />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartsDepartamentRatings />
+          </Grid>
         </Grid>
-
-        {/* ATENDIMENTOS POR ATENDENTE */}
-        <ChartsAppointmentsAtendent />
-
-        {/* HORARIO DE PICOS */}
-        <ChartsRushHour />
-
-        {/* MEDIA DE AVALIAÇÔES */}
-        <ChartsDepartamentRatings />
       </Container>
     </div>
   );

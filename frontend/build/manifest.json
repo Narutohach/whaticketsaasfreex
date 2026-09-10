@@ -13,24 +13,41 @@
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "/favicon.svg?v=hacto-desk-2",
+      "src": "/favicon.svg?v=hacto-desk-3",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/svg+xml"
     },
     {
-      "src": "/android-chrome-192x192.png",
+      "src": "/favicon-32x32.png?v=hacto-desk-3",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-192x192.png?v=hacto-desk-3",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/android-chrome-192x192.png?v=hacto-desk-3",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png?v=hacto-desk-3",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/android-chrome-512x512.png?v=hacto-desk-3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png?v=hacto-desk-3",
       "sizes": "180x180",
       "type": "image/png"
     }
@@ -41,14 +58,14 @@
       "short_name": "Tickets",
       "description": "Acessar fila de atendimentos e conversas",
       "url": "/tickets",
-      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/android-chrome-192x192.png?v=hacto-desk-3", "sizes": "192x192" }]
     },
     {
       "name": "Dashboard",
       "short_name": "Métricas",
       "description": "Ver indicadores e métricas em tempo real",
       "url": "/dashboard",
-      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/android-chrome-192x192.png?v=hacto-desk-3", "sizes": "192x192" }]
     }
   ]
 }

@@ -135,7 +135,7 @@ const PwaInstallPrompt = () => {
           <Box display="flex" alignItems="center" gap={1.5}>
             <Box
               component="img"
-              src="/android-chrome-192x192.png"
+              src="/android-chrome-192x192.png?v=hacto-desk-3"
               alt="HACTO Desk Logo"
               sx={{
                 width: 40,

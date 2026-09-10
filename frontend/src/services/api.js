@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-	baseURL: process.env.REACT_APP_BACKEND_URL,
+	baseURL: import.meta.env.REACT_APP_BACKEND_URL,
 	withCredentials: true,
 });
 
@@ -58,7 +58,7 @@ api.interceptors.response.use(
 );
 
 export const openApi = axios.create({
-	baseURL: process.env.REACT_APP_BACKEND_URL
+	baseURL: import.meta.env.REACT_APP_BACKEND_URL
 });
 
 export default api;

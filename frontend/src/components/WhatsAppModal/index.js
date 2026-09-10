@@ -332,7 +332,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     </Grid>
                     <p style={{ fontSize: "12px", color: "#555", marginTop: 8 }}>
                       <strong>URL do Webhook para configurar na Meta:</strong><br />
-                      <code>{process.env.REACT_APP_BACKEND_URL || "https://sua-api.com"}/webhooks/meta/whatsapp</code>
+                      <code>{import.meta.env.REACT_APP_BACKEND_URL || "https://sua-api.com"}/webhooks/meta/whatsapp</code>
                     </p>
                   </div>
                 )}

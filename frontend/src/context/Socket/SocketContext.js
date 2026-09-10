@@ -115,7 +115,7 @@ const SocketManager = {
       this.currentCompanyId = companyId;
       this.currentUserId = userId;
       
-      this.currentSocket = openSocket(process.env.REACT_APP_BACKEND_URL, {
+      this.currentSocket = openSocket(import.meta.env.REACT_APP_BACKEND_URL, {
         transports: ["websocket"],
         pingTimeout: 18000,
         pingInterval: 18000,

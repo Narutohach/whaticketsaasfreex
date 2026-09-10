@@ -246,7 +246,7 @@ export default function Whitelabel(props) {
       },
     }).then((response) => {
       updateSettingsLoaded(`appLogo${mode}`, response.data);
-      colorMode[`setAppLogo${mode}`](process.env.REACT_APP_BACKEND_URL + "/public/" + response.data);
+      colorMode[`setAppLogo${mode}`](import.meta.env.REACT_APP_BACKEND_URL + "/public/" + response.data);
     }).catch((err) => {
       console.error(
         `Houve um problema ao realizar o upload da imagem.`

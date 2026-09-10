@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkfrontend||=[]).push([[695],{3695(n,o,e){e.d(o,{Keyboard:()=>c,KeyboardResize:()=>a});var i,a,t=e(9344);!function(n){n.Dark="DARK",n.Light="LIGHT",n.Default="DEFAULT"}(i||(i={})),function(n){n.Body="body",n.Ionic="ionic",n.Native="native",n.None="none"}(a||(a={}));const c=(0,t.F3)("Keyboard")}}]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import QRCode from "qrcode.react";
+import QRCode from "react-qr-code";
 import {
   Dialog,
   DialogContent,
@@ -385,8 +385,6 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
                   value={qrCode}
                   size={230}
                   level="H"
-                  includeMargin={false}
-                  renderAs="svg"
                 />
               ) : (
                 <Box

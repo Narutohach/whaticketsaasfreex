@@ -239,8 +239,8 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   const iconColor = theme.palette.mode === "light" ? "#0f172a" : "#f8fafc";
 
   // Definindo os logos para modo claro e escuro
-  const logoLight = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/interno.png`;
-  const logoDark = `${process.env.REACT_APP_BACKEND_URL}/public/logotipos/logo_w.png`;
+  const logoLight = `${import.meta.env.REACT_APP_BACKEND_URL}/public/logotipos/interno.png`;
+  const logoDark = `${import.meta.env.REACT_APP_BACKEND_URL}/public/logotipos/logo_w.png`;
 
   // Definindo o logo inicial com base no modo de tema atual
   const initialLogo = theme.palette.mode === 'light' ? logoLight : logoDark;

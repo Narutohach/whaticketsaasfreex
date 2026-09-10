@@ -48,7 +48,6 @@
     "mic-recorder-to-mp3": "^2.2.2",
     "moment": "^2.29.1",
     "path-browserify": "^1.0.1",
-    "qrcode.react": "^1.0.0",
     "query-string": "^7.0.0",
     "react": "^18.3.1",
     "react-big-calendar": "^1.8.7",
@@ -64,7 +63,6 @@
     "react-qr-code": "^2.0.7",
     "react-query": "^3.39.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^5.0.1",
     "react-text-mask": "^5.5.0",
     "react-to-print": "^3.0.2",
     "react-toastify": "9.0.0",
@@ -79,16 +77,12 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "start": "cross-env GENERATE_SOURCEMAP=false react-scripts start",
-    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
-    "builddev": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
+    "builddev": "vite build --mode development",
+    "preview": "vite preview",
     "cap:sync": "npm run build && cap sync",
     "cap:open": "cap open android"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -103,9 +97,9 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@capacitor/cli": "^8.5.1",
-    "cross-env": "^7.0.3",
-    "typescript": "^4.9.5"
+    "@vitejs/plugin-react": "^5.2.0",
+    "typescript": "^4.9.5",
+    "vite": "^7.3.6"
   }
 }

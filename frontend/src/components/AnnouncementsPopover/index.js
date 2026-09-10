@@ -236,7 +236,7 @@ export default function AnnouncementsPopover() {
   };
 
   {/* const getMediaPath = (filename) => {
-    return `${process.env.REACT_APP_BACKEND_URL}/public/${filename}`;
+    return `${import.meta.env.REACT_APP_BACKEND_URL}/public/${filename}`;
   };*/}
 
   const handleShowAnnouncementDialog = (record) => {

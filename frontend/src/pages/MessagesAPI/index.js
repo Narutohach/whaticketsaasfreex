@@ -58,7 +58,7 @@ const MessagesAPI = () => {
   }, []);
 
   const getEndpoint = () => {
-    return process.env.REACT_APP_BACKEND_URL + '/api/messages/send'
+    return import.meta.env.REACT_APP_BACKEND_URL + '/api/messages/send'
   }
 
   const handleSendTextMessage = async (values) => {

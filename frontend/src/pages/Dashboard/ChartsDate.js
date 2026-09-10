@@ -44,14 +44,14 @@ export const ChartsDate = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleGetTicketsInformation = async () => {
+  const handleGetTicketsInformation = async (start = initialDate, end = finalDate) => {
     setLoading(true);
     try {
       const { data } = await api.get(
         `/dashboard/ticketsDay?initialDate=${format(
-          initialDate,
+          start,
           "yyyy-MM-dd"
-        )}&finalDate=${format(finalDate, "yyyy-MM-dd")}&companyId=${companyId}`
+        )}&finalDate=${format(end, "yyyy-MM-dd")}&companyId=${companyId}`
       );
       setTicketsData(data);
     } catch (error) {
@@ -99,32 +99,41 @@ export const ChartsDate = () => {
 
   return (
     <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
-      <Box sx={{ mb: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1, mb: 1 }}>
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography
-              component="h3"
-              sx={{
-                fontWeight: 700,
-                fontSize: "1rem",
-                letterSpacing: "-0.01em",
-                color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
-                lineHeight: 1.3,
-              }}
-            >
-              Evolução Diária de Atendimentos
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
-                display: "block",
-                lineHeight: 1.3,
-              }}
-            >
-              Distribuição de tickets ao longo do período selecionado
-            </Typography>
-          </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: 1.5,
+          mb: 2.5,
+        }}
+      >
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography
+            component="h3"
+            sx={{
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              letterSpacing: "-0.01em",
+              color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+              lineHeight: 1.3,
+            }}
+          >
+            Evolução Diária de Atendimentos
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
+              display: "block",
+              lineHeight: 1.3,
+            }}
+          >
+            Distribuição de tickets ao longo do período selecionado
+          </Typography>
+        </Box>
+
+        <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 1 }}>
           <Chip
             size="small"
             label={`${ticketsData?.count || 0} total`}
@@ -134,26 +143,8 @@ export const ChartsDate = () => {
               backgroundColor: "rgba(6, 182, 212, 0.12)",
               color: "#06b6d4",
               border: "1px solid rgba(6, 182, 212, 0.25)",
-              flexShrink: 0,
             }}
           />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "flex-start", sm: "flex-end" },
-            alignItems: "center",
-            pt: 0.5,
-            pb: 1.2,
-            borderBottom: (t) =>
-              `1px solid ${
-                t.palette.mode === "dark"
-                  ? "rgba(255, 255, 255, 0.06)"
-                  : "rgba(0, 0, 0, 0.05)"
-              }`,
-          }}
-        >
           <ChartDateFilter
             initialDate={initialDate}
             setInitialDate={setInitialDate}

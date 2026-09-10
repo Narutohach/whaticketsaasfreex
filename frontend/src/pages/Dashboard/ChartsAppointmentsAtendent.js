@@ -55,14 +55,14 @@ const ChartsAppointmentsAtendent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleChangeReportData() {
+  async function handleChangeReportData(start = initialDate, end = finalDate) {
     setLoading(true);
     try {
       const { data } = await api.get(
         `/reports/appointmentsAtendent?initialDate=${format(
-          initialDate,
+          start,
           "yyyy-MM-dd"
-        )}&finalDate=${format(finalDate, "yyyy-MM-dd")}&companyId=${companyId}`
+        )}&finalDate=${format(end, "yyyy-MM-dd")}&companyId=${companyId}`
       );
       setTicketsData(data);
     } catch (err) {
@@ -123,49 +123,41 @@ const ChartsAppointmentsAtendent = () => {
       {/* ATENDIMENTOS POR ATENDENTE */}
       <Grid size={{ xs: 12, md: 6 }}>
         <Paper className={classes.card}>
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1, mb: 1 }}>
-              <Box sx={{ minWidth: 0 }}>
-                <Typography
-                  component="h3"
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: "1rem",
-                    letterSpacing: "-0.01em",
-                    color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  Atendimentos por Atendente
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
-                    display: "block",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  Produtividade da equipe no período
-                </Typography>
-              </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              gap: 1.5,
+              mb: 2.5,
+            }}
+          >
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography
+                component="h3"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  letterSpacing: "-0.01em",
+                  color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+                  lineHeight: 1.3,
+                }}
+              >
+                Atendimentos por Atendente
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
+                  display: "block",
+                  lineHeight: 1.3,
+                }}
+              >
+                Produtividade da equipe no período
+              </Typography>
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "flex-start", sm: "flex-end" },
-                alignItems: "center",
-                pt: 0.5,
-                pb: 1.2,
-                borderBottom: (t) =>
-                  `1px solid ${
-                    t.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.06)"
-                      : "rgba(0, 0, 0, 0.05)"
-                  }`,
-              }}
-            >
+            <Box sx={{ flexShrink: 0 }}>
               <ChartDateFilter
                 initialDate={initialDate}
                 setInitialDate={setInitialDate}
@@ -186,49 +178,41 @@ const ChartsAppointmentsAtendent = () => {
       {/* ATENDIMENTOS POR FILA / DEPARTAMENTO */}
       <Grid size={{ xs: 12, md: 6 }}>
         <Paper className={classes.card}>
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1, mb: 1 }}>
-              <Box sx={{ minWidth: 0 }}>
-                <Typography
-                  component="h3"
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: "1rem",
-                    letterSpacing: "-0.01em",
-                    color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  Atendimentos por Departamento / Fila
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
-                    display: "block",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  Distribuição da demanda pelos setores de atendimento
-                </Typography>
-              </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              gap: 1.5,
+              mb: 2.5,
+            }}
+          >
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography
+                component="h3"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  letterSpacing: "-0.01em",
+                  color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+                  lineHeight: 1.3,
+                }}
+              >
+                Atendimentos por Departamento / Fila
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
+                  display: "block",
+                  lineHeight: 1.3,
+                }}
+              >
+                Distribuição da demanda pelos setores de atendimento
+              </Typography>
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "flex-start", sm: "flex-end" },
-                alignItems: "center",
-                pt: 0.5,
-                pb: 1.2,
-                borderBottom: (t) =>
-                  `1px solid ${
-                    t.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.06)"
-                      : "rgba(0, 0, 0, 0.05)"
-                  }`,
-              }}
-            >
+            <Box sx={{ flexShrink: 0 }}>
               <ChartDateFilter
                 initialDate={initialDate}
                 setInitialDate={setInitialDate}

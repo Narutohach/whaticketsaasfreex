@@ -111,73 +111,214 @@ const PwaInstallPrompt = () => {
       TransitionComponent={SlideTransition}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       sx={{
-        bottom: { xs: 16, sm: 24 },
+        bottom: { xs: 16, sm: 28 },
         zIndex: 9999,
-        maxWidth: 440,
+        maxWidth: 460,
         width: "92%",
         margin: "0 auto",
       }}
     >
       <Paper
-        elevation={8}
+        elevation={12}
         sx={{
+          position: "relative",
+          overflow: "hidden",
           width: "100%",
-          p: 2,
-          borderRadius: "16px",
-          background: "linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(8, 12, 20, 0.98) 100%)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(16, 185, 129, 0.3)",
-          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(16, 185, 129, 0.2)",
+          p: { xs: 2, sm: 2.5 },
+          borderRadius: "20px",
+          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(8, 12, 20, 0.98) 100%)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          boxShadow: "0 24px 48px -12px rgba(0, 0, 0, 0.8), 0 0 24px -4px rgba(16, 185, 129, 0.25)",
           color: "#f8fafc",
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-          <Box display="flex" alignItems="center" gap={1.5}>
+        {/* Ambient Gradient Glow */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: -40,
+            left: -40,
+            width: 140,
+            height: 140,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Pinned Top-Right Close Button */}
+        <IconButton
+          size="small"
+          onClick={handleClose}
+          aria-label="Fechar"
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            zIndex: 2,
+            color: "#94a3b8",
+            backgroundColor: "rgba(255, 255, 255, 0.04)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "10px",
+            p: 0.6,
+            transition: "all 0.2s ease",
+            "&:hover": {
+              color: "#ffffff",
+              backgroundColor: "rgba(255, 255, 255, 0.12)",
+              borderColor: "rgba(255, 255, 255, 0.2)",
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+
+        {/* Header content */}
+        <Box display="flex" alignItems="flex-start" gap={2} pr={4}>
+          <Box
+            sx={{
+              position: "relative",
+              width: 48,
+              height: 48,
+              flexShrink: 0,
+              borderRadius: "14px",
+              p: "2px",
+              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.7) 0%, rgba(14, 165, 233, 0.4) 100%)",
+              boxShadow: "0 8px 18px -4px rgba(16, 185, 129, 0.35)",
+            }}
+          >
             <Box
               component="img"
               src="/android-chrome-192x192.png?v=hacto-desk-3"
               alt="HACTO Desk Logo"
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: "10px",
-                border: "1px solid rgba(255,255,255,0.1)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                width: "100%",
+                height: "100%",
+                borderRadius: "12px",
+                display: "block",
+                objectFit: "cover",
               }}
             />
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ color: "#ffffff", lineHeight: 1.2 }}>
-                Instalar HACTO Desk
-              </Typography>
-              <Typography variant="caption" sx={{ color: "#94a3b8", display: "block" }}>
-                Acesso rápido em tela cheia
+          </Box>
+
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Box display="flex" alignItems="center" gap={0.8} mb={0.4}>
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  backgroundColor: "#10b981",
+                  boxShadow: "0 0 8px #10b981",
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: "0.68rem",
+                  fontWeight: 800,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#34d399",
+                }}
+              >
+                Aplicativo Oficial
               </Typography>
             </Box>
+
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontSize: "1rem",
+                fontWeight: 800,
+                color: "#ffffff",
+                lineHeight: 1.25,
+                letterSpacing: "-0.01em",
+                mb: 0.4,
+              }}
+            >
+              Instalar HACTO Desk
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#94a3b8",
+                fontSize: "0.8rem",
+                lineHeight: 1.35,
+              }}
+            >
+              Acesso rápido com notificações nativas e experiência fluida em tela cheia.
+            </Typography>
           </Box>
-          <IconButton size="small" onClick={handleClose} sx={{ color: "#64748b", "&:hover": { color: "#fff" } }}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
         </Box>
 
         {showIosTip ? (
-          <Box sx={{ mt: 1.5, p: 1.5, borderRadius: "10px", backgroundColor: "rgba(16, 185, 129, 0.1)", border: "1px dashed rgba(16, 185, 129, 0.4)" }}>
-            <Typography variant="caption" sx={{ color: "#cbd5e1", display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-              1. Toque no ícone Compartilhar <IosShareIcon fontSize="small" sx={{ color: "#38bdf8" }} />
+          <Box
+            sx={{
+              mt: 2,
+              p: 1.8,
+              borderRadius: "12px",
+              backgroundColor: "rgba(16, 185, 129, 0.08)",
+              border: "1px dashed rgba(16, 185, 129, 0.35)",
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                mb: 1,
+                fontSize: "0.8rem",
+              }}
+            >
+              1. Toque no ícone Compartilhar{" "}
+              <IosShareIcon fontSize="small" sx={{ color: "#38bdf8" }} /> na barra do Safari
             </Typography>
-            <Typography variant="caption" sx={{ color: "#cbd5e1", display: "flex", alignItems: "center", gap: 1 }}>
-              2. Selecione <AddBoxOutlinedIcon fontSize="small" sx={{ color: "#34d399" }} /> <b>Adicionar à Tela de Início</b>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                fontSize: "0.8rem",
+              }}
+            >
+              2. Role e selecione{" "}
+              <AddBoxOutlinedIcon fontSize="small" sx={{ color: "#34d399" }} />{" "}
+              <b>Adicionar à Tela de Início</b>
             </Typography>
           </Box>
         ) : (
-          <Box display="flex" justifyContent="flex-end" gap={1} mt={1.5}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="flex-end"
+            gap={1.2}
+            mt={2}
+            pt={1.5}
+            sx={{
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
             <Button
               size="small"
               onClick={handleClose}
               sx={{
                 color: "#94a3b8",
                 textTransform: "none",
-                fontWeight: 500,
-                "&:hover": { color: "#fff" },
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                px: 1.8,
+                py: 0.7,
+                borderRadius: "10px",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  color: "#f1f5f9",
+                  backgroundColor: "rgba(255, 255, 255, 0.06)",
+                },
               }}
             >
               Agora não
@@ -185,19 +326,26 @@ const PwaInstallPrompt = () => {
             <Button
               size="small"
               variant="contained"
-              startIcon={<GetAppIcon fontSize="small" />}
+              startIcon={<GetAppIcon sx={{ fontSize: 18 }} />}
               onClick={handleInstall}
               sx={{
-                backgroundColor: "#10b981",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                 color: "#ffffff",
-                fontWeight: 600,
+                fontWeight: 700,
+                fontSize: "0.84rem",
                 textTransform: "none",
-                borderRadius: "8px",
-                px: 2,
-                boxShadow: "0 4px 12px rgba(16, 185, 129, 0.35)",
+                borderRadius: "10px",
+                px: 2.2,
+                py: 0.8,
+                boxShadow: "0 4px 14px rgba(16, 185, 129, 0.4)",
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 "&:hover": {
-                  backgroundColor: "#059669",
-                  boxShadow: "0 4px 16px rgba(16, 185, 129, 0.5)",
+                  background: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
+                  boxShadow: "0 6px 20px rgba(16, 185, 129, 0.6)",
+                  transform: "translateY(-1px)",
+                },
+                "&:active": {
+                  transform: "translateY(0)",
                 },
               }}
             >

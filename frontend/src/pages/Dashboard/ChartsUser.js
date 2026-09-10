@@ -9,17 +9,13 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import brLocale from "date-fns/locale/pt-BR";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Button, Stack, TextField, Box, Typography, useTheme } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { Box, Typography, useTheme } from "@mui/material";
 import api from "../../services/api";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
-import "./button.css";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
 import { getBaseOptions, modernPalette } from "./chartConfig";
+import ChartDateFilter from "./ChartDateFilter";
 
 ChartJS.register(
   CategoryScale,
@@ -97,77 +93,58 @@ export const ChatsUser = () => {
 
   return (
     <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "center" },
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 1.5,
-          mb: 2,
-        }}
-      >
-        <Box>
-          <Typography
-            component="h3"
-            sx={{
-              fontWeight: 700,
-              fontSize: "1rem",
-              letterSpacing: "-0.01em",
-              color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
-            }}
-          >
-            Total de Conversas por Usuários
-          </Typography>
-          <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
-            Volume de interações atribuídas a cada atendente
-          </Typography>
+      <Box sx={{ mb: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1, mb: 1 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                fontSize: "1rem",
+                letterSpacing: "-0.01em",
+                color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+                lineHeight: 1.3,
+              }}
+            >
+              Total de Conversas por Usuários
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
+                display: "block",
+                lineHeight: 1.3,
+              }}
+            >
+              Volume de interações atribuídas a cada atendente
+            </Typography>
+          </Box>
         </Box>
 
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-            <DatePicker
-              value={initialDate}
-              onChange={(val) => setInitialDate(val)}
-              label="Início"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  sx={{
-                    width: "140px",
-                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
-                  }}
-                />
-              )}
-            />
-            <DatePicker
-              value={finalDate}
-              onChange={(val) => setFinalDate(val)}
-              label="Fim"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  sx={{
-                    width: "140px",
-                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
-                  }}
-                />
-              )}
-            />
-          </LocalizationProvider>
-
-          <Button
-            className="buttonHover"
-            onClick={handleGetTicketsInformation}
-            disabled={loading}
-            variant="contained"
-            startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
-          >
-            {loading ? "..." : "Filtrar"}
-          </Button>
-        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "flex-start", sm: "flex-end" },
+            alignItems: "center",
+            pt: 0.5,
+            pb: 1.2,
+            borderBottom: (t) =>
+              `1px solid ${
+                t.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.06)"
+                  : "rgba(0, 0, 0, 0.05)"
+              }`,
+          }}
+        >
+          <ChartDateFilter
+            initialDate={initialDate}
+            setInitialDate={setInitialDate}
+            finalDate={finalDate}
+            setFinalDate={setFinalDate}
+            onFilter={handleGetTicketsInformation}
+            loading={loading}
+          />
+        </Box>
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 260, position: "relative" }}>

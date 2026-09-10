@@ -13,18 +13,14 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import Typography from "@mui/material/Typography";
-import { Button, Stack, TextField, Box, useTheme } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { Box, useTheme } from "@mui/material";
 import { makeStyles } from "../../styles/makeStyles";
-import brLocale from "date-fns/locale/pt-BR";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-import "./button.css";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "../../utils/dates";
 import { getBaseOptions } from "./chartConfig";
+import ChartDateFilter from "./ChartDateFilter";
 
 ChartJS.register(
   CategoryScale,
@@ -132,77 +128,58 @@ const ChartsRushHour = () => {
 
   return (
     <Paper className={classes.card}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "center" },
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 1.5,
-          mb: 2,
-        }}
-      >
-        <Box>
-          <Typography
-            component="h3"
-            sx={{
-              fontWeight: 700,
-              fontSize: "1rem",
-              letterSpacing: "-0.01em",
-              color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
-            }}
-          >
-            Horário de Pico - Troca de Mensagens
-          </Typography>
-          <Typography variant="caption" sx={{ color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8" }}>
-            Fluxo de mensagens recebidas e enviadas a cada hora do dia
-          </Typography>
+      <Box sx={{ mb: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1, mb: 1 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                fontSize: "1rem",
+                letterSpacing: "-0.01em",
+                color: theme.palette.mode === "dark" ? "#f1f5f9" : "#0f172a",
+                lineHeight: 1.3,
+              }}
+            >
+              Horário de Pico - Troca de Mensagens
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.mode === "dark" ? "#64748b" : "#94a3b8",
+                display: "block",
+                lineHeight: 1.3,
+              }}
+            >
+              Fluxo de mensagens recebidas e enviadas a cada hora do dia
+            </Typography>
+          </Box>
         </Box>
 
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-            <DatePicker
-              value={initialDate}
-              onChange={(val) => setInitialDate(val)}
-              label="Início"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  sx={{
-                    width: "130px",
-                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
-                  }}
-                />
-              )}
-            />
-            <DatePicker
-              value={finalDate}
-              onChange={(val) => setFinalDate(val)}
-              label="Fim"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  sx={{
-                    width: "130px",
-                    "& .MuiInputBase-root": { fontSize: "0.8rem", borderRadius: "8px" },
-                  }}
-                />
-              )}
-            />
-          </LocalizationProvider>
-
-          <Button
-            className="buttonHover"
-            onClick={handleChangeReportData}
-            disabled={loading}
-            variant="contained"
-            startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
-          >
-            {loading ? "..." : "Filtrar"}
-          </Button>
-        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "flex-start", sm: "flex-end" },
+            alignItems: "center",
+            pt: 0.5,
+            pb: 1.2,
+            borderBottom: (t) =>
+              `1px solid ${
+                t.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.06)"
+                  : "rgba(0, 0, 0, 0.05)"
+              }`,
+          }}
+        >
+          <ChartDateFilter
+            initialDate={initialDate}
+            setInitialDate={setInitialDate}
+            finalDate={finalDate}
+            setFinalDate={setFinalDate}
+            onFilter={handleChangeReportData}
+            loading={loading}
+          />
+        </Box>
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 260, position: "relative" }}>

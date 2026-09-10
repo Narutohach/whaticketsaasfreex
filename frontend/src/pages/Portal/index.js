@@ -405,6 +405,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 10,
     padding: "12px 14px",
     borderRadius: 12,
     background: "rgba(15, 23, 42, 0.8)",
@@ -414,11 +415,18 @@ const useStyles = makeStyles(() => ({
       borderColor: "rgba(52, 211, 153, 0.4)",
       background: "rgba(30, 41, 59, 0.9)",
     },
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      alignItems: "flex-start",
+      gap: 8,
+    },
   },
   ticketInfo: {
     display: "flex",
     alignItems: "center",
     gap: 12,
+    minWidth: 0,
+    flex: 1,
   },
   avatarPill: {
     width: 36,
@@ -430,15 +438,21 @@ const useStyles = makeStyles(() => ({
     fontWeight: 800,
     fontSize: 13,
     color: "#fff",
+    flexShrink: 0,
   },
   ticketMeta: {
     display: "flex",
     flexDirection: "column",
+    minWidth: 0,
+    flex: 1,
   },
   ticketName: {
     fontSize: 13,
     fontWeight: 750,
     color: "#f8fafc",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   ticketPreview: {
     fontSize: 11.5,
@@ -447,6 +461,9 @@ const useStyles = makeStyles(() => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    "@media (max-width: 480px)": {
+      maxWidth: 150,
+    },
   },
   ticketBadge: {
     padding: "3px 8px",
@@ -455,6 +472,12 @@ const useStyles = makeStyles(() => ({
     fontWeight: 800,
     textTransform: "uppercase",
     letterSpacing: "0.03em",
+    flexShrink: 0,
+    whiteSpace: "nowrap",
+    "@media (max-width: 480px)": {
+      fontSize: 9,
+      padding: "3px 6px",
+    },
   },
 
   /* AI Simulation */

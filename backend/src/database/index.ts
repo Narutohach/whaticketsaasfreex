@@ -39,6 +39,8 @@ import Prompt from "../models/Prompt";
 import QueueIntegrations from "../models/QueueIntegrations";
 import AuditLog from "../models/AuditLog";
 import InboundMessageBacklog from "../models/InboundMessageBacklog";
+import Flow from "../models/Flow";
+import FlowSession from "../models/FlowSession";
 
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
@@ -87,6 +89,8 @@ const models = [
   QueueIntegrations,
   AuditLog,
   InboundMessageBacklog,
+  Flow,
+  FlowSession,
 ];
 
 sequelize.addModels(models);

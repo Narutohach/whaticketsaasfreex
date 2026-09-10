@@ -82,7 +82,7 @@ export const deleteMedia = async (
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
-  const { name, color, greetingMessage, outOfHoursMessage, schedules, orderQueue, integrationId, promptId } =
+  const { name, color, greetingMessage, outOfHoursMessage, schedules, orderQueue, integrationId, promptId, flowId } =
     req.body;
   const { companyId } = req.user;
   const queue = await CreateQueueService({
@@ -94,7 +94,8 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     schedules,
     orderQueue: orderQueue === "" ? null : orderQueue,
     integrationId: integrationId === "" ? null : integrationId,
-    promptId: promptId === "" ? null : promptId
+    promptId: promptId === "" ? null : promptId,
+    flowId: flowId === "" ? null : flowId
   });
 
   const io = getIO();
@@ -121,7 +122,7 @@ export const update = async (
 ): Promise<Response> => {
   const { queueId } = req.params;
   const { companyId } = req.user;
-  const { name, color, greetingMessage, outOfHoursMessage, schedules, orderQueue, integrationId, promptId } =
+  const { name, color, greetingMessage, outOfHoursMessage, schedules, orderQueue, integrationId, promptId, flowId } =
     req.body;
   const queue = await UpdateQueueService(queueId, {
     name,
@@ -131,7 +132,8 @@ export const update = async (
     schedules,
     orderQueue: orderQueue === "" ? null : orderQueue,
     integrationId: integrationId === "" ? null : integrationId,
-    promptId: promptId === "" ? null : promptId
+    promptId: promptId === "" ? null : promptId,
+    flowId: flowId === "" ? null : flowId
   }, companyId);
 
   const io = getIO();

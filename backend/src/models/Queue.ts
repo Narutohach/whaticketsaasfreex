@@ -24,6 +24,7 @@ import WhatsappQueue from "./WhatsappQueue";
 import QueueOption from "./QueueOption";
 import Prompt from "./Prompt";
 import QueueIntegrations from "./QueueIntegrations";
+import Flow from "./Flow";
 
 @Table
 class Queue extends Model<Queue> {
@@ -98,7 +99,15 @@ class Queue extends Model<Queue> {
 
   @BelongsTo(() => Prompt)
   prompt: Prompt;
-  
+
+  @ForeignKey(() => Flow)
+  @Column
+  flowId: number;
+
+  @BelongsTo(() => Flow)
+  flow: Flow;
+
+
   @Column
   mediaPath: string;
 

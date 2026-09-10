@@ -13,6 +13,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SearchIcon from '@mui/icons-material/Search';
+import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ContactPhoneOutlinedIcon from "@mui/icons-material/ContactPhoneOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
@@ -599,6 +600,11 @@ const MainListItems = (props) => {
                 icon={<DeviceHubOutlined />}
               />
             )}
+            <ListItemLink
+              to="/flows"
+              primary="Fluxos"
+              icon={<SchemaOutlinedIcon />}
+            />
             <ListItemLink
               to="/connections"
               primary={i18n.t("mainDrawer.listItems.connections")}

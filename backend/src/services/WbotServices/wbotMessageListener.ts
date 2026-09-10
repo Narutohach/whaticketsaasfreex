@@ -66,6 +66,7 @@ import FindOrCreateATicketTrakingService from "../TicketServices/FindOrCreateATi
 import FindOrCreateTicketService from "../TicketServices/FindOrCreateTicketService";
 import UpdateTicketService from "../TicketServices/UpdateTicketService";
 import typebotListener from "../TypebotServices/typebotListener";
+import { handleFlowContinuation, startFlowFromQueue } from "../FlowServices/FlowEngineService";
 import ShowWhatsAppService from "../WhatsappService/ShowWhatsAppService";
 import { provider } from "./providers";
 import { SimpleObjectCache } from "../../helpers/simpleObjectCache";
@@ -1135,6 +1136,15 @@ const verifyQueue = async (
       // return;
     }
 
+    //inicia fluxo visual (HactoFlow)
+    if (
+      !msg.key.fromMe &&
+      !ticket.isGroup &&
+      !isNil(queues[0]?.flowId)
+    ) {
+      await startFlowFromQueue(queues[0], ticket, contact, getBodyMessage(msg));
+    }
+
     await UpdateTicketService({
       ticketData: { queueId: firstQueue.id, chatbot, status: "pending" },
       ticketId: ticket.id,
@@ -1329,6 +1339,15 @@ if (choosenQueue.options.length === 0) {
           promptId: choosenQueue?.promptId
         })
         // return;
+      }
+
+      //inicia fluxo visual (HactoFlow)
+      if (
+        !msg.key.fromMe &&
+        !ticket.isGroup &&
+        !isNil(choosenQueue?.flowId)
+      ) {
+        await startFlowFromQueue(choosenQueue, ticket, contact, getBodyMessage(msg));
       }
 
       const body = formatBody(`\u200e${choosenQueue.greetingMessage}`, ticket.contact);
@@ -1957,7 +1976,16 @@ const handleMessage = async (
 
     const ticket = await FindOrCreateTicketService(contact, wbot.id!, unreadMessages, companyId, groupContact);
 
-
+    // Fluxo visual (HactoFlow): se este ticket já tem uma sessão de fluxo em
+    // andamento (esperando resposta ou entre passos), ela tem prioridade
+    // sobre toda a lógica de fila/IA/integração abaixo — o fluxo é quem
+    // decide a próxima mensagem até terminar ou transferir o ticket.
+    if (!msg.key.fromMe && !isGroup && bodyMessage) {
+      const flowHandled = await handleFlowContinuation(ticket, contact, bodyMessage);
+      if (flowHandled) {
+        return;
+      }
+    }
 
     await provider(ticket, msg, companyId, contact, wbot as WASocket);
 

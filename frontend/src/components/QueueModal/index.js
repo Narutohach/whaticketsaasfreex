@@ -114,12 +114,25 @@ const QueueModal = ({ open, onClose, queueId }) => {
 
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [prompts, setPrompts] = useState([]);
+  const [selectedFlow, setSelectedFlow] = useState(null);
+  const [flows, setFlows] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await api.get("/prompt");
         setPrompts(data.prompts);
+      } catch (err) {
+        toastError(err);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get("/flows");
+        setFlows(data.flows);
       } catch (err) {
         toastError(err);
       }
@@ -158,6 +171,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
           return { ...prevState, ...data };
         });
         data.promptId ? setSelectedPrompt(data.promptId) : setSelectedPrompt(null);
+        data.flowId ? setSelectedFlow(data.flowId) : setSelectedFlow(null);
 
         setSchedules(data.schedules);
       } catch (err) {
@@ -207,7 +221,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
     try {
       if (queueId) {
         await api.put(`/queue/${queueId}`, {
-          ...values, schedules, promptId: selectedPrompt ? selectedPrompt : null
+          ...values, schedules, promptId: selectedPrompt ? selectedPrompt : null, flowId: selectedFlow ? selectedFlow : null
         });
 		if (attachment != null) {
           const formData = new FormData();
@@ -216,7 +230,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
         }
       } else {
         await api.post("/queue", {
-          ...values, schedules, promptId: selectedPrompt ? selectedPrompt : null
+          ...values, schedules, promptId: selectedPrompt ? selectedPrompt : null, flowId: selectedFlow ? selectedFlow : null
         });
 		if (attachment != null) {
           const formData = new FormData();
@@ -239,6 +253,10 @@ const QueueModal = ({ open, onClose, queueId }) => {
 
   const handleChangePrompt = (e) => {
     setSelectedPrompt(e.target.value);
+  };
+
+  const handleChangeFlow = (e) => {
+    setSelectedFlow(e.target.value);
   };
 
   return (
@@ -424,6 +442,45 @@ const QueueModal = ({ open, onClose, queueId }) => {
                                 value={prompt.id}
                               >
                                 {prompt.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl
+                          margin="dense"
+                          variant="outlined"
+                          fullWidth
+                        >
+                          <InputLabel>
+                            Fluxo (HactoFlow)
+                          </InputLabel>
+                          <Select
+                            labelId="dialog-select-flow-label"
+                            id="dialog-select-flow"
+                            name="flowId"
+                            value={selectedFlow || ""}
+                            onChange={handleChangeFlow}
+                            label="Fluxo (HactoFlow)"
+                            fullWidth
+                            MenuProps={{
+                              anchorOrigin: {
+                                vertical: "bottom",
+                                horizontal: "left",
+                              },
+                              transformOrigin: {
+                                vertical: "top",
+                                horizontal: "left",
+                              },
+                              getContentAnchorEl: null,
+                            }}
+                          >
+                            <MenuItem value="">Nenhum</MenuItem>
+                            {flows.map((flow) => (
+                              <MenuItem
+                                key={flow.id}
+                                value={flow.id}
+                              >
+                                {flow.name}
                               </MenuItem>
                             ))}
                           </Select>

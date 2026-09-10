@@ -14,6 +14,7 @@ interface QueueData {
   orderQueue?: number;
   integrationId?: number;
   promptId?: number;
+  flowId?: number;
 }
 
 const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {

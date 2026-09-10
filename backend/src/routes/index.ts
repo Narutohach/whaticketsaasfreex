@@ -35,6 +35,7 @@ import versionRouter from "./versionRoutes";
 import reportsRoutes from './reportsRoutes';
 import metaWebhookRoutes from "./metaWebhookRoutes";
 import auditLogRoutes from "./auditLogRoutes";
+import flowRoutes from "./flowRoutes";
 
 const routes = Router();
 
@@ -73,5 +74,6 @@ routes.use(reportsRoutes);
 routes.use(versionRouter);
 routes.use(metaWebhookRoutes);
 routes.use(auditLogRoutes);
+routes.use(flowRoutes);
 
 export default routes;

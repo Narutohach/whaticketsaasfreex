@@ -42,6 +42,8 @@ import QueueIntegration from "../pages/QueueIntegration";
 
 import ForgetPassword from "../pages/ForgetPassWord/"; // Reset PassWd
 import Portal from "../pages/Portal";
+import Flows from "../pages/Flows";
+import FlowBuilder from "../pages/Flows/Builder";
 
 const Routes = () => {
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -104,6 +106,8 @@ const Routes = () => {
                 <Route exact path="/files" component={Files} isPrivate />
                 <Route exact path="/prompts" component={Prompts} isPrivate />
                 <Route exact path="/queue-integration" component={QueueIntegration} isPrivate />
+                <Route exact path="/flows" component={Flows} isPrivate />
+                <Route exact path="/flows/:flowId" component={FlowBuilder} isPrivate />
 					{/*<Route exact path="/kanban-schedules" component={kanbanSchedules} isPrivate />*/}
                 <Route
                   exact

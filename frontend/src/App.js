@@ -37,24 +37,36 @@ const App = () => {
         {
             scrollbarStyles: {
                 "&::-webkit-scrollbar": {
-                    width: '8px',
-                    height: '8px',
-					borderRadius: "8px",
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                    background: "transparent",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                    boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.3)',
-                    backgroundColor: "#10b981",
-					borderRadius: "8px",
+                    backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.16)" : "rgba(255, 255, 255, 0.12)",
+                    borderRadius: "6px",
+                    "&:hover": {
+                        backgroundColor: "#10b981",
+                    }
                 },
             },
             scrollbarStylesSoft: {
                 "&::-webkit-scrollbar": {
-                    width: "8px",
-					borderRadius: "8px",
+                    width: "4px",
+                    height: "4px",
+                    borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-track": {
+                    background: "transparent",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: mode === "light" ? "#e2e8f0" : "#1e293b",
-					borderRadius: "8px",
+                    backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.08)",
+                    borderRadius: "4px",
+                    "&:hover": {
+                        backgroundColor: "rgba(16, 185, 129, 0.4)",
+                    }
                 },
             },
             palette: {

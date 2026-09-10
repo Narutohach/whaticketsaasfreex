@@ -30,7 +30,7 @@ import ListIcon from "@mui/icons-material/ListAlt";
 import AnnouncementIcon from "@mui/icons-material/Announcement";
 import ForumIcon from "@mui/icons-material/Forum";
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
-import RotateRight from "@mui/icons-material/RotateRight";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { i18n } from "../translate/i18n";
 import { WhatsAppsContext } from "../context/WhatsApp/WhatsAppsContext";
 import { AuthContext } from "../context/Auth/AuthContext";
@@ -51,64 +51,100 @@ import useVersion from "../hooks/useVersion";
 
 const useStyles = makeStyles((theme) => ({
   ListSubheader: {
+    position: "static !important",
     height: "auto",
-    padding: "16px 16px 4px 16px",
-    fontFamily: "'Inter', sans-serif",
-    fontSize: "0.68rem",
+    padding: "16px 12px 4px 12px",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    fontSize: "0.66rem",
     fontWeight: 800,
-    letterSpacing: "1.2px",
+    letterSpacing: "0.08em",
     textTransform: "uppercase",
-    color: theme.palette.mode === "light" ? "#94a3b8" : "#64748b",
-    backgroundColor: "transparent",
+    color: theme.palette.mode === "light" ? "#64748b" : "#64748b",
+    backgroundColor: "transparent !important",
     lineHeight: "1.4",
   },
   menuItem: {
     borderRadius: 10,
-    margin: "2px 8px",
+    margin: "2px 4px",
     padding: "7px 12px",
-    color: theme.palette.mode === "light" ? "#334155" : "#cbd5e1",
-    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    color: theme.palette.mode === "light" ? "#475569" : "#94a3b8",
+    transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
+    position: "relative",
     "&:hover": {
-      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.12)",
-      color: "#10b981",
-      transform: "translateX(3px)",
+      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(255, 255, 255, 0.05)",
+      color: theme.palette.mode === "light" ? "#0f172a" : "#ffffff",
+      transform: "translateX(2px)",
+      "& .MuiListItemIcon-root": {
+        color: theme.palette.mode === "light" ? "#10b981" : "#ffffff",
+      },
     },
   },
   menuItemActive: {
-    backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.12)" : "rgba(16, 185, 129, 0.18)",
+    backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.1)" : "rgba(16, 185, 129, 0.12)",
     color: "#10b981 !important",
     fontWeight: 700,
-    boxShadow: "inset 3px 0 0 #10b981",
+    border: theme.palette.mode === "light" ? "1px solid rgba(16, 185, 129, 0.25)" : "1px solid rgba(16, 185, 129, 0.22)",
+    boxShadow: "0 2px 8px rgba(16, 185, 129, 0.15)",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      left: 0,
+      top: "22%",
+      bottom: "22%",
+      width: 3.5,
+      borderRadius: "0 4px 4px 0",
+      backgroundColor: "#10b981",
+      boxShadow: "0 0 10px rgba(16, 185, 129, 0.8)",
+    },
     "&:hover": {
-      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.22)",
+      backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.14)" : "rgba(16, 185, 129, 0.16)",
+      transform: "none",
     },
   },
   menuIcon: {
-    minWidth: 36,
-    color: theme.palette.mode === "light" ? "#64748b" : "#94a3b8",
-    transition: "color 0.2s ease",
+    minWidth: 34,
+    color: theme.palette.mode === "light" ? "#64748b" : "#64748b",
+    transition: "color 0.18s ease",
+    "& svg": {
+      fontSize: "1.25rem",
+    },
   },
   menuIconActive: {
     color: "#10b981 !important",
   },
   menuText: {
-    fontSize: "0.88rem",
+    fontSize: "0.85rem",
     fontWeight: 500,
+    letterSpacing: "-0.01em",
   },
   menuTextActive: {
     fontWeight: 700,
-    color: "#10b981",
+    color: "#10b981 !important",
   },
   logoutButton: {
     borderRadius: 10,
-    margin: "8px 8px",
+    margin: "12px 4px 4px 4px",
+    padding: "8px 12px",
     backgroundColor: "rgba(239, 68, 68, 0.08)",
+    border: "1px solid rgba(239, 68, 68, 0.15)",
     color: "#ef4444",
-    transition: "all 0.2s ease",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "& .MuiListItemIcon-root": {
+      minWidth: 34,
+      color: "#ef4444",
+    },
+    "& .MuiListItemText-primary": {
+      fontSize: "0.85rem",
+      fontWeight: 600,
+    },
     "&:hover": {
       backgroundColor: "rgba(239, 68, 68, 0.16)",
-      color: "#dc2626",
-      transform: "translateX(3px)",
+      borderColor: "rgba(239, 68, 68, 0.3)",
+      color: "#f87171",
+      transform: "translateX(2px)",
+      "& .MuiListItemIcon-root": {
+        color: "#f87171",
+      },
     },
   },
 }));
@@ -128,7 +164,7 @@ function ListItemLink(props) {
   );
 
   return (
-    <li>
+    <li style={{ listStyle: "none" }}>
       <ListItemButton
         dense
         component={renderLink}
@@ -364,15 +400,12 @@ const MainListItems = (props) => {
       <Can
         role={user.profile}
         perform={"drawer-service-items:view"}
-        style={{
-          overflowY: "scroll",
-        }}
         no={() => (
           <>
             <ListSubheader
               hidden={collapsed}
               className={classes.ListSubheader}
-              inset
+              disableSticky
               color="inherit">
               {i18n.t("Atendimento")}
             </ListSubheader>
@@ -450,7 +483,7 @@ const MainListItems = (props) => {
             <ListSubheader
               hidden={collapsed}
               className={classes.ListSubheader}
-              inset
+              disableSticky
               color="inherit">
               {i18n.t("Gerência")}
             </ListSubheader>
@@ -482,7 +515,7 @@ const MainListItems = (props) => {
                 <ListSubheader
                   hidden={collapsed}
                   className={classes.ListSubheader}
-                  inset
+                  disableSticky
                   color="inherit">
                   {i18n.t("Campanhas")}
                 </ListSubheader>
@@ -571,7 +604,7 @@ const MainListItems = (props) => {
             <ListSubheader
               hidden={collapsed}
               className={classes.ListSubheader}
-              inset
+              disableSticky
               color="inherit">
               {i18n.t("Administração")}
             </ListSubheader>
@@ -654,7 +687,7 @@ const MainListItems = (props) => {
 			<ListSubheader
               hidden={collapsed}
               className={classes.ListSubheader}
-              inset
+              disableSticky
               color="inherit">
               {i18n.t("Sistema")}
             </ListSubheader>
@@ -686,7 +719,7 @@ const MainListItems = (props) => {
         className={classes.logoutButton}
       >
         <ListItemIcon>
-          <RotateRight />
+          <LogoutIcon sx={{ fontSize: 20 }} />
         </ListItemIcon>
         <ListItemText primary={i18n.t("Sair")} />
       </ListItemButton>

@@ -149,8 +149,11 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     whiteSpace: "nowrap",
     width: drawerWidth,
-    borderRight: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
-    backgroundColor: theme.palette.background.paper,
+    borderRight: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.06)",
+    backgroundColor: theme.palette.mode === "light" ? "#ffffff" : "#090d16",
+    backgroundImage: theme.palette.mode === "dark" 
+      ? "linear-gradient(180deg, rgba(16, 185, 129, 0.02) 0%, rgba(9, 13, 22, 1) 100%)"
+      : "none",
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -160,7 +163,6 @@ const useStyles = makeStyles((theme) => ({
       height: "100%",
       zIndex: theme.zIndex.drawer + 10,
     },
-    ...theme.scrollbarStylesSoft
   },
   drawerPaperClose: {
     overflowX: "hidden",
@@ -204,9 +206,22 @@ const useStyles = makeStyles((theme) => ({
   },
   containerWithScroll: {
     flex: 1,
-    padding: theme.spacing(1),
-    overflowY: "scroll",
-    ...theme.scrollbarStyles,
+    padding: "6px 6px 36px 6px",
+    overflowY: "auto",
+    overflowX: "hidden",
+    "&::-webkit-scrollbar": {
+      width: "4px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "transparent",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.09)",
+      borderRadius: "4px",
+    },
+    "&::-webkit-scrollbar-thumb:hover": {
+      background: "rgba(16, 185, 129, 0.4)",
+    },
   },
   NotificationsPopOver: {
     // color: theme.barraSuperior.secondary.main,
@@ -411,17 +426,30 @@ const LoggedInLayout = ({ children, themeToggle }) => {
         onClose={drawerClose}
         ModalProps={{ keepMounted: true }}
       >
-        <div className={classes.toolbarIcon} style={{ justifyContent: "space-between", padding: "0 12px" }}>
+        <div className={classes.toolbarIcon} style={{ justifyContent: "space-between", padding: "0 14px", minHeight: 60 }}>
           {drawerOpen ? <HactoLogo size="small" light={theme.palette.mode === "light"} showTagline={false} /> : null}
-          <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
-            <ChevronLeftIcon />
+          <IconButton 
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            sx={{
+              color: theme.palette.mode === "light" ? "#64748b" : "#94a3b8",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              borderRadius: "10px",
+              p: 0.7,
+              transition: "all 0.2s ease",
+              "&:hover": {
+                color: "#ffffff",
+                backgroundColor: "rgba(255, 255, 255, 0.08)",
+                borderColor: "rgba(255, 255, 255, 0.15)",
+              },
+            }}
+          >
+            <ChevronLeftIcon fontSize="small" />
           </IconButton>
         </div>
-        <Divider />
         <List className={classes.containerWithScroll}>
           <MainListItems drawerClose={drawerClose} collapsed={!drawerOpen} />
         </List>
-        <Divider />
       </Drawer>
       <UserModal
         open={userModalOpen}

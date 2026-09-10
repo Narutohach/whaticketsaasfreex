@@ -14,6 +14,8 @@ import {
   useTheme,
   useMediaQuery,
   Box,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
 import { makeStyles } from "../styles/makeStyles";
 
@@ -24,6 +26,10 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import CachedIcon from "@mui/icons-material/Cached";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import EventIcon from "@mui/icons-material/Event";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -74,19 +80,40 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   toolbar: {
-    paddingRight: 16,
-    paddingLeft: 16,
-    minHeight: 56,
+    paddingRight: 20,
+    paddingLeft: 20,
+    minHeight: 60,
+    height: 60,
     color: theme.palette.mode === "light" ? "#0f172a" : "#f8fafc",
-    background: theme.palette.barraSuperior,
+    backgroundColor: theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.85)" : "rgba(9, 13, 22, 0.82)",
     backdropFilter: "blur(16px)",
     WebkitBackdropFilter: "blur(16px)",
-    borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
+    borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.06)",
     boxShadow: "none",
+    gap: 8,
+    "& .MuiIconButton-root": {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      color: theme.palette.mode === "light" ? "#475569" : "#94a3b8",
+      backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.03)" : "rgba(255, 255, 255, 0.03)",
+      border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.06)" : "1px solid rgba(255, 255, 255, 0.06)",
+      transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
+      "&:hover": {
+        color: theme.palette.mode === "light" ? "#0f172a" : "#ffffff",
+        backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
+        borderColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.15)",
+        transform: "translateY(-1px)",
+      },
+      "& svg": {
+        fontSize: "1.2rem",
+      },
+    },
     [theme.breakpoints.down("sm")]: {
-      paddingRight: 8,
-      paddingLeft: 8,
-      minHeight: 52,
+      paddingRight: 10,
+      paddingLeft: 10,
+      minHeight: 54,
+      height: 54,
     }
   },
   toolbarIcon: {
@@ -194,10 +221,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBarSpacer: {
-    minHeight: "56px",
+    minHeight: "60px",
     flex: "none",
     [theme.breakpoints.down("sm")]: {
-      minHeight: "52px",
+      minHeight: "54px",
     }
   },
   content: {
@@ -495,93 +522,239 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             <MenuIcon />
           </IconButton>
 
-          <Typography
-            component="h2"
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.title}
-          >
-            {isMobile ? (
-              <b>{user?.company?.name || "HACTO Desk"}</b>
-            ) : greaterThenSm && user?.profile === "admin" && user?.company?.dueDate ? (
-              <>
-                Olá <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>! (Ativo até {dateToClient(user?.company?.dueDate)})
-              </>
-            ) : (
-              <>
-                Olá <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>!
-              </>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexGrow: 1, minWidth: 0, overflow: "hidden" }}>
+            <Typography
+              component="h1"
+              variant="body1"
+              noWrap
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.88rem",
+                color: theme.palette.mode === "light" ? "#1e293b" : "#f1f5f9",
+                letterSpacing: "-0.01em",
+                display: "flex",
+                alignItems: "center",
+                gap: 0.6,
+              }}
+            >
+              <span>Olá,</span>
+              <span style={{ color: "#10b981", fontWeight: 700 }}>{user?.name || "Usuário"}</span>
+            </Typography>
+
+            <Box
+              sx={{
+                display: { xs: "none", sm: "inline-flex" },
+                alignItems: "center",
+                gap: 0.7,
+                px: 1.2,
+                py: 0.35,
+                borderRadius: "20px",
+                backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.12)",
+                border: "1px solid rgba(16, 185, 129, 0.2)",
+                fontSize: "0.74rem",
+                fontWeight: 600,
+                color: "#10b981",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  backgroundColor: "#10b981",
+                  boxShadow: "0 0 6px #10b981",
+                }}
+              />
+              {user?.company?.name || "HACTO Desk"}
+            </Box>
+
+            {user?.profile === "admin" && user?.company?.dueDate && (
+              <Box
+                sx={{
+                  display: { xs: "none", md: "inline-flex" },
+                  alignItems: "center",
+                  gap: 0.6,
+                  px: 1,
+                  py: 0.3,
+                  borderRadius: "8px",
+                  backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.04)",
+                  border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.07)" : "1px solid rgba(255, 255, 255, 0.07)",
+                  fontSize: "0.72rem",
+                  fontWeight: 500,
+                  color: theme.palette.mode === "light" ? "#64748b" : "#94a3b8",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <EventIcon sx={{ fontSize: 13, color: "#10b981" }} />
+                <span>Ativo até {dateToClient(user?.company?.dueDate)}</span>
+              </Box>
             )}
-          </Typography>
+          </Box>
 
           {!isMobile ? (
-            <>
-              <IconButton edge="start" onClick={toggleColorMode}>
-                {theme.mode === 'dark' ? <Brightness7Icon style={{ color: iconColor }} /> : <Brightness4Icon style={{ color: iconColor }} />}
-              </IconButton>
-
-              <NotificationsVolume
-                setVolume={setVolume}
-                volume={volume}
-              />
-
-              <IconButton
-                onClick={handleRefreshPage}
-                aria-label={i18n.t("mainDrawer.appBar.refresh")}
-                color="inherit"
-              >
-                <CachedIcon style={{ color: iconColor }} />
-              </IconButton>
-
-              {user.id && <NotificationsPopOver volume={volume} />}
-
-              <AnnouncementsPopover />
-
-              <ChatPopover />
-
-              <div>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  style={{ color: iconColor }}
-                >
-                  <AccountCircle />
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+              <Tooltip title={theme.mode === 'dark' ? "Modo Claro" : "Modo Escuro"} arrow>
+                <IconButton onClick={toggleColorMode}>
+                  {theme.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  getContentAnchorEl={null}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={menuOpen}
-                  onClose={handleCloseMenu}
+              </Tooltip>
+
+              <Tooltip title="Volume das notificações" arrow>
+                <div>
+                  <NotificationsVolume
+                    setVolume={setVolume}
+                    volume={volume}
+                  />
+                </div>
+              </Tooltip>
+
+              <Tooltip title={i18n.t("mainDrawer.appBar.refresh")} arrow>
+                <IconButton
+                  onClick={handleRefreshPage}
+                  aria-label={i18n.t("mainDrawer.appBar.refresh")}
                 >
-                  <MenuItem onClick={handleOpenUserModal}>
-                    {i18n.t("mainDrawer.appBar.user.profile")}
-                  </MenuItem>
-                  <MenuItem onClick={handleClickLogout}>
-                    Sair
-                  </MenuItem>
-                </Menu>
-              </div>
-            </>
+                  <CachedIcon />
+                </IconButton>
+              </Tooltip>
+
+              {user.id && (
+                <Tooltip title="Notificações de tickets" arrow>
+                  <div>
+                    <NotificationsPopOver volume={volume} />
+                  </div>
+                </Tooltip>
+              )}
+
+              <Tooltip title="Avisos do sistema" arrow>
+                <div>
+                  <AnnouncementsPopover />
+                </div>
+              </Tooltip>
+
+              <Tooltip title="Chat interno" arrow>
+                <div>
+                  <ChatPopover />
+                </div>
+              </Tooltip>
+
+              <Box sx={{ width: "1px", height: 20, mx: 0.5, backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }} />
+
+              <Box
+                onClick={handleMenu}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  cursor: "pointer",
+                  p: "3px 8px 3px 4px",
+                  borderRadius: "20px",
+                  backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.03)" : "rgba(255, 255, 255, 0.04)",
+                  border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  transition: "all 0.18s ease",
+                  "&:hover": {
+                    backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)",
+                    borderColor: "rgba(16, 185, 129, 0.4)",
+                  },
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                    color: "#ffffff",
+                    boxShadow: "0 2px 6px rgba(16, 185, 129, 0.3)",
+                  }}
+                >
+                  {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                </Avatar>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: { xs: "none", md: "block" },
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    color: theme.palette.mode === "light" ? "#334155" : "#e2e8f0",
+                    maxWidth: 100,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {user?.name?.split(" ")[0]}
+                </Typography>
+                <KeyboardArrowDownIcon sx={{ fontSize: 16, color: theme.palette.mode === "light" ? "#94a3b8" : "#64748b" }} />
+              </Box>
+
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                getContentAnchorEl={null}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={menuOpen}
+                onClose={handleCloseMenu}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 190,
+                    borderRadius: "12px",
+                    backgroundColor: theme.palette.mode === "light" ? "#ffffff" : "#0d111b",
+                    border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
+                    boxShadow: theme.palette.mode === "light" 
+                      ? "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+                      : "0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5)",
+                    "& .MuiMenuItem-root": {
+                      fontSize: "0.85rem",
+                      py: 1,
+                      px: 1.5,
+                      gap: 1.2,
+                      borderRadius: "8px",
+                      mx: 0.5,
+                      my: 0.2,
+                      "&:hover": {
+                        backgroundColor: theme.palette.mode === "light" ? "rgba(16, 185, 129, 0.08)" : "rgba(255, 255, 255, 0.06)",
+                      },
+                    },
+                  },
+                }}
+              >
+                <Box sx={{ px: 1.5, py: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: "0.85rem" }}>
+                    {user?.name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#10b981", fontWeight: 600 }}>
+                    {user?.profile === "admin" ? "Administrador" : "Usuário"}
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 0.5, borderColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.06)" }} />
+                <MenuItem onClick={handleOpenUserModal}>
+                  <PersonIcon sx={{ fontSize: 18, color: "#10b981" }} />
+                  {i18n.t("mainDrawer.appBar.user.profile")}
+                </MenuItem>
+                <MenuItem onClick={handleClickLogout} sx={{ color: "#ef4444" }}>
+                  <LogoutIcon sx={{ fontSize: 18, color: "#ef4444" }} />
+                  {i18n.t("Sair")}
+                </MenuItem>
+              </Menu>
+            </Box>
           ) : (
-            <>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               {user.id && <NotificationsPopOver volume={volume} />}
               <div>
                 <IconButton
                   aria-label="mais opções"
                   onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
-                  style={{ color: iconColor, padding: 6 }}
+                  style={{ padding: 6 }}
                 >
                   <MoreVertIcon />
                 </IconButton>
@@ -599,27 +772,39 @@ const LoggedInLayout = ({ children, themeToggle }) => {
                   }}
                   open={moreMenuOpen}
                   onClose={() => setMoreMenuAnchor(null)}
+                  PaperProps={{
+                    sx: {
+                      borderRadius: "12px",
+                      backgroundColor: theme.palette.mode === "light" ? "#ffffff" : "#0d111b",
+                      border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+                      "& .MuiMenuItem-root": {
+                        gap: 1.2,
+                        py: 1,
+                      },
+                    }
+                  }}
                 >
                   <MenuItem onClick={() => { toggleColorMode(); setMoreMenuAnchor(null); }}>
-                    {theme.mode === 'dark' ? <Brightness7Icon style={{ marginRight: 8 }} /> : <Brightness4Icon style={{ marginRight: 8 }} />}
+                    {theme.mode === 'dark' ? <Brightness7Icon sx={{ fontSize: 18 }} /> : <Brightness4Icon sx={{ fontSize: 18 }} />}
                     {theme.mode === 'dark' ? "Modo Claro" : "Modo Escuro"}
                   </MenuItem>
                   <MenuItem onClick={() => { handleRefreshPage(); setMoreMenuAnchor(null); }}>
-                    <CachedIcon style={{ marginRight: 8 }} />
+                    <CachedIcon sx={{ fontSize: 18 }} />
                     {i18n.t("mainDrawer.appBar.refresh")}
                   </MenuItem>
                   <MenuItem onClick={() => { handleOpenUserModal(); setMoreMenuAnchor(null); }}>
-                    <AccountCircle style={{ marginRight: 8 }} />
+                    <PersonIcon sx={{ fontSize: 18, color: "#10b981" }} />
                     {i18n.t("mainDrawer.appBar.user.profile")}
                   </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={() => { handleClickLogout(); setMoreMenuAnchor(null); }}>
-                    <ExitToAppIcon style={{ marginRight: 8 }} />
+                  <Divider sx={{ my: 0.5 }} />
+                  <MenuItem onClick={() => { handleClickLogout(); setMoreMenuAnchor(null); }} sx={{ color: "#ef4444" }}>
+                    <LogoutIcon sx={{ fontSize: 18, color: "#ef4444" }} />
                     Sair
                   </MenuItem>
                 </Menu>
               </div>
-            </>
+            </Box>
           )}
         </Toolbar>
       </AppBar>

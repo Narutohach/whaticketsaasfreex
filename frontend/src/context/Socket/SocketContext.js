@@ -105,10 +105,10 @@ const SocketManager = {
       }
       
       if ( isExpired(token) ) {
-        console.warn("Expired token, reload after refresh");
-        setTimeout(() => {
-          window.location.reload();
-        },1000);
+        console.warn("Expired token detected in SocketManager, clearing auth");
+        localStorage.removeItem("token");
+        localStorage.removeItem("companyId");
+        localStorage.removeItem("userId");
         return new DummySocket();
       }
 
@@ -124,10 +124,17 @@ const SocketManager = {
 
       this.currentSocket.io.on("reconnect_attempt", () => {
         this.currentSocket.io.opts.query.r = 1;
-        token = JSON.parse(localStorage.getItem("token"));
-        if ( isExpired(token) ) {
-          console.warn("Refreshing");
-          window.location.reload();
+        try {
+          token = JSON.parse(localStorage.getItem("token"));
+        } catch {
+          token = null;
+        }
+        if ( !token || isExpired(token) ) {
+          console.warn("Token expired or missing during reconnect, aborting");
+          localStorage.removeItem("token");
+          localStorage.removeItem("companyId");
+          localStorage.removeItem("userId");
+          this.currentSocket.disconnect();
         } else {
           console.warn("Using new token");
           this.currentSocket.io.opts.query.token = token;
@@ -137,12 +144,18 @@ const SocketManager = {
       this.currentSocket.on("disconnect", (reason) => {
         console.warn(`socket disconnected because: ${reason}`);
         if (reason.startsWith("io server disconnect")) {
-          console.warn("tryng to reconnect", this.currentSocket);
-          token = JSON.parse(localStorage.getItem("token"));
+          console.warn("trying to reconnect", this.currentSocket);
+          try {
+            token = JSON.parse(localStorage.getItem("token"));
+          } catch {
+            token = null;
+          }
           
-          if ( isExpired(token) ) {
-            console.warn("Expired token - refreshing");
-            window.location.reload();
+          if ( !token || isExpired(token) ) {
+            console.warn("Expired token on disconnect, aborting reconnect");
+            localStorage.removeItem("token");
+            localStorage.removeItem("companyId");
+            localStorage.removeItem("userId");
             return;
           }
           console.warn("Reconnecting using refreshed token");

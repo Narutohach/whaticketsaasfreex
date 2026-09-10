@@ -28,7 +28,11 @@ const useAuth = () => {
           setIsAuth(true);
           setUser(data.user);
         } catch (err) {
-          toastError(err);
+          localStorage.removeItem("token");
+          localStorage.removeItem("companyId");
+          localStorage.removeItem("userId");
+          setIsAuth(false);
+          setUser({});
         }
       }
       setLoading(false);
